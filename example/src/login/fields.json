@@ -1,0 +1,11 @@
+{
+	"login": [
+		{ "id":"user",   "type":"email" },
+		{ "id":"pass",   "type":"password" },
+		{ "id":"save",   "type":"switch", "checked":true },
+		{ "id":"btn",    "type":"submit", "classes":"bgPrimary" },
+		{ "id":"btnFb",  "type":"button", "classes":"bgPrimary" },
+		{ "id":"btnGg",  "type":"button", "classes":"bgPrimary" },
+		{ "id":"btnWa",  "type":"button", "classes":"bgPrimary" }
+	]
+}

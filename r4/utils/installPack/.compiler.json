@@ -1,0 +1,10 @@
+{
+
+	"jsPacker": true,
+
+	"foldersToMonitor": [
+		"./src",
+		"./vendor"
+	]
+
+}

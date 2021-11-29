@@ -1,0 +1,100 @@
+/*Based on simplegrid.io */
+
+
+/* ==== GRID SYSTEM ==== */
+
+body > main {
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.row {
+	position: relative;
+	width: 100%;
+}
+
+.row [class^="col"] {
+	float: left;
+	margin: 0.5rem 2%;
+	min-height: 0.125rem;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.row [class^="col"].onRight {
+	float: right;
+}
+
+.row::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.col-1,  .col-2,  .col-3,
+.col-4,  .col-5,  .col-6,
+.col-7,  .col-8,  .col-9,
+.col-10, .col-11, .col-12 {
+	width: 96%;
+}
+
+.col-xs-1  { width: 4.33%;  }
+.col-xs-2  { width: 12.66%; }
+.col-xs-3  { width: 21%;    }
+.col-xs-4  { width: 29.33%; }
+.col-xs-5  { width: 37.66%; }
+.col-xs-6  { width: 46%;    }
+.col-xs-7  { width: 54.33%; }
+.col-xs-8  { width: 62.66%; }
+.col-xs-9  { width: 71%;    }
+.col-xs-10 { width: 79.33%; }
+.col-xs-11 { width: 87.66%; }
+.col-xs-12 { width: 96%;    }
+.hidden-xs { display: none; }
+
+
+@media only screen and (min-width: 33.75em) {  /* 540px */
+	.container {
+		width: 80%;
+	}
+}
+
+@media only screen and (min-width: 45em) {  /* 720px */
+	.col-1     { width: 4.33%;   }
+	.col-2     { width: 12.66%;  }
+	.col-3     { width: 21%;     }
+	.col-4     { width: 29.33%;  }
+	.col-5     { width: 37.66%;  }
+	.col-6     { width: 46%;     }
+	.col-7     { width: 54.33%;  }
+	.col-8     { width: 62.66%;  }
+	.col-9     { width: 71%;     }
+	.col-10    { width: 79.33%;  }
+	.col-11    { width: 87.66%;  }
+	.col-12    { width: 96%;     }
+	.hidden-xs { display: block; }
+}
+
+@media only screen and (min-width: 60em) { /* 960px */
+	.container {
+		width: 75%;
+		max-width: 60rem;
+	}
+}
+
+.flexBox { display: flex; }
+.flexBox.wrap { flex-wrap: wrap; }
+.flex1  { flex: 1;  }
+.flex2  { flex: 2;  }
+.flex3  { flex: 3;  }
+.flex4  { flex: 4;  }
+.flex5  { flex: 5;  }
+.flex6  { flex: 6;  }
+.flex7  { flex: 7;  }
+.flex8  { flex: 8;  }
+.flex9  { flex: 9;  }
+.flex10 { flex: 10; }
+.flex11 { flex: 11; }
+.flex12 { flex: 12; }

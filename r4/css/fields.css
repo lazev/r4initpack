@@ -1,0 +1,219 @@
+.R4Fields {
+	position: relative;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.R4Fields:not(.switch):not(.tags) > input,
+.R4Fields > textarea,
+.R4Fields > select,
+.R4Fields.tags {
+	font-size: 18px;
+	padding: 10px 10px 10px 5px;
+	width: 100%;
+	border: none;
+	border-bottom: 1px solid #757575;
+	box-sizing: border-box;
+	background-color: inherit;
+}
+
+
+.R4Fields:not(.switch):not(.tags) > input:focus,
+.R4Fields > textarea:focus,
+.R4Fields > select:focus {
+	outline: none;
+	border-bottom: 1px solid #337ab7;
+}
+
+/*LABEL ======================================= */
+.R4Fields:not(.switch) > label {
+	color: #999;
+	font-size: 18px;
+	font-weight: normal;
+	position: absolute;
+	pointer-events: none;
+	left: 5px;
+	top: 10px;
+	transition: 0.1s ease all;
+	-o-transition: 0.1s ease all;
+	-moz-transition: 0.1s ease all;
+}
+
+.R4Fields:not(.switch) > input:focus ~ label,
+.R4Fields > textarea:focus ~ label,
+.R4Fields > select:focus ~ label,
+.R4Fields > input:-webkit-autofill ~ label,
+.R4Fields.withContent > label {
+	top: -20px;
+	font-size: 14px;
+	color: #337ab7;
+}
+
+/* PASSWORD EYE ================================= */
+.R4Fields > .passEye {
+	margin-left: -30px;
+	cursor: pointer;
+	position: relative;
+}
+
+
+/* TAGS ================================= */
+
+.R4Fields.tags {
+	display: flex;
+	padding: 0;
+	flex-wrap: wrap;
+}
+
+.R4Fields > .tagList > .tagItem {
+	padding: 5px 3px;
+	margin-left: 5px;
+	display: inline-block;
+
+}
+
+.R4Fields > .tagList > .tagItem > .closer {
+	cursor: pointer;
+	position: relative;
+	float: right;
+	top: -9px;
+	font-size: 13px;
+	font-weight: bold;
+	color: yellow;
+}
+
+.R4Fields.tags > input {
+	flex-grow: 1;
+	width: 20px;
+	font-size: 18px;
+	padding: 10px 10px 10px 5px;
+	border: none;
+	box-sizing: border-box;
+	background-color: inherit;
+}
+
+.R4Fields.tags > input:focus {
+	outline: none;
+}
+
+.R4Fields.tags > .typeAheadList {
+	position: absolute;
+	margin-top: 40px;
+	background: white;
+}
+
+.R4Fields.tags > .typeAheadList > ul {
+	list-style: none;
+	padding: 0;
+	margin-bottom: 0;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+.R4Fields.tags > .typeAheadList > ul > li {
+	cursor: pointer;
+	padding: 5px;
+	min-height: 45px;
+	border-bottom: 1px solid #f1f3f4;
+}
+
+.R4Fields.tags > .typeAheadList > ul > li.marked {
+	background-color: #F1F164;
+}
+
+.R4Fields.tags > .typeAheadList > ul > li > .itemExtra {
+	color: gray;
+	font-size: 12px;
+}
+
+/* BOTTOM BARS ================================= */
+.R4Fields > .bar {
+	position: relative;
+	display: block;
+	width: 100%;
+}
+.R4Fields > .bar:before,
+.R4Fields > .bar:after {
+	content: '';
+	height: 1px;
+	width: 0;
+	bottom: 1px;
+	position: absolute;
+	background: #337ab7;
+	transition: 0.2s ease all;
+}
+.R4Fields.tags > .bar:before,
+.R4Fields.tags > .bar:after {
+	bottom: 0px;
+}
+.R4Fields > .bar:before {
+	left: 50%;
+}
+.R4Fields > .bar:after {
+	right: 50%;
+}
+.R4Fields > input:focus ~ .bar:before,
+.R4Fields > input:focus ~ .bar:after,
+.R4Fields > textarea:focus ~ .bar:before,
+.R4Fields > textarea:focus ~ .bar:after,
+.R4Fields > select:focus ~ .bar:before,
+.R4Fields > select:focus ~ .bar:after {
+	width: 50%;
+}
+
+/* SWITCH ================================= */
+.R4Fields.switch {
+	display: inline-block;
+	position: relative;
+	font-size: 16px;
+	line-height: 24px;
+	margin-bottom: 29px;
+}
+.R4Fields.switch > input {
+	position: absolute;
+	opacity: 0;
+	z-index: 0;
+}
+.R4Fields.switch > label {
+	display: block;
+	padding: 9px 0 8px 44px;
+	cursor: pointer;
+}
+.R4Fields.switch > label:before {
+	content: '';
+	position: absolute;
+	top: 13px;
+	left: 0;
+	width: 36px;
+	height: 14px;
+	background-color: rgba(0, 0, 0, 0.26);
+	border-radius: 14px;
+	z-index: 1;
+	transition: background-color 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.R4Fields.switch > label:after {
+	content: '';
+	position: absolute;
+	top: 10px;
+	left: 0;
+	width: 20px;
+	height: 20px;
+	background-color: #fff;
+	border-radius: 14px;
+	box-shadow:
+		0 2px 2px 0 rgba(0, 0, 0, 0.14),
+		0 3px 1px -2px rgba(0, 0, 0, 0.2),
+		0 1px 5px 0 rgba(0, 0, 0, 0.12);
+	z-index: 2;
+	transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+	transition-property: left, background-color;
+}
+.R4Fields.switch > input:checked + label {
+	color: #337ab7;
+}
+.R4Fields.switch > input:checked + label:before {
+	background-color: rgba(63, 81, 181, 0.5);
+}
+.R4Fields.switch > input:checked + label:after {
+	left: 16px;
+	background-color: #337ab7;
+}

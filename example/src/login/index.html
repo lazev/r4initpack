@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="pt-BR">
+	<head>
+		<base href="../">
+		<title>Identifique-se</title>
+		<script src="freeway.js.php"></script>
+		<script defer src="login/webauth.class.js"></script>
+		<!--R4TEMPLATE-head-->
+	</head>
+	<body>
+		<!--R4TEMPLATE-loading-->
+		<header>
+			<h1>Identificação</h1>
+		</header>
+		<main>
+			<form id="formLogin" class="panel bgWhite onCenter clearfix col-8">
+				<div class="row">
+					<div id="login_user" class="col-12">E-mail de acesso</div>
+				</div>
+				<div class="row">
+					<div id="login_pass" class="col-12">Senha de acesso</div>
+				</div>
+				<div class="row">
+					<div id="login_save" class="col-12">Manter conectado</div>
+				</div>
+				<div class="row">
+					<div id="login_btn" class="onLeft">Entrar</div>
+					<div id="login_btnFb" class="onLeft">Entrar com Facebook</div>
+					<div id="login_btnGg" class="onLeft">Entrar com Google</div>
+					<div id="login_btnWa" class="onLeft">WebAuth</div>
+				</div>
+				<a href="signup/" class="onRight">Criar uma conta</a>
+
+				<div id="boxMsg" class="white bgDanger center clearer paspatur clickable hidden corner"></div>
+			</form>
+		</main>
+		<footer>
+			R4 Framework
+		</footer>
+
+		<script defer src="login/login.class.js"></script>
+		<script>
+			const R4Init = () => {
+				Login.init();
+			}
+		</script>
+		<!--R4TEMPLATE-endBody-->
+	</body>
+</html>

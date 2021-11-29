@@ -1,0 +1,29 @@
+#!/usr/bin/php
+<?php
+
+$com   = $argv[1] ?? '';
+$param = $argv[2] ?? '';
+
+$syspath = getcwd() .'/';
+$r4path  = dirname(__FILE__) .'/';
+
+switch($com){
+	case 'init':
+
+		require $r4path .'utils/installer.php';
+
+	break;
+	case 'up':
+
+		if($param == 'monitor') $monitor = true;
+		require $r4path .'utils/compiler.php';
+
+	break;
+	default:
+		echoc('Infome um comando para continuar...', 'yellow');
+}
+
+
+function echoc($msg='', $color='white') {
+	echo $msg . PHP_EOL;
+}

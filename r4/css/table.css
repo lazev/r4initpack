@@ -1,0 +1,39 @@
+table.R4 {
+	width: 100%;
+}
+
+table.R4 > thead > tr > th,
+table.R4 > tbody > tr > td,
+table.R4 > tfoot > tr > td {
+	padding: 5px 3px;
+	text-align: left;
+}
+
+table.R4.compact > tbody > tr > td {
+	padding: 1px 2px;
+}
+
+table.R4.striped > tbody > tr:nth-child(odd) {
+  background-color: #eaeaea;
+}
+
+table.R4 th.right, table.R4 td.right {
+	text-align: right;
+}
+
+table.R4 th.center, table.R4 td.center {
+	text-align: center;
+}
+
+table.R4 > thead > tr > th > span[orderBy] {
+	cursor: pointer;
+}
+
+table.R4 > tbody > tr > td.nonClickCol {
+	cursor: default;
+}
+
+table.R4 > tbody > tr:hover,
+table.R4.striped > tbody > tr:hover {
+	background: #f0e68c;
+}

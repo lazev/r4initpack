@@ -1,0 +1,235 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic);
+
+/* -----
+SVG Icons - svgicons.sparkk.fr
+----- */
+
+.svg-icon {
+  width: 1em;
+  height: 1em;
+}
+
+.svg-icon path,
+.svg-icon polygon,
+.svg-icon rect {
+  fill: #4691f6;
+}
+
+.svg-icon circle {
+  stroke: #4691f6;
+  stroke-width: 1;
+}
+
+.bgPrimary { background-color: #2196f3 !important; }
+.bgInfo    { background-color: #673ab7 !important; }
+.bgDanger  { background-color: #e81e62 !important; }
+.bgSuccess { background-color: #009688 !important; }
+.bgWarning { background-color: #f37e21 !important; }
+.bgFancy   { background-color: #cddc39 !important; }
+.bgGrey    { background-color: #616161 !important; }
+.bgLight   { background-color: #999999 !important; }
+.bgWhite   { background-color: #ffffff !important; }
+.bgBlack   { background-color: #000000 !important; }
+
+.primary { color: #2196f3 !important; }
+.info    { color: #673ab7 !important; }
+.danger  { color: #e81e62 !important; }
+.success { color: #008275 !important; }
+.warning { color: #f37e21 !important; }
+.fancy   { color: #cddc39 !important; }
+.grey    { color: #616161 !important; }
+.light   { color: #999999 !important; }
+.white   { color: #ffffff !important; }
+.black   { color: #000000 !important; }
+
+.center   { text-align: center; }
+.right    { text-align: right;  }
+.left     { text-align: left;   }
+.hidden   { display: none;      }
+.onCenter { margin: auto;       }
+.onRight  { float: right;       }
+.onLeft   { float: left;        }
+
+.badge {
+	border-radius: 3px;
+	padding: 3px;
+	background-color: #2196f3;
+	color: white;
+}
+
+.corner { border-radius: 3px; }
+
+.paspatur { padding: 20px; }
+
+.transition { transition: 0.2s ease-out; }
+
+.clickable { cursor: pointer; }
+
+.spinning {
+	animation: spin-animation 0.5s infinite;
+	display: inline-block;
+}
+
+.highlight {
+	animation: highlight-bg 0.5s;
+}
+
+@keyframes spin-animation {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(359deg); }
+}
+
+@keyframes highlight-bg {
+	0% { background: #f0e68c; }
+	100% { background: transparent; }
+}
+
+.blink {
+	animation: blink 0.3s infinite;
+}
+
+@keyframes blink {
+	50% { opacity: 0.0; }
+}
+
+* {
+	font-family: 'Lato', Helvetica, sans-serif;
+	line-height: 1.5;
+}
+
+body, html {
+	height: 100%;
+}
+
+body {
+	font-weight: 400;
+	background: #F1F3F4;
+}
+
+a {
+	color: #2196f3;
+	text-decoration: none;
+}
+
+a:hover, a:focus {
+	text-decoration: underline;
+}
+
+p {
+	margin: 0 0 10px;
+}
+
+ul,
+ol {
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+
+hr {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	border: 0;
+	height: 1px;
+	background-color: black;
+	background-color: rgba(0, 0, 0, 0.12);
+}
+
+strong {
+	font-weight: 700;
+}
+
+abbr[title] {
+	cursor: help;
+	text-decoration-color: #2196f3;
+}
+
+/* TYPOGRAPHY */
+
+h1, h2, h3 {
+	margin: 0;
+	padding-top: 20px;
+	padding-bottom: 10px;
+}
+
+h4, h5, h6 {
+	margin: 0;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+h1 { font-size: 2.5rem;   }
+h2 { font-size: 2rem;     }
+h3 { font-size: 1.375rem; }
+h4 { font-size: 1.125rem; }
+h5 { font-size: 1rem;     }
+h6 { font-size: 0.875rem; }
+
+p {
+	font-size: 1.125rem;
+	font-weight: 200;
+	line-height: 1.8;
+}
+
+small {
+	font-size: 0.7rem;
+}
+
+.clearer {
+	clear: both;
+}
+
+.clearfix::after {
+	content: "";
+	clear: both;
+	display: table;
+}
+
+
+/* DO NOT USE */
+
+.dialogOpen { overflow: hidden; }
+
+.slider {
+	display: none;
+	height: 0;
+	opacity: 0;
+	overflow: hidden;
+	transition: height 200ms ease-in-out, opacity 300ms ease-in-out;
+}
+
+.slider.is-visible {
+	display: block;
+	height: auto;
+	opacity: 1;
+}
+
+
+/*POP*/
+
+.R4Pop {
+	min-width: 200px;
+	background: white;
+	border: 1px solid #c9c9c9;
+	border-radius: 2px;
+	position: absolute;
+	z-index: 50;
+}
+
+.R4PopHint {
+	min-width: 0px;
+	background: black;
+	opacity: 0.8;
+	color: white;
+	border: 1px solid black;
+	padding: 3px 5px;
+	margin: 3px 0 0 0;
+}
+
+/*PANEL*/
+
+.panel {
+	padding: 20px;
+	margin-bottom: 20px;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,.16), 0 0 2px 0 rgba(0,0,0,.12);
+	box-sizing: border-box;
+}

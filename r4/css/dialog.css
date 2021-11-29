@@ -1,0 +1,80 @@
+.R4Overlay {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: black;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 20;
+	overflow: auto;
+}
+
+.R4Overlay .R4Dialog {
+	background-color: #fafafa;
+	margin: auto;
+	border-radius: 2px;
+	width: 100%;
+	max-width: 900px;
+	max-height: 100%;
+	overflow: auto;
+}
+
+.R4Overlay .R4Dialog.small {
+	max-width: 450px;
+}
+
+.R4Overlay .R4Dialog.full {
+	max-width: 100%;
+	border-radius: 0;
+	margin: 0 auto;
+	height: 100%;
+}
+
+.R4Overlay .R4Dialog > header::after {
+	content: "";
+	clear: both;
+	display: table;
+}
+
+.R4Overlay .R4Dialog > header > .R4DialogTitle {
+	font-weight: bold;
+	padding: 5px 10px;
+	display: inline-block;
+	font-size: 22px;
+	/*
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	*/
+}
+
+.R4Overlay .R4Dialog > header > .R4DialogCloser {
+	float: left;
+	padding: 0px 10px;
+	cursor: pointer;
+	font-size: 28px;
+}
+
+.R4Overlay .R4Dialog > section {
+	padding: 20px;
+	min-height: 100px;
+}
+
+.R4Overlay .R4Dialog > footer {
+	position: sticky;
+	bottom: 0;
+	pointer-events: none;
+}
+
+.R4Overlay .R4Dialog > footer > button {
+	margin: 10px 10px 15px 0;
+	pointer-events: auto;
+}
+
+.R4Overlay .R4Dialog > footer::after {
+	content: "";
+	clear: both;
+	display: table;
+}

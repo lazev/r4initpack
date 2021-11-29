@@ -1,0 +1,8 @@
+{
+
+	"foldersToMonitor": [
+		"./src",
+		"./vendor"
+	]
+
+}
