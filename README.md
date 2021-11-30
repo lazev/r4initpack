@@ -1,6 +1,6 @@
-# R4 Visual Framework
+# R4 Framework
 
-JS e CSS de um framework leve e pequeno que pode ajudar no seu projeto
+PHP, JS e CSS de um framework leve e pequeno que pode ajudar no seu projeto
 
 ## CSS
 
@@ -143,19 +143,18 @@ Fields.create([
 $('#formDialog').dialog('open');
 
 //Jeito completo
-Dialog.create({objDeOpcoes});
-
-{objDeOpcoes}.
-id
-title
-html
-classes
-style
-onOpen
-onCreate
-open
-ephemeral
-onClose
-beforeClose
-buttons
+Dialog.create({
+	id
+	title
+	html
+	classes
+	style
+	onOpen
+	onCreate
+	open
+	ephemeral
+	onClose
+	beforeClose
+	buttons
+});
 ```
