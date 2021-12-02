@@ -2,7 +2,9 @@
 <?php
 
 $cfgfile = '.compiler.json';
-$r4path = dirname(__FILE__) .'/../';
+
+$sep    = DIRECTORY_SEPARATOR;
+$r4path = dirname(__FILE__) . $sep .'..'. $sep;
 
 if(!file_exists($cfgfile)) {
 	escreve('Arquivo de configuração não encontrado');
@@ -20,6 +22,8 @@ $cfg = json_decode($cfgstr, 1);
 
 $jsPacker       = $cfg['jsPacker'] ?? '';
 $monitorFolders = $cfg['foldersToMonitor'];
+
+escreve('Running on ' . PHP_OS_FAMILY);
 
 $past = '';
 if((count($argv) > 1 && $argv[1] == 'monitor') || (isset($monitor) && $monitor)) {
@@ -47,8 +51,18 @@ if((count($argv) > 1 && $argv[1] == 'monitor') || (isset($monitor) && $monitor))
 function getlshash() {
 	global $monitorFolders;
 
-	foreach($monitorFolders as $folder) {
-		$lsarr[] = trim(shell_exec('ls -Rtral '. $folder .' | md5sum'));
+	if(PHP_OS_FAMILY == 'Windows') {
+		foreach($monitorFolders as $folder) {
+			$folder = str_replace('/', '\\', $folder);
+			$contDIR = trim(shell_exec('forfiles /P "'. $folder . '" /S /M * /C "cmd /c echo @fdate @ftime @file"'));
+			// https://docs.microsoft.com/pt-br/windows-server/administration/windows-commands/forfiles
+			$lsarr[] = md5($contDIR);
+		}
+
+	} else {
+		foreach($monitorFolders as $folder) {
+			$lsarr[] = trim(shell_exec('ls -Rtral '. $folder .' | md5sum'));
+		}
 	}
 
 	return implode('', $lsarr);
@@ -56,12 +70,18 @@ function getlshash() {
 
 
 function compile() {
-	global $r4path, $jsPacker;
+	global $sep, $r4path, $jsPacker;
 
 	escreve('Updating codes...');
 
-	if(strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-		//COMANDOS PARA WINDOWS
+	if(PHP_OS_FAMILY == 'Windows') {
+		shell_exec('rmdir /s /q ".\public"');
+		shell_exec('mkdir "./public"');
+		echo shell_exec('Xcopy  /r /s /e /c /q /y "./src" "./public"');
+		shell_exec('mkdir "./public/_assets/r4/php"');
+		shell_exec('mkdir "./public/_assets/vendor"');
+		shell_exec('Xcopy  /r /s /e /c /q /y  "'. $r4path .'vendor\r4\php" "./public/_assets/r4/php"');
+		shell_exec('Xcopy /r /s /e /c /q /y "./vendor/vendor" "./public/_assets/vendor"');
 	} else {
 		shell_exec('rm -rf ./public/*');
 		shell_exec('mkdir ./public/_assets');
@@ -72,8 +92,8 @@ function compile() {
 		shell_exec('cp -r ./vendor/vendor/* ./public/_assets/vendor/');
 	}
 
-	shell_exec('php '. $r4path .'/utils/templater.php');
-	shell_exec('php '. $r4path .'/utils/packer.php '. $jsPacker);
+	shell_exec('php '. $r4path . $sep .'utils'. $sep .'templater.php');
+	shell_exec('php '. $r4path . $sep .'utils'. $sep .'packer.php '. $jsPacker);
 
 	escreve('Ok'. PHP_EOL);
 }

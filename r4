@@ -3,20 +3,21 @@
 
 $com   = $argv[1] ?? '';
 $param = $argv[2] ?? '';
+$sep   = DIRECTORY_SEPARATOR;
 
-$syspath = getcwd() .'/';
-$r4path  = dirname(__FILE__) .'/';
+$syspath = getcwd() . $sep;
+$r4path  = dirname(__FILE__) . $sep;
 
 switch($com){
 	case 'init':
 
-		require $r4path .'utils/installer.php';
+		require $r4path .'utils'. $sep .'installer.php';
 
 	break;
 	case 'up':
 
 		if($param == 'monitor') $monitor = true;
-		require $r4path .'utils/compiler.php';
+		require $r4path .'utils'. $sep .'compiler.php';
 
 	break;
 	default:
