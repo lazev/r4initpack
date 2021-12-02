@@ -21,6 +21,10 @@ file_put_contents('./public/_assets/r4/r4.min.css', $content);
 //JS R4
 $content = getFilesContent($r4path .'/../js', ['js']);
 
+$content2 = getFilesContent('./src/_assets/js/global', ['js']);
+
+$content = array_merge($content, $content2);
+
 $result = '';
 foreach($content as $cont) {
 	if($usePacker) {
@@ -34,24 +38,14 @@ foreach($content as $cont) {
 file_put_contents('./public/_assets/r4/r4.min.js', $result);
 
 
-
 //HTML PUBLIC
-/*
-Not working
-require './utils/vendor/TinyHtmlMinifier.php';
-$tinyHtmlMinifier = new TinyHtmlMinifier([
-	'collapse_whitespace' => true,
-	'disable_comments' => false,
-]);
-
 $content = [];
 $content = getFilesContent('./public', ['htm', 'html']);
 
 foreach($content as $file => $html) {
 	echo $file;
-	file_put_contents($file, $tinyHtmlMinifier->minify($html));
+	file_put_contents($file, minimizeHTML($html));
 }
-*/
 
 
 function getFilesContent($dir, $ext) {
@@ -69,6 +63,63 @@ function getFilesContent($dir, $ext) {
 	}
 	return $allContent;
 }
+
+
+function minimizeHTML($input) {
+
+	//Save pre
+	preg_match_all('|<pre(.*?)>(.*?)\</pre>|sim', $input, $pre);
+	foreach($pre[0] as $key => $val) {
+		$input = str_replace($val, '<!~~r4SavePreHTMLElem'. $key .'~~>', $input);
+	}
+
+	//remove redundant (white-space) characters
+	$replace = array(
+		//remove tabs before and after HTML tags
+		'/\>[^\S ]+/s' => '>',
+		'/[^\S ]+\</s' => '<',
+		//shorten multiple whitespace sequences; keep new-line characters because they matter in JS!!!
+		'/([\t ])+/s'  => ' ',
+		//remove leading and trailing spaces
+		'/^([\t ])+/m' => '',
+		'/([\t ])+$/m' => '',
+		// remove JS line comments (simple only); do NOT remove lines containing URL (e.g. 'src="http://server.com/"')!!!
+		'~//[a-zA-Z0-9 ]+$~m' => '',
+		//remove empty lines (sequence of line-end and white-space characters)
+		'/[\r\n]+([\t ]?[\r\n]+)+/s' => "\n",
+		//remove empty lines (between HTML tags); cannot remove just any line-end characters because in inline JS they can matter!
+		'/\>[\r\n\t ]+\</s' => '><',
+		//remove "empty" lines containing only JS's block end character; join with next line (e.g. "}\n}\n</script>" --> "}}</script>"
+		'/}[\r\n\t ]+/s' => '}',
+		'/}[\r\n\t ]+,[\r\n\t ]+/s' => '},',
+		//remove new-line after JS's function or condition start; join with next line
+		'/\)[\r\n\t ]?{[\r\n\t ]+/s' => '){',
+		'/,[\r\n\t ]?{[\r\n\t ]+/s' => ',{',
+		//remove new-line after JS's line end (only most obvious and safe cases)
+		'/\),[\r\n\t ]+/s'  => '),',
+		//remove quotes from HTML attributes that does not contain spaces; keep quotes around URLs!
+		'~([\r\n\t ])?([a-zA-Z0-9]+)="([a-zA-Z0-9_/\\-]+)"([\r\n\t ])?~s' => '$1$2=$3$4', //$1 and $4 insert first white-space character found before/after attribute
+		//Remove HTML comments
+		'/<!--(.*)-->/Uis' => ''
+	);
+
+	$output = preg_replace(array_keys($replace), array_values($replace), $input);
+
+	//remove optional ending tags (see http://www.w3.org/TR/html5/syntax.html#syntax-tag-omission )
+	$remove = array(
+		'</option>', '</li>', '</dt>', '</dd>', '</tr>', '</th>', '</td>'
+	);
+
+	$output = str_ireplace($remove, '', $output);
+
+	//Restore PRE
+	foreach($pre[0] as $key => $val) {
+		$output = str_replace('<!~~r4SavePreHTMLElem'. $key .'~~>', $val, $output);
+	}
+
+	return $output;
+}
+
 
 function minimizeCSS($input) {
 	// Remove comments
@@ -91,12 +142,14 @@ function minimizeCSS($input) {
 	return $output;
 }
 
+
 function removeSpaces($string){
 	$string = preg_replace("/\s{2,}/", " ", $string);
 	$string = str_replace("\n", "", $string);
 	$string = str_replace(', ', ",", $string);
 	return $string;
 }
+
 
 function removeCSSComments($css){
 	$file = preg_replace("/(\/\*[\w\'\s\r\n\*\+\,\"\-\.]*\*\/)/", "", $css);

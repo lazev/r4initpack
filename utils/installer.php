@@ -9,7 +9,7 @@ $sysname = array_pop($arr);
 
 echoc('Inicializando conteúdo básico para '. $sysname);
 
-copy($r4path .'utils/installPack/content.zip', $syspath .'content.zip');
+copy($r4path .'utils/initPack/content.zip', $syspath .'content.zip');
 chdir($syspath);
 shell_exec('unzip content.zip');
 unlink('content.zip');
@@ -36,13 +36,13 @@ do {
 
 	echoc('Criar índice do sistema no banco de dados?');
 	echo '( S ou N ): ';
-	$cindex = stream_get_line(STDIN, 1024, PHP_EOL);
+	$cindex = strtolower(stream_get_line(STDIN, 1024, PHP_EOL));
 }
 while($cindex != 's' && $cindex != 'n');
 
 if(strtolower($cindex) == 's') {
 	shell_exec('mysql -u '. $dbuser .' -p'. $dbpass .' -e "create database _'. $systemid .' collate \'utf8mb4_general_ci\';";');
-	shell_exec('mysql -u '. $dbuser .' -p'. $dbpass .' _'. $systemid .' < '. $r4path .'utils/installPack/indexDB.sql');
+	shell_exec('mysql -u '. $dbuser .' -p'. $dbpass .' _'. $systemid .' < '. $r4path .'utils/initPack/indexDB.sql');
 }
 
 echoc();

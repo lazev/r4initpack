@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html lang="pt-BR">
+	<head>
+		<base href=".">
+		<title>R4 - Exemplos</title>
+		<script src="freeway.js.php"></script>
+		<!--R4TEMPLATE-head-->
+
+		<script>
+		const R4Init = () => {
+			console.log('Essa linha foi escrita pela função R4Init')
+
+			Fields.create([
+				{ id: 'fieldText',   type:'text'   },
+				{ id: 'fieldSelect', type:'select', options: ['', 'Um', 'Dois', 'Três'] },
+				{ id: 'fieldSwitch', type:'switch' },
+				{ id: 'fieldPass',   type:'password' },
+				{ id: 'fieldButton', type:'button' }
+			], 'prefix')
+
+			$('#dialogSimples').click(event => {
+				event.preventDefault();
+				$('#formDialog').dialog('open');
+			})
+
+			$('#warningOn').click(event => {
+				event.preventDefault();
+				Warning.on('Exemplo de warning', 'Linha debaixo');
+			})
+		}
+		</script>
+
+	</head>
+	<body>
+		<main>
+			<!--R4TEMPLATE-loading-->
+			<div class="container">
+
+			<h1>R4 - Framework</h1>
+
+			<p>
+			<b>R4Init</b><br>
+			Coloque uma função com esse nome no seu HTML e ela será chamada assim que a tela carregar.<br>
+			<pre>
+			const R4Init = () => {
+				console.log('Essa linha foi escrita pela função R4Init')
+			}
+			</pre>
+			</p>
+
+
+
+			<p><b>Cores</b>
+			<pre>
+			primary  <span class="primary">class="primary"</span>  <span class="bgPrimary">class="bgPrimary"</span>
+			info     <span class="info">class="info"</span>     <span class="bgInfo">class="bgInfo"</span>
+			danger   <span class="danger">class="danger"</span>   <span class="bgDanger">class="bgDanger"</span>
+			success  <span class="success">class="success"</span>  <span class="bgSuccess">class="bgSuccess"</span>
+			warning  <span class="warning">class="warning"</span> <span class="bgWarning">class="bgWarning"</span>
+			fancy    <span class="fancy">class="fancy"</span>   <span class="bgFancy">class="bgFancy"</span>
+			grey     <span class="grey">class="grey"</span>    <span class="bgGrey">class="bgGrey"</span>
+			light    <span class="light">class="light"</span>    <span class="bgLight">class="bgLight"</span>
+			white    <span class="white">class="white"</span>   <span class="bgWhite">class="bgWhite"</span>
+			black    <span class="black">class="black"</span>   <span class="bgBlack">class="bgBlack"</span>
+			</pre>
+			</p>
+
+			<hr>
+
+			<p><b>Classes CSS</b><br>
+			<br><div class="center" style="border: 1px dashed #24248D;">class="center"</div>
+			<br><div class="right" style="border: 1px dashed #24248D;">class="right"</div>
+			<br><div class="left" style="border: 1px dashed #24248D;">class="left"</div>
+			<br><div class="corner" style="border: 1px dashed #24248D;">class="corner"</div>
+			<br><div class="onCenter" style="border: 1px dashed #24248D;">class="onCenter" (margin auto)</div>
+			<br><div class="onRight" style="border: 1px dashed #24248D;">class="onRight"</div>
+			<br><div class="onLeft" style="border: 1px dashed #24248D;">class="onLeft"</div>
+			<br><div class="clearer" style="border: 1px dashed #24248D;">class="clearer"</div>
+			<br><div class="clearfix" style="border: 1px dashed #24248D;">class="clearfix"</div>
+			<br><div class="paspatur" style="border: 1px dashed #24248D;">class="paspatur"</div>
+			<br><div class="transition" style="border: 1px dashed #24248D;">class="transition"</div>
+			<br><div class="panel">class="panel"</div>
+			<br><div class="panel corner bgWarning white center">class="panel corner bgWarning white center"</div>
+			</p>
+
+			<hr>
+
+			<p><b>Buttons</b>
+			<pre>
+			&lt;button class="R4"&gt;Botão padrão&lt;/button&gt;
+			</pre>
+			<button class="R4">Botão padrão</button>
+			<button class="R4 fancy">Botão com class success</button>
+			<button class="R4 bgPrimary">Botão com class bgPrimary</button>
+			</p>
+
+			<hr>
+
+			<p><b>Inputs</b>
+			<pre>
+			&lt;div id="prefix_fieldText"&gt;Campo input&lt;/div&gt;
+			&lt;div id="prefix_fieldSelect"&gt;Campo select&lt;/div&gt;
+
+			Fields.create([
+				{ id: 'fieldText',   type:'text'   },
+				{ id: 'fieldSelect', type:'select', options: ['', 'Um', 'Dois', 'Três'] }
+			], 'prefix')
+
+			</pre>
+			<div class="flexBox">
+				<div class="flex1">
+					<div id="prefix_fieldText">Input</div>
+					<div id="prefix_fieldSelect">Select</div>
+				</div>
+				<div class="flex1">
+					<div id="prefix_fieldSwitch">Switch que permite marcar e desmarcar</div>
+					<div id="prefix_fieldPass">Password</div>
+					<div id="prefix_fieldButton">Button</div>
+				</div>
+			</div>
+			</p>
+
+			<hr>
+
+			<p><b>Grids</b> class="row"
+			<div class="row" style="border: 1px dashed #24248D">
+				<div class="col-12" style="border: 1px dashed #24248D">class="col-12"</div>
+				<div class="col-2" style="border: 1px dashed #24248D">col-2</div>
+				<div class="col-4" style="border: 1px dashed #24248D">col-4</div>
+				<div class="col-3" style="border: 1px dashed #24248D">col-3</div>
+				<div class="col-1" style="border: 1px dashed #24248D">col-1</div>
+				<div class="col-2" style="border: 1px dashed #24248D">col-2</div>
+			</div>
+			</p>
+
+			<hr>
+
+			<p><b>Flexbox</b> class="flexBox wrap"
+			<div class="flexBox wrap">
+				<div class="flex1" style="border: 1px dashed #24248D">flex1</div>
+				<div class="flex12" style="border: 1px dashed #24248D">flex12</div>
+				<div class="flex5" style="border: 1px dashed #24248D">flex5</div>
+			</div>
+			</p>
+
+
+			<hr>
+
+
+			<p><b>Dialog</b>
+			<pre>
+			&lt;div id="formDialog" class="hidden" title="Exemplo Dialog Simples"&gt;
+				Conteúdo do dialog
+			&lt;/div&gt;
+
+			$('#formDialog').dialog('open');
+			</pre>
+
+			<a href="#" id="dialogSimples">Dialog Simples</a>
+
+			<div id="formDialog" class="hidden" title="Exemplo Dialog Simples">
+				Conteúdo do dialog
+			</div>
+
+			</p>
+
+			<hr>
+
+			<p><b>Warning</b>
+			<pre>
+			Warning.on('Exemplo de warning', 'Linha debaixo');
+			</pre>
+
+			<a href="#" id="warningOn">Warning.on</a>
+			</p>
+
+
+			<p><b>Table</b> class="R4"
+
+			<table class="R4">
+				<thead>
+					<tr>
+						<th>Company</th>
+						<th>Contact</th>
+						<th>Country</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Alfreds Futterkiste</td>
+						<td>Maria Anders</td>
+						<td>Germany</td>
+					</tr>
+					<tr>
+						<td>Centro comercial Moctezuma</td>
+						<td>Francisco Chang</td>
+						<td>Mexico</td>
+					</tr>
+					<tr>
+						<td>Ernst Handel</td>
+						<td>Roland Mendel</td>
+						<td>Austria</td>
+					</tr>
+					<tr>
+						<td>Island Trading</td>
+						<td>Helen Bennett</td>
+						<td>UK</td>
+					</tr>
+					<tr>
+						<td>Laughing Bacchus Winecellars</td>
+						<td>Yoshi Tannamuri</td>
+						<td>Canada</td>
+					</tr>
+					<tr>
+						<td>Magazzini Alimentari Riuniti</td>
+						<td>Giovanni Rovelli</td>
+						<td>Italy</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="3">Total 6 registros</td>
+					</tr>
+				</tfoot>
+			</table>
+			</p>
+			</div>
+		</main>
+		<footer>
+			R4 Framework
+		</footer>
+		<style>
+			/*Demonstration layout*/
+			pre {
+				overflow: auto;
+				background: #888;
+				color: white;
+				border-radius: 5px;
+				padding: 10px 5px;
+				font-size: 0.8rem;
+			}
+		</style>
+		<!--R4TEMPLATE-endBody-->
+	</body>
+</html>
