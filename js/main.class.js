@@ -14,7 +14,7 @@ $.methods = {
 
 		if(typeof R4Init === 'function') R4Init();
 
-		$().sWorker();
+		//$().sWorker();
 	},
 
 
