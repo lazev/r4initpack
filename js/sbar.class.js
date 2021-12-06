@@ -14,6 +14,13 @@ var Sbar = {
 		down:  {}
 	},
 
+	onCloseFuncs: {
+		right: {},
+		left:  {},
+		up:    {},
+		down:  {}
+	},
+
 	opened: {},
 
 	xTouch: 0,
@@ -24,6 +31,8 @@ var Sbar = {
 		let idElem    = opt.id;
 		let direction = opt.direction;
 		let onOpen    = opt.onOpen;
+		let onClose   = opt.onClose;
+		let opened    = opt.opened;
 
 		let elem;
 
@@ -37,7 +46,8 @@ var Sbar = {
 		Sbar.touchEvents[direction][idElem] = 1;
 		Sbar.opened[idElem] = 0;
 
-		if(typeof onOpen == 'function') Sbar.onOpenFuncs[direction][idElem] = onOpen;
+		if(typeof onOpen  == 'function') Sbar.onOpenFuncs[direction][idElem]  = onOpen;
+		if(typeof onClose == 'function') Sbar.onCloseFuncs[direction][idElem] = onClose;
 
 		if(direction == 'right')     elem.style.left   = -elem.offsetWidth +'px';
 		else if(direction == 'left') elem.style.right  = -elem.offsetWidth +'px';
@@ -46,6 +56,8 @@ var Sbar = {
 
 		document.addEventListener('touchstart', Sbar.touchStart, false);
 		document.addEventListener('touchmove',  Sbar.touchMove,  false);
+
+		if(opened) Sbar.open(elem);
 	},
 
 
@@ -84,6 +96,10 @@ var Sbar = {
 		else if(direction == 'down') elem.style.top    = -elem.offsetHeight +'px';
 		else if(direction == 'up')   elem.style.bottom = -elem.offsetHeight +'px';
 
+		if(typeof Sbar.onCloseFuncs[direction][idElem] == 'function') {
+			Sbar.onCloseFuncs[direction][idElem]();
+		}
+
 		elem.style.opacity = 0;
 
 		Sbar.opened[idElem] = 0;
@@ -93,13 +109,20 @@ var Sbar = {
 
 
 	toggle: elem => {
-		let idElem    = elem.id;
+		let idElem = elem.id;
 
 		if(Sbar.opened[idElem]) {
 			Sbar.close(elem);
 		} else {
 			Sbar.open(elem);
 		}
+	},
+
+
+	isOpened: elem => {
+		let idElem = elem.id;
+
+		return (Sbar.opened[idElem]);
 	},
 
 

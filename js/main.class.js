@@ -1,4 +1,4 @@
-var R4SWorkerPath = 'sworker.js';
+var R4SWorkerPath = '/sworker.js';
 
 document.addEventListener('DOMContentLoaded', function() {
 	$().init((typeof R4Init === 'function') ? R4Init : null);
@@ -14,7 +14,7 @@ $.methods = {
 
 		if(typeof R4Init === 'function') R4Init();
 
-		//$().sWorker();
+		$().sWorker();
 	},
 
 
@@ -87,6 +87,18 @@ $.methods = {
 				.toString()
 				.substr(-5)
 		);
+	},
+
+
+	currentDate: function() {
+		let now = new Date().toISOString();
+		return now.substr(0, 10);
+	},
+
+
+	currentDateTime: function() {
+		let now = new Date().toISOString();
+		return now.substr(0, 19).replace('T', ' ');
 	},
 
 
@@ -187,9 +199,31 @@ $.methods = {
 
 		arr.forEach(item => {
 			tmp = item.split('=');
-			ret[decodeURI(tmp[0])] = decodeURI(tmp[1]);
+			ret[encodeURIComponent(tmp[0])] = encodeURIComponent(tmp[1]);
 		});
 
+		return ret;
+	},
+
+
+	getURLParams: filter => {
+		let ret = {};
+		let arr = [];
+		let tmp = [];
+
+		let strparam = window.location.search;
+
+		if(strparam[0] != '?') return null;
+
+		strparam = strparam.substr(1);
+		arr = strparam.split('&');
+
+		arr.forEach(item => {
+			tmp = item.split('=');
+			ret[decodeURIComponent(tmp[0])] = decodeURIComponent(tmp[1]);
+		});
+
+		if(filter) return ret[filter];
 		return ret;
 	},
 
