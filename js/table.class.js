@@ -200,7 +200,11 @@ var Table = {
 			td = document.createElement('td');
 
 			if(Table.dom[idDestiny].head[position].type == 'decimal') {
-				value = $().toEUNumber(value);
+				value = $().numberMask(value);
+				td.classList.add('right');
+			}
+			else if(Table.dom[idDestiny].head[position].type == 'date') {
+				value = $().dateMask(value);
 				td.classList.add('right');
 			}
 

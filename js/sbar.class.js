@@ -26,13 +26,15 @@ var Sbar = {
 	xTouch: 0,
 	yTouch: 0,
 
-	create: (opt) => {
+	create: (opts) => {
 
-		let idElem    = opt.id;
-		let direction = opt.direction;
-		let onOpen    = opt.onOpen;
-		let onClose   = opt.onClose;
-		let opened    = opt.opened;
+		let idElem       = opts.id;
+		let direction    = opts.direction;
+		let onOpen       = opts.onOpen;
+		let onClose      = opts.onClose;
+		let opened       = opts.opened;
+		let touchMonitor = opts.touchMonitor ?? true;
+		let classes      = [];
 
 		let elem;
 
@@ -41,6 +43,12 @@ var Sbar = {
 		elem.style.opacity  = 0;
 		elem.style.position = 'fixed';
 		elem.classList.add('transition');
+		elem.classList.add('R4Sbar');
+
+		classes.forEach(item => {
+			elem.classList.add(item);
+		});
+
 		elem.setAttribute('R4SbarDirection', direction);
 
 		Sbar.touchEvents[direction][idElem] = 1;
@@ -49,13 +57,15 @@ var Sbar = {
 		if(typeof onOpen  == 'function') Sbar.onOpenFuncs[direction][idElem]  = onOpen;
 		if(typeof onClose == 'function') Sbar.onCloseFuncs[direction][idElem] = onClose;
 
-		if(direction == 'right')     elem.style.left   = -elem.offsetWidth +'px';
-		else if(direction == 'left') elem.style.right  = -elem.offsetWidth +'px';
+		if(direction == 'right')     elem.style.left   = -elem.offsetWidth  +'px';
+		else if(direction == 'left') elem.style.right  = -elem.offsetWidth  +'px';
 		else if(direction == 'down') elem.style.top    = -elem.offsetHeight +'px';
 		else if(direction == 'up')   elem.style.bottom = -elem.offsetHeight +'px';
 
-		document.addEventListener('touchstart', Sbar.touchStart, false);
-		document.addEventListener('touchmove',  Sbar.touchMove,  false);
+		if(opts.touchMonitor) {
+			document.addEventListener('touchstart', Sbar.touchStart, false);
+			document.addEventListener('touchmove',  Sbar.touchMove,  false);
+		}
 
 		if(opened) Sbar.open(elem);
 	},
@@ -75,11 +85,13 @@ var Sbar = {
 		else if(direction == 'down') elem.style.top    = 0;
 		else if(direction == 'up')   elem.style.bottom = 0;
 
+		document.getElementsByTagName('body')[0].classList.add('sbarOpen');
+
+		Sbar.opened[idElem] = 1;
+
 		if(typeof Sbar.onOpenFuncs[direction][idElem] == 'function') {
 			Sbar.onOpenFuncs[direction][idElem]();
 		}
-
-		Sbar.opened[idElem] = 1;
 
 		return idElem;
 	},
@@ -96,13 +108,15 @@ var Sbar = {
 		else if(direction == 'down') elem.style.top    = -elem.offsetHeight +'px';
 		else if(direction == 'up')   elem.style.bottom = -elem.offsetHeight +'px';
 
+		document.getElementsByTagName('body')[0].classList.remove('sbarOpen');
+
+		Sbar.opened[idElem] = 0;
+
 		if(typeof Sbar.onCloseFuncs[direction][idElem] == 'function') {
 			Sbar.onCloseFuncs[direction][idElem]();
 		}
 
 		elem.style.opacity = 0;
-
-		Sbar.opened[idElem] = 0;
 
 		return idElem;
 	},

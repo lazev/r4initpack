@@ -1,5 +1,3 @@
-var R4SWorkerPath = '/sworker.js';
-
 document.addEventListener('DOMContentLoaded', function() {
 	$().init((typeof R4Init === 'function') ? R4Init : null);
 });
@@ -13,8 +11,6 @@ $.methods = {
 		$().listeners();
 
 		if(typeof R4Init === 'function') R4Init();
-
-		//$().sWorker();
 	},
 
 
@@ -35,46 +31,6 @@ $.methods = {
 		document.addEventListener('mousedown', function(event) {
 			Pop.destroyAll();
 		});
-	},
-
-
-	sWorker: function() {
-
-		window.isUpdateAvailable = new Promise(function(resolve, reject) {
-			console.log('Worker init');
-
-			if('serviceWorker' in navigator) {
-				navigator.serviceWorker.register(R4SWorkerPath)
-
-				.then(function(reg) {
-
-					reg.onupdatefound = function() {
-
-						console.log('Update found');
-
-						newWorker = reg.installing;
-
-						newWorker.onstatechange = function(){
-							if(newWorker.state == 'installed') {
-								resolve(navigator.serviceWorker.controller);
-							}
-						};
-					};
-				})
-
-				.catch(err => console.error('[SW ERROR]', err));
-			}
-		});
-
-		window.isUpdateAvailable
-		.then(function(isAvailable) {
-			if (isAvailable) {
-				if(confirm('New version found. Update?')) {
-					window.location.reload();
-				}
-			}
-		});
-
 	},
 
 
@@ -631,7 +587,7 @@ $.methods = {
 		return str;
 	},
 
-	EUNumberMask: function(num, mindec, maxdec) {
+	numberMask: function(num, mindec, maxdec) {
 		if(!mindec) mindec = 0;
 		if(!maxdec) maxdec = mindec;
 

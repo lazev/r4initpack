@@ -50,6 +50,11 @@ SVG Icons - svgicons.sparkk.fr
 .onRight  { float: right;       }
 .onLeft   { float: left;        }
 
+.small {
+	color: gray;
+	font-size: 0.6rem;
+}
+
 .badge {
 	border-radius: 3px;
 	padding: 3px;
@@ -187,7 +192,14 @@ small {
 
 /* DO NOT USE */
 
-.dialogOpen { overflow: hidden; }
+.dialogOpen, .sbarOpen {
+	overflow: hidden;
+}
+
+
+.R4Sbar {
+	overflow: auto;
+}
 
 .slider {
 	display: none;
