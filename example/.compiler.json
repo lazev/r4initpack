@@ -1,8 +1,12 @@
 {
 
+	"jsPacker": false,
+
 	"foldersToMonitor": [
 		"./src",
-		"./vendor"
+		"./vendor",
+		"../r4",
+		"../js"
 	]
 
 }

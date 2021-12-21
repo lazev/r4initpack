@@ -20,7 +20,7 @@ define('USER_IP',    ((isset($_SERVER['HTTP_X_FORWARDED_FOR']))
                      : $_SERVER['REMOTE_ADDR']));
 
 //define('ROOT_URL',   HTTP . $_SERVER['HTTP_HOST'] .'/');
-define('ROOT_URL',   HTTP . $_SERVER['HTTP_HOST'] .'/r4initpack/example/public/');
+define('ROOT_URL',   HTTP . $_SERVER['HTTP_HOST'] .'/');
 
 define('ROOT',       pathinfo(__FILE__)['dirname'] .'/');
 

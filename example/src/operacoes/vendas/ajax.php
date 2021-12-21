@@ -1,30 +1,17 @@
 <?php
-require '../config.inc.php';
+require '../../config.inc.php';
 require R4PHP .'r4iniend.php';
 
-require ROOT .'produtos/produtos.class.php';
+require ROOT .'operacoes/vendas/vendas.class.php';
 
-$produtos = new Produtos;
+$vendas = new Vendas;
 
 
 switch($_REQUEST['com']) {
 
 	case 'getInit':
 
-		$listaCores = [
-			12 => 'Azul',
-			45 => 'Vermelho',
-			18 => 'Amarelho',
-			21 => 'Verde',
-			82 => 'Cinza',
-			5  => 'Branco',
-			33 => 'Preto'
-		];
-
-		R4::retOkAPI([
-			'fields'     => file_get_contents('fields.json'),
-			'listaCores' => $listaCores
-		]);
+		R4::retOkAPI();
 
 		break;
 
@@ -33,14 +20,14 @@ switch($_REQUEST['com']) {
 
 		$id = (int)$_REQUEST['idProduto'];
 
-		$dados = $produtos->read($id);
+		$dados = $vendas->read($id);
 
 		if($dados === false) {
-			R4::dieAPI(0, $produtos->errMsg, $produtos->errObs);
+			R4::dieAPI(0, $vendas->errMsg, $vendas->errObs);
 		}
 
 		R4::retOkAPI([
-			'produto' => $dados
+			'venda' => $dados
 		]);
 
 		break;
@@ -50,14 +37,14 @@ switch($_REQUEST['com']) {
 
 		$id = (int)$_REQUEST['idProduto'];
 
-		$dados = $produtos->save($id, $_REQUEST);
+		$dados = $vendas->save($id, $_REQUEST);
 
 		if($dados === false) {
-			R4::dieAPI(0, $produtos->errMsg, $produtos->errObs);
+			R4::dieAPI(0, $vendas->errMsg, $vendas->errObs);
 		}
 
 		R4::retOkAPI([
-			'produto' => $dados
+			'venda' => $dados
 		]);
 
 		break;
@@ -68,10 +55,10 @@ switch($_REQUEST['com']) {
 		$listFilter = @$_REQUEST['listFilter'] ?: [];
 		$listParams = @$_REQUEST['listParams'] ?: [];
 
-		$dados = $produtos->list($listFilter, $listParams);
+		$dados = $vendas->list($listFilter, $listParams);
 
 		if($dados === false) {
-			R4::dieAPI(0, $produtos->errMsg, $produtos->errObs);
+			R4::dieAPI(0, $vendas->errMsg, $vendas->errObs);
 		}
 
 		R4::retOkAPI([
@@ -86,10 +73,10 @@ switch($_REQUEST['com']) {
 
 		$ids = $_REQUEST['ids'];
 
-		$dados = $produtos->delete($ids);
+		$dados = $vendas->delete($ids);
 
 		if($dados === false) {
-			R4::dieAPI(0, $produtos->errMsg, $produtos->errObs);
+			R4::dieAPI(0, $vendas->errMsg, $vendas->errObs);
 		}
 
 		R4::retOkAPI([
@@ -104,10 +91,10 @@ switch($_REQUEST['com']) {
 
 		$ids = $_REQUEST['ids'];
 
-		$dados = $produtos->undel($ids);
+		$dados = $vendas->undel($ids);
 
 		if($dados === false) {
-			R4::dieAPI(0, $produtos->errMsg, $produtos->errObs);
+			R4::dieAPI(0, $vendas->errMsg, $vendas->errObs);
 		}
 
 		R4::retOkAPI([

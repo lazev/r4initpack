@@ -9,17 +9,18 @@
 	<body>
 		<!--R4TEMPLATE-loading-->
 
-		<header>
-			<nav class="onRight">
-				<button onclick="Produtos.insert()" class="R4 bgSuccess white bold"> + </button>
-				<button onclick="Produtos.delete('listaProdutos')" class="R4 bgDanger white bold"> x </button>
-			</nav>
+		<!--R4TEMPLATE-innerHead-->
+
+		<nav class="onRight">
+			<button onclick="Produtos.insert()" class="R4 bgSuccess white bold"> + </button>
+			<button onclick="Produtos.delete('listaProdutos')" class="R4 bgDanger white bold"> x </button>
+		</nav>
+
+		<main>
+
 			<h2>
 				Produtos
 			</h2>
-		</header>
-
-		<main>
 
 			<div id="listaProdutos"></div>
 
@@ -32,9 +33,9 @@
 		<link rel="stylesheet" type="text/css" href="produtos/style.css" />
 		<script defer src="produtos/produtos.class.js"></script>
 		<script>
-		const R4Init = async () => {
-			await Produtos.init();
-			Produtos.list();
+		const R4Init = () => {
+			Produtos.init()
+			.then(Produtos.list);
 		}
 		</script>
 

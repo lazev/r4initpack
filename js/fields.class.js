@@ -74,7 +74,7 @@ var Fields = {
 
 				rcpt.innerHTML = '';
 
-				rcpt.appendChild(elem);
+				rcpt.append(elem);
 			}
 
 			resolve(true);
@@ -174,14 +174,14 @@ var Fields = {
 		let wrap = document.createElement('div');
 		wrap.setAttribute('class', 'R4Fields');
 
-		if(tagList) wrap.appendChild(tagList);
+		if(tagList) wrap.append(tagList);
 
-		wrap.appendChild(elem);
+		wrap.append(elem);
 
-		if(passEye) wrap.appendChild(passEye);
+		if(passEye) wrap.append(passEye);
 
-		wrap.appendChild(bar);
-		if(label) wrap.appendChild(label);
+		wrap.append(bar);
+		if(label) wrap.append(label);
 
 		if(wrapClass) {
 			wrap.classList.add(wrapClass);
@@ -194,7 +194,7 @@ var Fields = {
 		if(item.type == 'tags') {
 			let typeAheadList = document.createElement('div');
 			typeAheadList.classList.add('typeAheadList');
-			wrap.appendChild(typeAheadList);
+			wrap.append(typeAheadList);
 		} else {
 			elem.addEventListener('blur', function(event){
 				if(event.target.value) {
@@ -235,6 +235,13 @@ var Fields = {
 		for(let k in attrib) elem.setAttribute(k, attrib[k]);
 
 		if(item.options) {
+
+			if(typeof item.options === 'string') {
+				if(typeof eval(item.options) === 'object') {
+					item.options = eval(item.options);
+				}
+			}
+
 			for(let k in item.options) {
 				if(typeof item.options[k] == 'string') {
 					let opt = document.createElement('option');
@@ -248,7 +255,7 @@ var Fields = {
 
 					opt.innerHTML = item.options[k];
 
-					elem.appendChild(opt);
+					elem.append(opt);
 				}
 			}
 		}
@@ -260,8 +267,8 @@ var Fields = {
 
 		let wrap = document.createElement('div');
 		wrap.setAttribute('class', 'R4Fields');
-		wrap.appendChild(elem);
-		wrap.appendChild(label);
+		wrap.append(elem);
+		wrap.append(label);
 		if(withContent) {
 			wrap.classList.add('withContent');
 		}
@@ -314,12 +321,13 @@ var Fields = {
 	createSwitch: function(item, prefix) {
 
 		let elem;
-		let label;
+		let elLabel;
 		let id      = (prefix) ? prefix +'_'+ item.id : item.id;
 		let name    = item.name    || item.id;
 		let attr    = item.attr    || {};
 		let value   = item.value   || 1;
 		let checked = item.checked || false;
+		let label   = item.label   ?? 'abc';
 		let classes = [];
 
 		let attrib  = {
@@ -344,16 +352,14 @@ var Fields = {
 
 		for(let k in attrib) elem.setAttribute(k, attrib[k]);
 
-		if(item.label) {
-			label = document.createElement('label');
-			label.setAttribute('for', id);
-			label.innerHTML = item.label;
-		}
+		elLabel = document.createElement('label');
+		elLabel.setAttribute('for', id);
+		elLabel.innerHTML = label;
 
 		let wrap = document.createElement('div');
 		wrap.setAttribute('class', 'R4Fields switch');
-		wrap.appendChild(elem);
-		wrap.appendChild(label);
+		wrap.append(elem);
+		wrap.append(elLabel);
 
 		return wrap;
 	},

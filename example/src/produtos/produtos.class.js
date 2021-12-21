@@ -11,16 +11,61 @@ const Produtos = {
 	setPaths: () => {
 		Produtos.pathAjax   = _CONFIG.rootURL +'produtos/ajax.php';
 		Produtos.pathFields = _CONFIG.rootURL +'produtos/fields.json';
+		Produtos.pathForm   = _CONFIG.rootURL +'produtos/templates/formProdutos.html';
+		Produtos.pathCSS    = _CONFIG.rootURL +'produtos/style.css';
+	},
+
+
+	//Usada pra incorporar todo o módulo dentro de outra tela
+	//Nesse caso, o HTML não pode ter os cabeçalhos e rodapés
+	incorporar: () => {
+		console.log('incorporou');
+		Produtos.setPaths();
+		$('#moduloProdutos').setRemoteHTML(Produtos.pathView);
+		$().importCSS(Produtos.pathCSS);
+		Produtos.init();
+		console.log('iniciou');
 	},
 
 
 	//Roda as funções de inicialização do módulo
-	init: async () => {
-		Produtos.setPaths();
-		Produtos.initForm();
-		Produtos.initFields();
-		Produtos.initList();
-		Produtos.getInit();
+	init: () => {
+		return new Promise((resolve, reject) => {
+
+			Produtos.setPaths();
+			Produtos.getInit()
+			.then(res => {
+				Produtos.initForm();
+				Produtos.initList();
+				resolve();
+			})
+			.catch(err => {
+				reject(err);
+			});
+
+		});
+	},
+
+
+	//Função comum em todos os módulos (mesmo que não seja usada)
+	//Ela busca dados essenciais pro funcionamento do módulo.
+	//Por exemplo, pode buscar uma lista de situações ou categorias
+	//pra guardar na memória ao carregar a tela.
+	getInit: () => {
+		return new Promise((resolve, reject) => {
+			let params = {
+				com: 'getInit'
+			};
+			$().getJSON(Produtos.pathAjax, params)
+			.then(ret => {
+				Produtos.listaCores = ret.listaCores;
+				resolve();
+			})
+			.catch(err => {
+				Warning.on('Erro ao buscar os dados iniciais', err);
+				reject(err);
+			});
+		});
 	},
 
 
@@ -29,11 +74,12 @@ const Produtos = {
 	//templates aqui dentro do próprio módulo
 	//mas o HTML poderia também estar direto
 	//no index.html
-	initForm: async () => {
+	initForm: () => {
+
 		//A função dialog usa o HTML encontrado
 		//dentro do div #formProdutos e adiciona
 		//botões com eventos
-		await $('#formProdutos').dialog({
+		$('#formProdutos').dialog({
 			buttons: [
 				{
 					label: 'Salvar',
@@ -50,17 +96,14 @@ const Produtos = {
 				}
 			]
 		});
-	},
 
-
-	//Inicia os campos, com base no HTML e no arquivo JSON
-	//que contém as definições dos campos.
-	//O segundo parêmtro (prod) dessa função indica o prefixo
-	//usado em todos os campos do módulo.
-	//Esse prefixo é importante pra evitar conflito com
-	//outros módulos, no caso de chamar um dentro do outro
-	initFields: async () => {
-		await Fields.createFromFile(Produtos.pathFields, 'prod');
+		//Inicia os campos, com base no HTML e no arquivo JSON
+		//que contém as definições dos campos.
+		//O segundo parêmtro (prod) dessa função indica o prefixo
+		//usado em todos os campos do módulo.
+		//Esse prefixo é importante pra evitar conflito com
+		//outros módulos, no caso de chamar um dentro do outro
+		Fields.createFromFile(Produtos.pathFields, 'prod');
 	},
 
 
@@ -86,23 +129,6 @@ const Produtos = {
 			onOrderBy:    value => { Produtos.filter(value); },
 			onPagination: value => { Produtos.filter(value); },
 			onRegPerPage: value => { Produtos.filter(value); }
-		});
-	},
-
-
-	//Função comum em todos os módulos (mesmo que não seja usada)
-	//Ela busca dados essenciais pro funcionamento do módulo.
-	//Por exemplo, pode buscar uma lista de situações ou categorias
-	//pra guardar na memória ao carregar a tela.
-	getInit: () => {
-		let params = {
-			com: 'getInit'
-		};
-		$().getJSON(Produtos.pathAjax, params)
-		.then(ret => {
-
-			Produtos.listaCores = ret.listaCores;
-
 		});
 	},
 
@@ -182,10 +208,11 @@ const Produtos = {
 				btn
 			);
 
-
-			//Após salvar, roda a função de listar pra
-			//que as alterações já apareçam na lista
-			Produtos.list();
+			//Após salvar, roda a função definida.
+			//Dentro do próprio módulo, a função padrão
+			//é a de listar, para que as alterações
+			//já apareçam na lista
+			Produtos.onSave();
 
 			$('#formProdutos').dialog('close');
 
@@ -196,6 +223,11 @@ const Produtos = {
 			Warning.on('Erro ao salvar o produto');
 			console.log(err);
 		})
+	},
+
+
+	onSave: id => {
+		Produtos.list();
 	},
 
 
@@ -369,5 +401,31 @@ const Produtos = {
 			console.log(err);
 			Warning.on('Erro', err);
 		})
+	},
+
+
+	importForm: () => {
+		return new Promise((resolve, reject) => {
+			Produtos.setPaths();
+
+			$().getHTML(Produtos.pathForm)
+			.then(html => {
+
+				let div = document.createElement('div');
+				div.innerHTML = html;
+				$0('body').append(div.firstChild);
+
+				$().importCSS(Produtos.pathCSS);
+			})
+			.then(() => {
+				Produtos.getInit();
+				Produtos.initForm();
+				Produtos.onSave = function(){};
+				resolve();
+			})
+			.catch(err => {
+				reject(err);
+			});
+		});
 	}
 };

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="pt-BR">
+	<head>
+		<base href="../../">
+		<title>Vendas</title>
+		<script src="gatekeeper.js.php"></script>
+		<!--R4TEMPLATE-head-->
+	</head>
+	<body>
+		<!--R4TEMPLATE-loading-->
+
+		<!--R4TEMPLATE-innerHead-->
+
+		<nav class="onRight">
+			<button onclick="Vendas.insert()" class="R4 bgSuccess white bold"> + </button>
+			<button onclick="Vendas.delete('listaVendas')" class="R4 bgDanger white bold"> x </button>
+		</nav>
+
+		<main>
+
+			<h2>
+				Vendas
+			</h2>
+
+			<div id="listaVendas"></div>
+
+		</main>
+
+		<footer>
+			R4 Framework
+		</footer>
+
+		<link rel="stylesheet" type="text/css" href="operacoes/vendas/style.css" />
+		<script defer src="operacoes/vendas/vendas.class.js"></script>
+		<script>
+		const R4Init = async () => {
+			await Vendas.init();
+			Vendas.list();
+		}
+		</script>
+
+		<!--R4TEMPLATE-endBody-->
+	</body>
+</html>

@@ -1,0 +1,13 @@
+.R4Tabs {
+	border-bottom: 2px solid darkgrey;
+}
+
+.R4Tabs .R4TabItem {
+	margin: 0;
+	border-radius: 5px 5px 0 0;
+	box-shadow: 0 0 0 0;
+}
+
+.R4Tabs .R4TabItem.R4TabOn {
+/*	background-color: blue;*/
+}

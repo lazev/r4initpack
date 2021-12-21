@@ -138,6 +138,48 @@ $.methods = {
 	},
 
 
+	getHTML: function(source){
+		return new Promise((resolve, reject) => {
+
+			fetch(source)
+
+			.then(resp => {
+
+				if(resp.ok) resolve( resp.text() );
+
+				else {
+					if(typeof Warning === 'object') {
+						Warning.on(
+							'Erro ao buscar dados',
+							resp.status +' - '+ resp.statusText
+						);
+					}
+					reject(resp.status +' - '+ resp.statusText);
+				}
+			})
+			.catch(err => {
+				if(typeof Warning === 'object') {
+					Warning.on(
+						'Erro de conexão',
+						'Problema com a internet?'
+					);
+				}
+				reject(err);
+			});
+
+		});
+	},
+
+
+	importCSS: function(source){
+		let script  = document.createElement('link');
+		script.href = source;
+		script.setAttribute('type', 'text/css');
+		script.setAttribute('rel', 'stylesheet');
+		document.head.append(script);
+	},
+
+
 	getHashParams: function(hash) {
 		let ret = {};
 		let arr = [];
@@ -290,6 +332,18 @@ $.methods = {
 		} else {
 			this.each(el => (el.innerHTML = t));
 		}
+	},
+
+	setRemoteHTML: function(source) {
+		return new Promise((resolve, reject) => {
+
+			$().getHTML(source)
+
+			.then(html => {
+				this[0].innerHTML = html;
+				resolve();
+			});
+		});
 	},
 
 	dateMask: function(dt) {

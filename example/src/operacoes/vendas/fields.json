@@ -1,0 +1,14 @@
+{
+	"vendas": [
+		{ "id": "codCliente",  "type": "tags",   "maxSel": 1 },
+		{ "id": "codVendedor", "type": "tags",   "maxSel": 1 },
+		{ "id": "codProduto",  "type": "tags",   "maxSel": 1 },
+		{ "id": "dtVenda",     "type": "date" },
+		{ "id": "tags",        "type": "tags" },
+		{ "id": "situacao",    "type": "select", "options":"Vendas.listaSituacao" },
+		{ "id": "quant",       "type": "decimal" },
+		{ "id": "valor",       "type": "money"   },
+		{ "id": "desc",        "type": "money"   },
+		{ "id": "vTotal",      "type": "money"   }
+	]
+}
