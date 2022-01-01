@@ -40,6 +40,8 @@ var Sbar = {
 
 		elem = document.getElementById(idElem);
 
+		if(!elem) return;
+
 		elem.style.opacity  = 0;
 		elem.style.position = 'fixed';
 		elem.classList.add('transition');

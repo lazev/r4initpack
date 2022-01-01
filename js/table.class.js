@@ -200,11 +200,11 @@ var Table = {
 			td = document.createElement('td');
 
 			if(Table.dom[idDestiny].head[position].type == 'decimal') {
-				value = $().numberMask(value);
+				value = R4.numberMask(value);
 				td.classList.add('right');
 			}
 			else if(Table.dom[idDestiny].head[position].type == 'date') {
-				value = $().dateMask(value);
+				value = R4.dateMask(value);
 				td.classList.add('right');
 			}
 
@@ -501,7 +501,7 @@ var Table = {
 		let btnSel = document.createElement('button');
 		btnSel.setAttribute('class', 'R4 bgWhite grey');
 		btnSel.innerHTML = 'reg/pag';
-		$(btnSel).pop({ html: ul });
+		Pop.push(btnSel, { html: ul });
 
 		let rcpt = document.createElement('div');
 		rcpt.setAttribute('class', 'col-2 R4TableRegPerPage');

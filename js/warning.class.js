@@ -4,7 +4,7 @@ var Warning = {
 		if(!opts) opts = {};
 
 		let fixed = opts.fixed || false;
-		let id    = opts.id    || $().uniqid();
+		let id    = opts.id    || R4.uniqid();
 
 		let container = document.getElementById('R4WarningContainer');
 

@@ -1,3 +1,8 @@
+/*
+ *
+ * //ARQUIVO EM DESUSO. SUBSTITUÍDO PELO r4.class.js
+ *
+ *
 document.addEventListener('DOMContentLoaded', function() {
 	$().init((typeof R4Init === 'function') ? R4Init : null);
 });
@@ -698,3 +703,4 @@ function $(arg) {
 
 	return results;
 }
+//*/

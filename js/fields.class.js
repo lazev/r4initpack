@@ -4,7 +4,7 @@ var Fields = {
 		return new Promise((resolve, reject) => {
 			if(!fieldsPrefix) fieldsPrefix = '';
 
-			$().getJSON(source, '', {method: 'GET'})
+			R4.getJSON(source, '', {method: 'GET'})
 				.then(json => {
 
 					for(let k in json) {
@@ -373,7 +373,7 @@ var Fields = {
 			let type = elem.getAttribute('R4Type');
 			switch(type) {
 				case 'switch': return (elem.checked) ? elem.value : 0;
-				case 'money':  return $().toUSNumber(elem.value);
+				case 'money':  return R4.numtoUSNumber(elem.value);
 				case 'tags':   return FieldsTags.getVal(elem);
 				default:       return elem.value;
 			}
@@ -389,7 +389,7 @@ var Fields = {
 				else elem.checked = true;
 				break;
 			case 'money':
-				elem.value = $().toEUNumber(value);
+				elem.value = R4.toEUNumber(value);
 				break;
 			case 'tags':
 				FieldsTags.setVal(elem, value);

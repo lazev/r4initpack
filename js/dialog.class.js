@@ -9,34 +9,30 @@ var Dialog = {
 
 			if(!opts) opts = {};
 
-			let elem;
+			let elem         = opts.elem;
+			    id           = opts.id           || '',
+			    title        = opts.title        || '',
+			    html         = opts.html         || '',
+			    style        = opts.style        || {},
+			    open         = opts.open         || false,
+			    ephemeral    = opts.ephemeral    || false,
+			    closeMonitor = opts.closeMonitor || false,
+			    buttons      = opts.buttons      || [],
+			    classes      = [];
 
-			let id           = opts.id           || '';
-			let title        = opts.title        || '';
-			let html         = opts.html         || '';
-			let classes      = [];
-			let style        = opts.style        || {};
-			let open         = opts.open         || false;
-			let ephemeral    = opts.ephemeral    || false;
-			let closeMonitor = opts.closeMonitor || false;
-			let buttons      = opts.buttons      || [];
+			let onOpen    = opts.onOpen      || function(){},
+			    onCreate  = opts.onCreate    || function(){},
+			    onClose   = opts.onClose     || function(){},
+			    befClose  = opts.beforeClose || function(){};
 
-			let onOpen    = opts.onOpen      || function(){};
-			let onCreate  = opts.onCreate    || function(){};
-			let onClose   = opts.onClose     || function(){};
-			let befClose  = opts.beforeClose || function(){};
+			let over = document.createElement('div'),
+			    modl = document.createElement('div'),
+			    head = document.createElement('header'),
+			    body = document.createElement('section'),
+			    foot = document.createElement('footer');
 
-			let over = document.createElement('div');
-			let modl = document.createElement('div');
-			let head = document.createElement('header');
-			let body = document.createElement('section');
-			let foot = document.createElement('footer');
-
-			let cont, idElem;
-
-			if(opts.elem) {
-				elem = opts.elem[0] || opts.elem;
-			}
+			let cont,
+			    idElem;
 
 			if(elem) {
 				cont = elem;
@@ -48,7 +44,7 @@ var Dialog = {
 				cont.id = idElem;
 			}
 
-			if($('#R4Overlay-'+ idElem).length) {
+			if($('#R4Overlay-'+ idElem)) {
 				resolve(idElem);
 				return;
 			}

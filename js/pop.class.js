@@ -1,32 +1,39 @@
 var Pop = {
 	openPops: {},
-	
-	/*
-	Pop.hint(elem, txt) - create mouseover hints
-	*/
-	hint: function(elem, txt) {
+
+	//Pop.hint(elem, txt) - Cria hints ao posicionar o cursor do mouse
+	hint: function(el, txt) {
 		let popel;
 
-		elem.each(el => {
-			el.addEventListener('mouseenter', function(){
-				popel = Pop.create({
-					html: txt,
-					destiny: el,
-					classes: 'R4PopHint',
-					id: 'R4PopHint'+ $().uniqid()
-				});
+		el.addEventListener('mouseenter', function(){
+			popel = Pop.create({
+				html: txt,
+				destiny: el,
+				classes: 'R4PopHint',
+				id: 'R4PopHint'+ R4.uniqid()
 			});
+		});
 
-			el.addEventListener('mouseleave', function(){
-				Pop.destroyElem(popel);
-			});
+		el.addEventListener('mouseleave', function(){
+			Pop.destroyElem(popel);
+		});
+
+	},
+
+
+	//Pop.push(elem, opts) - cria box ao clicar com o mouse
+	push: function(el, opts) {
+		el.addEventListener('click', function(ev){
+			if(opts.preventDefault) ev.preventDefault();
+			opts.destiny = el;
+			Pop.create(opts);
 		});
 	},
 
-	
+
 	create: function(opts) {
 
-		let destiny = opts.destiny[0] || opts.destiny;
+		let destiny = opts.destiny;
 
 		if(!destiny) {
 			console.warn('To use Pop you need to set the destiny');
@@ -51,7 +58,7 @@ var Pop = {
 
 		pop.setAttribute('id', id);
 		pop.setAttribute('class', classes.join(' '));
-		
+
 		if(typeof html == 'string') {
 			pop.innerHTML = html;
 		}
@@ -70,12 +77,12 @@ var Pop = {
 		document.body.appendChild(pop);
 
 		let destPos = destiny.getBoundingClientRect();
-		
+
 		let topLeft = {
 			top:  destPos.bottom + window.pageYOffset,
 			left: destPos.left   + window.pageXOffset
 		};
-		
+
 		pop.style.top  = topLeft.top + 'px';
 		pop.style.left = topLeft.left + 'px';
 
@@ -84,7 +91,7 @@ var Pop = {
 		if(topLeft.left+popPos.width > document.body.clientWidth) {
 			pop.style.left = topLeft.left-(topLeft.left+popPos.width-document.body.clientWidth)-10 +'px';
 		}
-		
+
 		if(topLeft.top+popPos.height > document.body.clientHeight) {
 			console.log('maio rque altura');
 			pop.style.top = topLeft.top-(topLeft.top+popPos.height-document.body.clientHeight)-destPos.height +'px';
@@ -93,14 +100,14 @@ var Pop = {
 		destiny.setAttribute('R4PopTarget', id);
 
 		Pop.openPops[id] = true;
-		
+
 		if(typeof onOpen === 'function') {
 			onOpen();
 		}
-		
+
 		return pop;
 	},
-	
+
 
 	destroyAll: function(force) {
 		for(let idElem in Pop.openPops) {
@@ -115,7 +122,7 @@ var Pop = {
 		let elem = document.getElementById(idElem);
 		Pop.destroyElem(elem, force);
 	},
-	
+
 
 	destroyElem: function(elem, force) {
 		if(elem) {

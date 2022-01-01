@@ -70,7 +70,7 @@ var Effects = {
 			}
 		})();
 	},
-		
+
 
 	highlight: function(elem) {
 		elem.classList.add('highlight');
@@ -78,7 +78,8 @@ var Effects = {
 			elem.classList.remove('highlight');
 		}, 500);
 	},
-			     
+
+
 	blink: function(elem) {
 		elem.classList.add('blink');
 		setTimeout(function(){
@@ -86,5 +87,3 @@ var Effects = {
 		}, 500);
 	}
 };
-
-
