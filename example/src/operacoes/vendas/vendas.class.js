@@ -83,7 +83,7 @@ var Vendas = {
 		let params = {
 			com: 'getInit'
 		};
-		$().getJSON(Vendas.pathAjax, params)
+		R4.getJSON(Vendas.pathAjax, params)
 		.then(ret => {
 
 		});
@@ -107,7 +107,7 @@ var Vendas = {
 			idVenda: id
 		};
 
-		$().getJSON(Vendas.pathAjax, params)
+		R4.getJSON(Vendas.pathAjax, params)
 		.then(ret => {
 			Vendas.idVenda = ret.venda.id;
 
@@ -134,7 +134,7 @@ var Vendas = {
 			tags:       $('#prod_tags').val()
 		};
 
-		$().getJSON(Vendas.pathAjax, params)
+		R4.getJSON(Vendas.pathAjax, params)
 
 		.then(ret => {
 
@@ -179,7 +179,7 @@ var Vendas = {
 			ids: ids
 		}
 
-		$().getJSON(Vendas.pathAjax, params)
+		R4.getJSON(Vendas.pathAjax, params)
 
 		.then(ret => {
 			if(ret.deleted.length) {
@@ -222,7 +222,7 @@ var Vendas = {
 			ids: ids
 		}
 
-		$().getJSON(Vendas.pathAjax, params)
+		R4.getJSON(Vendas.pathAjax, params)
 
 		.then(ret => {
 			if(ret.recovered.length) {
@@ -260,7 +260,7 @@ var Vendas = {
 			listFilter: arrFilter.listFilter
 		};
 
-		$().getJSON(Vendas.pathAjax, params)
+		R4.getJSON(Vendas.pathAjax, params)
 		.then(ret => {
 
 			let goodVal = '';
@@ -298,7 +298,7 @@ var Vendas = {
 					'',
 					'TOTAL LISTADO',
 					'',
-					$().round(vTotal, 2),
+					R4.round(vTotal, 2),
 					''
 				]
 			});
@@ -320,7 +320,7 @@ var Vendas = {
 		if(typeof Produtos === 'object') {
 			Produtos.edit(codProd);
 		} else {
-			$().getScript(Vendas.pathProdutos )
+			R4.getScript(Vendas.pathProdutos )
 			.then(() => Produtos.importForm()    )
 			.then(() => Produtos.edit(codProd));
 		}

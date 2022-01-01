@@ -186,7 +186,11 @@ var Dialog = {
 
 
 	close: function(idElem) {
-		Dialog.closeOverlay('R4Overlay-'+ idElem);
+		if(typeof idElem === 'object') {
+			Dialog.closeOverlay('R4Overlay-'+ idElem.id);
+		} else {
+			Dialog.closeOverlay('R4Overlay-'+ idElem);
+		}
 	},
 
 

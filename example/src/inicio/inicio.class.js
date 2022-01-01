@@ -3,14 +3,11 @@ const Inicio = {
 	userNome: '',
 	setNomePop: null,
 
-	setPaths: () => {
-		Inicio.pathAjax   = _CONFIG.rootURL +'inicio/ajax.php';
-		Inicio.pathFields = _CONFIG.rootURL +'inicio/fields.json';
-	},
-
+	pathAjax:       _CONFIG.rootURL +'inicio/ajax.php',
+	pathFields:     _CONFIG.rootURL +'inicio/fields.json',
+	pathAoSelConta: _CONFIG.rootURL +'produtos/',
 
 	init: () => {
-		Inicio.setPaths();
 		Inicio.getInit();
 		Inicio.initForm();
 		Inicio.initFields();
@@ -21,7 +18,7 @@ const Inicio = {
 		let params = {
 			com: 'getInit'
 		};
-		$().getJSON(Inicio.pathAjax, params)
+		R4.getJSON(Inicio.pathAjax, params)
 		.then(ret => {
 			Inicio.setHTMLNome(ret.dados.userNome);
 			Inicio.setListaContas(ret.contas);
@@ -30,7 +27,9 @@ const Inicio = {
 
 
 	initForm: () => {
-		$('#formCriarConta').dialog({
+		Dialog.create({
+			elem: $('#formCriarConta'),
+			title: 'Criar nova conta',
 			onOpen: function(){
 				$('#inicioNomeConta').val('');
 			},
@@ -59,17 +58,21 @@ const Inicio = {
 
 
 	abrirFormCriarConta: () => {
-		$('#formCriarConta').dialog('open');
+		Dialog.open($('#formCriarConta'));
 	},
 
 
 	setHTMLNome: nome => {
 
+		nome = null;
+
 		if(nome) {
-			$('.labelUserNome').html(nome);
+			$('.labelUserNome').innerHTML = nome;
 		} else {
-			$('.labelUserNome').html('desconhecido <small><a href="#" id="linkTenhoNome">Ei, eu tenho nome</a></small>');
-			Inicio.setNomePop = $('#linkTenhoNome').pop({
+			$('.labelUserNome').innerHTML = 'desconhecido <small><a href="#" id="linkTenhoNome">'
+			                              + 'Ei, eu tenho nome</a></small>';
+
+			Pop.push($('#linkTenhoNome'), {
 				preventDefault: true,
 				classes: 'paspatur',
 				html: '<div id="inputUserNome">Diga seu nome</div><div id="btnUserNome">Gravar</div>',
@@ -103,7 +106,7 @@ const Inicio = {
 			com: 'salvarNome',
 			val: nome
 		};
-		$().getJSON(Inicio.pathAjax, params)
+		R4.getJSON(Inicio.pathAjax, params)
 		.then(ret => {
 			Inicio.setHTMLNome(ret.dados.userNome);
 		})
@@ -124,37 +127,47 @@ const Inicio = {
 			nome: $('#inicioNomeConta').val()
 		};
 
-		$().getJSON(Inicio.pathAjax, params)
+		R4.getJSON(Inicio.pathAjax, params)
 		.then(ret => {
 			Inicio.addHTMLConta(ret.dados);
-			Dialog.close('formCriarConta');
+			Dialog.close($('#formCriarConta'));
 		});
 	},
 
 
 	addHTMLConta:  dados => {
 
-		let t = ''
-			+ '<div class="linhaConta" idConta="'+ dados.id +'">'
-			+ '<div>'+ dados.id                     +'</div>'
-			+ '<div>'+ dados.nome                   +'</div>'
-			+ '<div>'+ $().dateMask(dados.dtAcesso) +'</div>'
-			+ '</div>';
+		let elem = $new('div',
+		{
+			class:  'linhaConta',
+			idConta: dados.id
+		},
 
-		$('#boxContas').append(t);
+		  '<div>'+ dados.id                    +'</div>'
+		+ '<div>'+ dados.nome                  +'</div>'
+		+ '<div>'+ R4.dateMask(dados.dtAcesso) +'</div>'
 
-		$('.linhaConta[idConta="'+ dados.id +'"]').click(function(event) {
+		)
+
+
+		elem.on('click', (item, ev) => {
+
+			console.log(this);
+
+			console.log(ev);
 
 			let params = {
 				com: 'selConta',
-				id:  $(this).attr('idConta')
+				id:  item.attr('idConta')
 			};
 
-			$().getJSON(Inicio.pathAjax, params)
+			R4.getJSON(Inicio.pathAjax, params)
 			.then(ret => {
-				window.location = _CONFIG.rootURL +'produtos/';
+				window.location = Inicio.pathAoSelConta;
 			});
 		});
+
+		$('#boxContas').append(elem);
 	}
 
 };

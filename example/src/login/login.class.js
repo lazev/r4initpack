@@ -5,14 +5,12 @@ const Login = {
 	igAuthUrl: '',
 	liAuthUrl: '',
 
-	setPaths: () => {
-		Login.pathAjax   = _CONFIG.rootURL +'login/ajax.php';
-		Login.pathFields = _CONFIG.rootURL +'login/fields.json';
-	},
+	pathAjax:       _CONFIG.rootURL +'login/ajax.php',
+	pathFields:     _CONFIG.rootURL +'login/fields.json',
+	pathAfterLogin: _CONFIG.rootURL +'inicio/',
 
 
 	init: async () => {
-		Login.setPaths();
 		Login.initFields();
 		Login.getInit();
 		Login.hasher();
@@ -23,10 +21,10 @@ const Login = {
 		let params = {
 			com: 'getInit'
 		};
-		$().getJSON(Login.pathAjax, params)
+		R4.getJSON(Login.pathAjax, params)
 		.then(ret => {
 			if(ret.logged) {
-				Login.afterLogin();
+				//Login.afterLogin();
 			}
 
 			Login.fbAuthUrl = ret.fbAuthUrl;
@@ -46,24 +44,24 @@ const Login = {
 
 
 	setEvents: () => {
-		$('#formLogin').submit(event => {
-			event.preventDefault();
+		$('#formLogin').on('submit', (item, ev) => {
+			ev.preventDefault();
 			Login.login();
 		});
 
-		$('#login_btnFb').click(() => {
+		$('#login_btnFb').on('click', (item, ev) => {
 			window.location = Login.fbAuthUrl;
 		});
 
-		$('#login_btnGg').click(() => {
+		$('#login_btnGg').on('click', (item, ev) => {
 			window.location = Login.ggAuthUrl;
 		});
 
-		$('#login_btnWa').click(() => {
+		$('#login_btnWa').on('click', (item, ev) => {
 			WebAuth.create();
 		});
 
-		$('#boxMsg').click((ev) => {
+		$('#boxMsg').on('click', (item, ev) => {
 			$(ev.target).slideUp();
 		});
 	},
@@ -78,41 +76,37 @@ const Login = {
 
 		if(hash == 'access_denied') {
 			hasMsg = true;
-			$('#boxMsg').html('É necessário autorizar para continuar.');
+			$('#boxMsg').innerHTML = 'É necessário autorizar para continuar.';
 		}
 		else if(hash == 'code_expired') {
 			hasMsg = true;
-			$('#boxMsg').html('Autenticação expirou. Por favor, tente novamente.');
+			$('#boxMsg').innerHTML = 'Autenticação expirou. Por favor, tente novamente.';
 		}
 		else if(hash.indexOf('msg') > -1) {
 			hasMsg = true;
-			let obj = $().getHashParams(hash);
-			$('#boxMsg').html(obj.msg +'<br><i>'+ obj.obs +'</i>');
+			let obj = R4.getHashParams(hash);
+			$('#boxMsg').innerHTML = obj.msg +'<br><i>'+ obj.obs +'</i>';
 		}
 
 		if(hasMsg) {
-			$('#boxMsg').slideDown();
+			Effects.slideDown($('#boxMsg'));
 			window.location.hash = '';
 		}
 	},
 
 
 	login: () => {
-		let params = {
+		R4.getJSON(Login.pathAjax, {
 			com: 'login',
 			user: $('#login_user').val(),
 			pass: $('#login_pass').val(),
 			save: $('#login_save').val()
-		};
-
-		$().getJSON(Login.pathAjax, params)
-
+		})
 		.then(dados => {
 			if(dados.logged) {
 				Login.afterLogin();
 			}
 		})
-
 		.catch(dados => {
 
 		});
@@ -120,6 +114,6 @@ const Login = {
 
 
 	afterLogin: () => {
-		window.location = _CONFIG.rootURL +'inicio/';
+		window.location = Login.pathAfterLogin;
 	}
 };

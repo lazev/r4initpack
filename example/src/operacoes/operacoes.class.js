@@ -17,7 +17,7 @@ var Operacoes = {
 
 			if(typeof Vendas === 'object') Vendas.listar();
 			else {
-				$().getScript('operacoes/vendas/vendas.class.js')
+				R4.getScript('operacoes/vendas/vendas.class.js')
 				.then(() => Vendas.incorporar())
 				.then(() => Vendas.listar());
 			}
@@ -34,7 +34,7 @@ var Operacoes = {
 			if(typeof Produtos === 'object') Produtos.listar();
 			else {
 				//Se não tem, carrega, incorpora e lista
-				$().getScript('produtos/produtos.class.js')
+				R4.getScript('produtos/produtos.class.js')
 				.then(() => Produtos.incorporar())
 				.then(() => Produtos.listar());
 			}

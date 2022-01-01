@@ -57,17 +57,17 @@ $each = function(el, func) {
 
 
 //Criador de elementos
-$new = function(tag, params, events) {
-	var el = document.createElement(tag);
+$new = function(tag, params, innerhtml, events) {
+
 	var k;
+	var el = document.createElement(tag);
 
-	for(k in params) {
-		if(k != 'html') el.setAttribute(k, params[k]);
-	}
+	for(k in params) el.setAttribute(k, params[k]);
+	for(k in events) el.addEventListener(k, event => { events[k](event.target, event) });
 
-	if(params.html) el.innerHTML = params.html;
+//	el.addEventListener(k, events[k]);
 
-	for(k in events) el.addEventListener(k, events[k]);
+	el.innerHTML = innerhtml ?? '';
 
 	return $(el);
 };

@@ -22,7 +22,7 @@ const Produtos = {
 		console.log('incorporou');
 		Produtos.setPaths();
 		$('#moduloProdutos').setRemoteHTML(Produtos.pathView);
-		$().importCSS(Produtos.pathCSS);
+		R4.importCSS(Produtos.pathCSS);
 		Produtos.init();
 		console.log('iniciou');
 	},
@@ -56,7 +56,7 @@ const Produtos = {
 			let params = {
 				com: 'getInit'
 			};
-			$().getJSON(Produtos.pathAjax, params)
+			R4.getJSON(Produtos.pathAjax, params)
 			.then(ret => {
 				Produtos.listaCores = ret.listaCores;
 				resolve();
@@ -155,7 +155,7 @@ const Produtos = {
 			idProduto: id
 		};
 
-		$().getJSON(Produtos.pathAjax, params)
+		R4.getJSON(Produtos.pathAjax, params)
 		.then(ret => {
 			Produtos.idProduto = ret.produto.id;
 
@@ -185,7 +185,7 @@ const Produtos = {
 			tags:       $('#prod_tags').val()
 		};
 
-		$().getJSON(Produtos.pathAjax, params)
+		R4.getJSON(Produtos.pathAjax, params)
 
 		//.then é a função de retorno Ok
 		.then(ret => {
@@ -250,7 +250,7 @@ const Produtos = {
 			ids: ids
 		}
 
-		$().getJSON(Produtos.pathAjax, params)
+		R4.getJSON(Produtos.pathAjax, params)
 
 		.then(ret => {
 			if(ret.deleted.length) {
@@ -299,7 +299,7 @@ const Produtos = {
 			ids: ids
 		}
 
-		$().getJSON(Produtos.pathAjax, params)
+		R4.getJSON(Produtos.pathAjax, params)
 
 		.then(ret => {
 			if(ret.recovered.length) {
@@ -344,7 +344,7 @@ const Produtos = {
 			listFilter: arrFilter.listFilter
 		};
 
-		$().getJSON(Produtos.pathAjax, params)
+		R4.getJSON(Produtos.pathAjax, params)
 		.then(ret => {
 
 			let goodVal = '';
@@ -387,7 +387,7 @@ const Produtos = {
 				cells: [
 					'',
 					'TOTAL',
-					$().round(vTotal, 2)
+					R4.round(vTotal, 2)
 				]
 			});
 
@@ -408,14 +408,14 @@ const Produtos = {
 		return new Promise((resolve, reject) => {
 			Produtos.setPaths();
 
-			$().getHTML(Produtos.pathForm)
+			R4.getHTML(Produtos.pathForm)
 			.then(html => {
 
 				let div = document.createElement('div');
 				div.innerHTML = html;
-				$0('body').append(div.firstChild);
+				$('body').append(div.firstChild);
 
-				$().importCSS(Produtos.pathCSS);
+				R4.importCSS(Produtos.pathCSS);
 			})
 			.then(() => {
 				Produtos.getInit();

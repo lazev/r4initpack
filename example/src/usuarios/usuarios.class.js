@@ -18,7 +18,9 @@ const Usuarios = {
 
 
 	initForm: async () => {
-		await $('#formUsuarios').dialog({
+		await Dialog.create({
+			elem: $('#formUsuarios'),
+			title: 'Dados do usuario',
 			buttons: [
 				{
 					label: 'Salvar',
@@ -69,7 +71,7 @@ const Usuarios = {
 		let params = {
 			com: 'getInit'
 		};
-		$().getJSON(Usuarios.pathAjax, params)
+		R4.getJSON(Usuarios.pathAjax, params)
 		.then(ret => {});
 	},
 
@@ -78,7 +80,7 @@ const Usuarios = {
 		Usuarios.idUsuario = 0;
 
 		$('#formUsuarios').reset();
-		
+
 		$('#usuBoxAcesso').addClass('hidden');
 
 		$('#formUsuarios').dialog('open');
@@ -93,7 +95,7 @@ const Usuarios = {
 			idUsuario: id
 		};
 
-		$().getJSON(Usuarios.pathAjax, params)
+		R4.getJSON(Usuarios.pathAjax, params)
 		.then(ret => {
 			Usuarios.idUsuario = ret.usuario.id;
 
@@ -103,7 +105,7 @@ const Usuarios = {
 			$('#usu_tags').val(   ret.usuario.tags   );
 
 			$('#usuBoxAcesso').removeClass('hidden');
-			
+
 			$('#formUsuarios').dialog('open');
 		})
 	},
@@ -120,7 +122,7 @@ const Usuarios = {
 			tags:   $('#usu_tags').val()
 		};
 
-		$().getJSON(Usuarios.pathAjax, params)
+		R4.getJSON(Usuarios.pathAjax, params)
 
 		.then(ret => {
 
@@ -154,7 +156,7 @@ const Usuarios = {
 			ids: ids
 		}
 
-		$().getJSON(Usuarios.pathAjax, params)
+		R4.getJSON(Usuarios.pathAjax, params)
 
 		.then(ret => {
 			if(ret.deleted.length) {
@@ -194,7 +196,7 @@ const Usuarios = {
 			listFilter: arrFilter.listFilter
 		};
 
-		$().getJSON(Usuarios.pathAjax, params)
+		R4.getJSON(Usuarios.pathAjax, params)
 		.then(ret => {
 
 			let check   = '';
@@ -211,13 +213,13 @@ const Usuarios = {
 			}
 
 			let fones, emails, acesso;
-			
+
 			ret.list.forEach(item => {
-				
+
 				fones  = (item.fones)  ? item.fones.split(',').join(', ')  : '';
 				emails = (item.emails) ? item.emails.split(',').join(', ') : '';
 				acesso = '<span class="badge">'+ item.provider +'</span>';
-				
+
 				body.push({
 					value: item.id,
 					cells: [

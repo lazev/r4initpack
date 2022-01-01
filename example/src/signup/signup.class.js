@@ -34,7 +34,7 @@ const SignUp = {
 				pass2: $('#signUp_pass2').val(),
 			};
 
-			$().getJSON(SignUp.pathAjax, params)
+			R4.getJSON(SignUp.pathAjax, params)
 			.then(dados => {
 				if(dados.ok) {
 					window.location = _CONFIG.rootURL +'inicio/';
