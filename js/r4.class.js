@@ -57,17 +57,19 @@ $each = function(el, func) {
 
 
 //Criador de elementos
-$new = function(tag, params, innerhtml, events) {
+$new = function(tag, params, content, events) {
 
 	var k;
 	var el = document.createElement(tag);
 
+	if(typeof content === 'string') {
+		el.insertAdjacentHTML('beforeend', content);
+	} else if (content instanceof Element) {
+		el.appendChild(content.cloneNode(true));
+	}
+
 	for(k in params) el.setAttribute(k, params[k]);
 	for(k in events) el.addEventListener(k, event => { events[k](event.target, event) });
-
-//	el.addEventListener(k, events[k]);
-
-	el.innerHTML = innerhtml ?? '';
 
 	return $(el);
 };

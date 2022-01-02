@@ -147,14 +147,11 @@ const Inicio = {
 		+ '<div>'+ dados.nome                  +'</div>'
 		+ '<div>'+ R4.dateMask(dados.dtAcesso) +'</div>'
 
-		)
+		);
 
+		$('#boxContas').append(elem);
 
-		elem.on('click', (item, ev) => {
-
-			console.log(this);
-
-			console.log(ev);
+		$('.linhaConta[idConta="'+ dados.id +'"]').on('click', (item, ev) => {
 
 			let params = {
 				com: 'selConta',
@@ -166,8 +163,6 @@ const Inicio = {
 				window.location = Inicio.pathAoSelConta;
 			});
 		});
-
-		$('#boxContas').append(elem);
 	}
 
 };
