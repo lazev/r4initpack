@@ -58,8 +58,8 @@ PHP, JS e CSS de um framework leve e pequeno que pode ajudar no seu projeto
 .col-11
 .col-12
 
-.col-xs-1 
-.col-xs-2 
+.col-xs-1
+.col-xs-2
 (...)
 .col-xs-11
 .col-xs-12
@@ -103,7 +103,7 @@ const R4Init = () => {
 
 //Warning joga mensagens flutuantes na tela.
 //Tipo toast em outros frameworks.
-Warning.on('Exemplo de warning', 'Linha debaixo');
+Warning.show('Exemplo de warning', 'Linha debaixo');
 
 Effects.slideDown(elem, [callback]);
 Effects.slideUp(elem, [callback]);

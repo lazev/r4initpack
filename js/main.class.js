@@ -22,7 +22,7 @@ $.methods = {
 	listeners: function() {
 		//mobile debuger
 		window.onerror = function (msg, url, lineNo, columnNo, error) {
-			Warning.on(msg, url +': '+ lineNo +':'+columnNo+':'+error);
+			Warning.show(msg, url +': '+ lineNo +':'+columnNo+':'+error);
 		};
 
 		document.addEventListener('keydown', function(event) {
@@ -98,17 +98,17 @@ $.methods = {
 							var jResp = JSON.parse(resp);
 
 							if(jResp.error === 1) {
-								Warning.on(jResp.errMsg, jResp.errObs);
+								Warning.show(jResp.errMsg, jResp.errObs);
 								reject(jResp);
 							} else {
 								resolve(jResp);
 							}
 						} catch(err) {
-							Warning.on(xhr.status);
+							Warning.show(xhr.status);
 							reject(xhr.status);
 						}
 					} else {
-						Warning.on(xhr.status);
+						Warning.show(xhr.status);
 						reject(xhr.status);
 					}
 				}
@@ -154,7 +154,7 @@ $.methods = {
 
 				else {
 					if(typeof Warning === 'object') {
-						Warning.on(
+						Warning.show(
 							'Erro ao buscar dados',
 							resp.status +' - '+ resp.statusText
 						);
@@ -164,7 +164,7 @@ $.methods = {
 			})
 			.catch(err => {
 				if(typeof Warning === 'object') {
-					Warning.on(
+					Warning.show(
 						'Erro de conexão',
 						'Problema com a internet?'
 					);

@@ -9,30 +9,44 @@ var Vendas = {
 
 	idVenda: 0,
 
+	pathAjax:     _CONFIG.rootURL +'operacoes/vendas/ajax.php',
+	pathFields:   _CONFIG.rootURL +'operacoes/vendas/fields.json',
+   pathProdutos: _CONFIG.rootURL +'produtos/produtos.class.js',
+
 	listaSituacao: {
 		10: 'Orçamento',
 		50: 'Concluída',
 		90: 'Cancelada'
 	},
 
-	setPaths: () => {
-		Vendas.pathAjax     = _CONFIG.rootURL +'operacoes/vendas/ajax.php';
-		Vendas.pathFields   = _CONFIG.rootURL +'operacoes/vendas/fields.json';
-		Vendas.pathProdutos = _CONFIG.rootURL +'produtos/produtos.class.js';
+
+	init: async () => {
+		Vendas.getInit(() => {
+			Vendas.initForm();
+			Vendas.initList();
+		});
 	},
 
 
-	init: async () => {
-		Vendas.setPaths();
-		Vendas.initForm();
-		Vendas.initFields();
-		Vendas.initList();
-		Vendas.getInit();
+	getInit: callback => {
+
+		R4.getJSON(Vendas.pathAjax, {
+			com: 'getInit'
+		})
+
+		.then(ret => {
+			if(typeof callback === 'function') {
+				callback();
+			}
+		});
 	},
 
 
 	initForm: async () => {
-		await $('#formVendas').dialog({
+
+		Dialog.create({
+			elem: $('#formVendas'),
+			title: 'Dados da venda',
 			buttons: [
 				{
 					label: 'Salvar',
@@ -48,28 +62,23 @@ var Vendas = {
 			],
 			classes: 'full'
 		});
-	},
 
-
-	initFields: async () => {
-		await Fields.createFromFile(Vendas.pathFields, 'vendas');
+		Fields.createFromFile(Vendas.pathFields, 'vendas');
 	},
 
 
 	initList: () => {
 
-		let head = [
-			{ label: 'Cod',      orderBy: 'id' },
-			{ label: 'Cliente',  orderBy: 'nomeCliente' },
-			{ label: 'Data',     orderBy: 'dtVenda',  type: 'date' },
-			{ label: 'Preco',    orderBy: 'vTotal',   type: 'decimal' },
-			{ label: 'Situação', orderBy: 'situacao'  }
-		];
-
 		Table.create({
 			idDestiny:    'listaVendas',
 			classes:      'striped',
-			arrHead:      head,
+			arrHead:      [
+				{ label: 'Cod',      orderBy: 'id' },
+				{ label: 'Cliente',  orderBy: 'nomeCliente' },
+				{ label: 'Data',     orderBy: 'dtVenda',  type: 'date' },
+				{ label: 'Preco',    orderBy: 'vTotal',   type: 'decimal' },
+				{ label: 'Situação', orderBy: 'situacao'  }
+			],
 			withCheck:    true,
 			onLineClick:  value => { Vendas.edit(value);   },
 			onOrderBy:    value => { Vendas.filter(value); },
@@ -79,35 +88,23 @@ var Vendas = {
 	},
 
 
-	getInit: () => {
-		let params = {
-			com: 'getInit'
-		};
-		R4.getJSON(Vendas.pathAjax, params)
-		.then(ret => {
-
-		});
-	},
-
-
 	insert: () => {
 		Vendas.idVenda = 0;
 
-		$('#formVendas').reset();
+		Fields.reset($('#formVendas'));
 
-		$('#formVendas').dialog('open');
+		Dialog.open($('#formVendas'));
 	},
 
 
-	edit: id => {
-		if(!id) return;
+	edit: idVenda => {
+		if(!idVenda) return;
 
-		let params = {
+		R4.getJSON(Vendas.pathAjax, {
 			com: 'read',
-			idVenda: id
-		};
+			idVenda: idVenda
+		})
 
-		R4.getJSON(Vendas.pathAjax, params)
 		.then(ret => {
 			Vendas.idVenda = ret.venda.id;
 
@@ -117,49 +114,53 @@ var Vendas = {
 			$('#prod_comEstoque').val( ret.venda.comEstoque );
 			$('#prod_tags').val(       ret.venda.tags       );
 
-			$('#formVendas').dialog('open');
+			Dialog.open($('#formVendas'));
 		})
+
+		.catch(err => {
+			Warning.show('Erro ao buscar os dados da venda');
+			console.log(err);
+		});
 	},
 
 
-	save: idVenda => {
+	save: () => {
 
-		let params = {
+		R4.getJSON(Vendas.pathAjax, {
 			com:        'save',
-			idVenda: Vendas.idVenda,
+			idVenda:    Vendas.idVenda,
 			nome:       $('#prod_nome').val(),
 			categoria:  $('#prod_categoria').val(),
 			preco:      $('#prod_preco').val(),
 			comEstoque: $('#prod_comEstoque').val(),
 			tags:       $('#prod_tags').val()
-		};
-
-		R4.getJSON(Vendas.pathAjax, params)
+		})
 
 		.then(ret => {
 
-			let btn = document.createElement('button');
-			btn.setAttribute('type', 'button');
-			btn.classList.add('R4');
-			btn.innerHTML = 'Detalhar';
-			btn.addEventListener('click', ev => {
-				ev.preventDefault();
-				Vendas.edit(ret.venda.id);
-			});
-
-			Warning.on(
+			Warning.show(
 				'Venda '+ ret.venda.id +' salvo com sucesso',
-				btn
+
+				$new('button', {
+					html: 'Detalhar',
+					attr: { type: 'button', class: 'R4', },
+					event: {
+						click: function(ev) {
+							ev.preventDefault();
+							Vendas.edit(ret.venda.id);
+						}
+					}
+				})
+
 			);
 
 			Vendas.list();
 
-			$('#formVendas').dialog('close');
-
+			Dialog.close($('#formVendas'));
 		})
 
 		.catch(err => {
-			Warning.on('Erro ao salvar o venda');
+			Warning.show('Erro ao salvar a venda');
 			console.log(err);
 		})
 	},
@@ -170,7 +171,7 @@ var Vendas = {
 		let ids = (isNaN(id)) ? Table.getAllSel(id) : id;
 
 		if(!ids.length) {
-			Warning.on('Nenhum código informado para exclusão');
+			Warning.show('Nenhum código informado para exclusão');
 			return;
 		}
 
@@ -183,18 +184,19 @@ var Vendas = {
 
 		.then(ret => {
 			if(ret.deleted.length) {
-				let btn = document.createElement('button');
-				btn.setAttribute('type', 'button');
-				btn.classList.add('R4');
-				btn.innerHTML = 'Desfazer';
-				btn.addEventListener('click', ev => {
-					ev.preventDefault();
-					Vendas.undel(ret.deleted.join(','));
-				});
 
-				Warning.on(
+				Warning.show(
 					'Itens excluidos: '+ ret.deleted.join(', '),
-					btn
+					$new('button', {
+						html: 'Desfazer',
+						attr: { type: 'button', class: 'R4', },
+						event: {
+							click: function(ev) {
+								ev.preventDefault();
+								Vendas.undel(ret.deleted.join(','));
+							}
+						}
+					})
 				);
 
 				Vendas.list();
@@ -203,7 +205,7 @@ var Vendas = {
 			if(ret.alert) {
 				let k;
 				for(k in ret.alert) {
-					Warning.on('Erro na exclusão do item '+ k, ret.alert[k]);
+					Warning.show('Erro na exclusão do item '+ k, ret.alert[k]);
 				}
 			}
 		});
@@ -213,7 +215,7 @@ var Vendas = {
 	undel: ids => {
 
 		if(!ids.length) {
-			Warning.on('Nenhum código informado para recuperação');
+			Warning.show('Nenhum código informado para recuperação');
 			return;
 		}
 
@@ -226,14 +228,14 @@ var Vendas = {
 
 		.then(ret => {
 			if(ret.recovered.length) {
-				Warning.on('Itens recuperados: '+ ret.recovered.join(', '));
+				Warning.show('Itens recuperados: '+ ret.recovered.join(', '));
 				Vendas.list();
 			}
 
 			if(ret.alert) {
 				let k;
 				for(k in ret.alert) {
-					Warning.on('Erro na recuperação do item '+ k, ret.alert[k]);
+					Warning.show('Erro na recuperação do item '+ k, ret.alert[k]);
 				}
 			}
 		});
@@ -254,15 +256,13 @@ var Vendas = {
 
 		if(!arrFilter) arrFilter = {};
 
-		let params = {
+		R4.getJSON(Vendas.pathAjax, {
 			com: 'list',
 			listParams: arrFilter.listParams,
 			listFilter: arrFilter.listFilter
-		};
+		})
 
-		R4.getJSON(Vendas.pathAjax, params)
 		.then(ret => {
-
 			let goodVal = '';
 			let check   = '';
 			let body    = [];
@@ -306,9 +306,10 @@ var Vendas = {
 			Table.updateContent(destiny, body, foot);
 
 		})
+
 		.catch(err => {
 			console.log(err);
-			Warning.on('Erro', err);
+			Warning.show('Erro', err);
 		})
 	},
 
@@ -320,8 +321,8 @@ var Vendas = {
 		if(typeof Produtos === 'object') {
 			Produtos.edit(codProd);
 		} else {
-			R4.getScript(Vendas.pathProdutos )
-			.then(() => Produtos.importForm()    )
+			R4.getScript(Vendas.pathProdutos  )
+			.then(() => Produtos.importForm() )
 			.then(() => Produtos.edit(codProd));
 		}
 	}

@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 let methods = {
 
 	on: function(ev, func) {
-		this.addEventListener(ev, func );
+		this.addEventListener(ev, func);
 	},
 
 	trigger: function(ev) {
@@ -57,10 +57,14 @@ $each = function(el, func) {
 
 
 //Criador de elementos
-$new = function(tag, params, content, events) {
+$new = function(tag, params) {
 
-	var k;
-	var el = document.createElement(tag);
+	let k;
+	let el = document.createElement(tag);
+
+	let content = params.html  ?? '';
+	let attr    = params.attr  ?? {};
+	let event   = params.event ?? {};
 
 	if(typeof content === 'string') {
 		el.insertAdjacentHTML('beforeend', content);
@@ -68,8 +72,8 @@ $new = function(tag, params, content, events) {
 		el.appendChild(content.cloneNode(true));
 	}
 
-	for(k in params) el.setAttribute(k, params[k]);
-	for(k in events) el.addEventListener(k, events[k] );
+	for(k in attr)  el.setAttribute(k, attr[k]);
+	for(k in event) el.addEventListener(k, event[k]);
 
 	return $(el);
 };
@@ -87,7 +91,7 @@ var R4 = {
 	listeners: function() {
 		//mobile debuger
 		window.onerror = function (msg, url, lineNo, columnNo, error) {
-			Warning.on(msg, url +': '+ lineNo +':'+ columnNo +':'+ error);
+			Warning.show(msg, url +': '+ lineNo +':'+ columnNo +':'+ error);
 		};
 
 		document.addEventListener('keydown', function(event) {
@@ -254,17 +258,17 @@ var R4 = {
 							var jResp = JSON.parse(resp);
 
 							if(jResp.error === 1) {
-								Warning.on(jResp.errMsg, jResp.errObs);
+								Warning.show(jResp.errMsg, jResp.errObs);
 								reject(jResp);
 							} else {
 								resolve(jResp);
 							}
 						} catch(err) {
-							Warning.on(xhr.status);
+							Warning.show(xhr.status);
 							reject(xhr.status);
 						}
 					} else {
-						Warning.on(xhr.status);
+						Warning.show(xhr.status);
 						reject(xhr.status);
 					}
 				}
@@ -310,7 +314,7 @@ var R4 = {
 
 				else {
 					if(typeof Warning === 'object') {
-						Warning.on(
+						Warning.show(
 							'Erro ao buscar dados',
 							resp.status +' - '+ resp.statusText
 						);
@@ -320,7 +324,7 @@ var R4 = {
 			})
 			.catch(err => {
 				if(typeof Warning === 'object') {
-					Warning.on(
+					Warning.show(
 						'Erro de conexão',
 						'Problema com a internet?'
 					);

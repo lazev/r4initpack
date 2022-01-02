@@ -64,8 +64,6 @@ const Inicio = {
 
 	setHTMLNome: nome => {
 
-		nome = null;
-
 		if(nome) {
 			$('.labelUserNome').innerHTML = nome;
 		} else {
@@ -84,13 +82,13 @@ const Inicio = {
 
 					$('#inputUserNome').focus();
 
-					$('#btnUserNome').click(function(){
+					$('#btnUserNome').on('click', function(){
 						let nome = $('#inputUserNome').val();
 						if(nome) {
 							Pop.destroyAll('force');
 							Inicio.salvarNome(nome);
 						} else {
-							Warning.on('Preencha seu nome antes de clicar no botão');
+							Warning.show('Preencha seu nome antes de clicar no botão');
 						}
 					});
 				}
@@ -137,34 +135,35 @@ const Inicio = {
 
 	addHTMLConta:  dados => {
 
-		let elem = $new('div',
-		{
-			class:  'linhaConta',
-			idConta: dados.id
-		},
+		let html = ''+
+			'<div>'+ dados.id                    +'</div>'+
+			'<div>'+ dados.nome                  +'</div>'+
+			'<div>'+ R4.dateMask(dados.dtAcesso) +'</div>';
 
-		  '<div>'+ dados.id                    +'</div>'
-		+ '<div>'+ dados.nome                  +'</div>'
-		+ '<div>'+ R4.dateMask(dados.dtAcesso) +'</div>'
+		let elem = $new('div', {
+			html: html,
 
-		);
+			attr: {
+				class:  'linhaConta',
+				idConta: dados.id
+			},
+
+			event: {
+				click: function(event) {
+					let params = {
+						com: 'selConta',
+						id:  this.attr('idConta')
+					};
+
+					R4.getJSON(Inicio.pathAjax, params)
+					.then(ret => {
+						window.location = Inicio.pathAoSelConta;
+					});
+				}
+			}
+		});
 
 		$('#boxContas').append(elem);
-
-		$('.linhaConta[idConta="'+ dados.id +'"]').on('click', event => {
-
-			console.log(event);
-
-			let params = {
-				com: 'selConta',
-				id:  $(event.target).attr('idConta')
-			};
-
-			R4.getJSON(Inicio.pathAjax, params)
-			.then(ret => {
-				window.location = Inicio.pathAoSelConta;
-			});
-		});
 	}
 
 };

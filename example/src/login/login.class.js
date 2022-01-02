@@ -44,25 +44,25 @@ const Login = {
 
 
 	setEvents: () => {
-		$('#formLogin').on('submit', (item, ev) => {
+		$('#formLogin').on('submit', function(ev) {
 			ev.preventDefault();
 			Login.login();
 		});
 
-		$('#login_btnFb').on('click', (item, ev) => {
+		$('#login_btnFb').on('click', function() {
 			window.location = Login.fbAuthUrl;
 		});
 
-		$('#login_btnGg').on('click', (item, ev) => {
+		$('#login_btnGg').on('click', function() {
 			window.location = Login.ggAuthUrl;
 		});
 
-		$('#login_btnWa').on('click', (item, ev) => {
+		$('#login_btnWa').on('click', function() {
 			WebAuth.create();
 		});
 
-		$('#boxMsg').on('click', (item, ev) => {
-			$(ev.target).slideUp();
+		$('#boxMsg').on('click', function(ev) {
+			Effects.slideUp(this);
 		});
 	},
 

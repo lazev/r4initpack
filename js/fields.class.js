@@ -373,7 +373,7 @@ var Fields = {
 			let type = elem.getAttribute('R4Type');
 			switch(type) {
 				case 'switch': return (elem.checked) ? elem.value : 0;
-				case 'money':  return R4.numtoUSNumber(elem.value);
+				case 'money':  return R4.toUSNumber(elem.value);
 				case 'tags':   return FieldsTags.getVal(elem);
 				default:       return elem.value;
 			}

@@ -8,23 +8,18 @@ const Produtos = {
 
 
 	//Define os caminhos de arquivos externos usados pelo módulo
-	setPaths: () => {
-		Produtos.pathAjax   = _CONFIG.rootURL +'produtos/ajax.php';
-		Produtos.pathFields = _CONFIG.rootURL +'produtos/fields.json';
-		Produtos.pathForm   = _CONFIG.rootURL +'produtos/templates/formProdutos.html';
-		Produtos.pathCSS    = _CONFIG.rootURL +'produtos/style.css';
-	},
+	pathAjax:   _CONFIG.rootURL +'produtos/ajax.php',
+	pathFields: _CONFIG.rootURL +'produtos/fields.json',
+	pathForm:   _CONFIG.rootURL +'produtos/templates/formProdutos.html',
+	pathCSS:    _CONFIG.rootURL +'produtos/style.css',
 
 
 	//Usada pra incorporar todo o módulo dentro de outra tela
 	//Nesse caso, o HTML não pode ter os cabeçalhos e rodapés
 	incorporar: () => {
-		console.log('incorporou');
-		Produtos.setPaths();
-		$('#moduloProdutos').setRemoteHTML(Produtos.pathView);
+		R4.setRemoteHTML($('#moduloProdutos'), Produtos.pathView);
 		R4.importCSS(Produtos.pathCSS);
 		Produtos.init();
-		console.log('iniciou');
 	},
 
 
@@ -32,7 +27,6 @@ const Produtos = {
 	init: () => {
 		return new Promise((resolve, reject) => {
 
-			Produtos.setPaths();
 			Produtos.getInit()
 			.then(res => {
 				Produtos.initForm();
@@ -53,16 +47,16 @@ const Produtos = {
 	//pra guardar na memória ao carregar a tela.
 	getInit: () => {
 		return new Promise((resolve, reject) => {
-			let params = {
-				com: 'getInit'
-			};
-			R4.getJSON(Produtos.pathAjax, params)
+
+			R4.getJSON(Produtos.pathAjax, {com: 'getInit'})
+
 			.then(ret => {
 				Produtos.listaCores = ret.listaCores;
 				resolve();
 			})
+
 			.catch(err => {
-				Warning.on('Erro ao buscar os dados iniciais', err);
+				Warning.show('Erro ao buscar os dados iniciais', err);
 				reject(err);
 			});
 		});
@@ -79,7 +73,9 @@ const Produtos = {
 		//A função dialog usa o HTML encontrado
 		//dentro do div #formProdutos e adiciona
 		//botões com eventos
-		$('#formProdutos').dialog({
+		Dialog.create({
+			elem: $('#formProdutos'),
+			title: 'Dados do produto',
 			buttons: [
 				{
 					label: 'Salvar',
@@ -114,16 +110,14 @@ const Produtos = {
 
 		//orderBy gera os eventos de ordenação a partir do clique
 		//no cabeçalho. O type indica a formatação do dado
-		let head = [
-			{ label: 'Cod',   orderBy: 'id' },
-			{ label: 'Nome',  orderBy: 'nome' },
-			{ label: 'Preco', orderBy: 'preco', type: 'decimal' }
-		];
-
 		Table.create({
 			idDestiny:    'listaProdutos',
 			classes:      'striped',
-			arrHead:      head,
+			arrHead:      [
+				{ label: 'Cod',   orderBy: 'id' },
+				{ label: 'Nome',  orderBy: 'nome' },
+				{ label: 'Preco', orderBy: 'preco', type: 'decimal' }
+			],
 			withCheck:    true,
 			onLineClick:  value => { Produtos.edit(value);   },
 			onOrderBy:    value => { Produtos.filter(value); },
@@ -139,23 +133,22 @@ const Produtos = {
 	insert: () => {
 		Produtos.idProduto = 0;
 
-		$('#formProdutos').reset();
+		Fields.reset($('#formProdutos'));
 
-		$('#formProdutos').dialog('open');
+		Dialog.open($('#formProdutos'));
 	},
 
 
 	//A edição de um registro busca os dados
 	//por ajax, preenche os campos e abre o form
-	edit: id => {
-		if(!id) return;
+	edit: idProduto => {
+		if(!idProduto) return;
 
-		let params = {
+		R4.getJSON(Produtos.pathAjax, {
 			com: 'read',
-			idProduto: id
-		};
+			idProduto: idProduto
+		})
 
-		R4.getJSON(Produtos.pathAjax, params)
 		.then(ret => {
 			Produtos.idProduto = ret.produto.id;
 
@@ -165,7 +158,12 @@ const Produtos = {
 			$('#prod_comEstoque').val( ret.produto.comEstoque );
 			$('#prod_tags').val(       ret.produto.tags       );
 
-			$('#formProdutos').dialog('open');
+			Dialog.open($('#formProdutos'));
+		})
+
+		.catch(err => {
+			Warning.show('Erro ao buscar os dados do produto');
+			console.log(err);
 		})
 	},
 
@@ -173,39 +171,38 @@ const Produtos = {
 	//A função salvar é usada tanto pra inserir
 	//quanto pra atualizar. A diferença é estar
 	//definido o código em Produtos.idProduto
-	save: idProduto => {
+	save: () => {
 
-		let params = {
+		R4.getJSON(Produtos.pathAjax, {
 			com:        'save',
-			idProduto: Produtos.idProduto,
+			idProduto:  Produtos.idProduto,
 			nome:       $('#prod_nome').val(),
 			categoria:  $('#prod_categoria').val(),
 			preco:      $('#prod_preco').val(),
 			comEstoque: $('#prod_comEstoque').val(),
 			tags:       $('#prod_tags').val()
-		};
-
-		R4.getJSON(Produtos.pathAjax, params)
+		})
 
 		//.then é a função de retorno Ok
 		.then(ret => {
 
-			//Bloco de código que cria um botão
-			//onde o evento é de voltar a detalhar
-			//o produto que acabou de ser salvo
-			let btn = document.createElement('button');
-			btn.setAttribute('type', 'button');
-			btn.classList.add('R4');
-			btn.innerHTML = 'Detalhar';
-			btn.addEventListener('click', ev => {
-				ev.preventDefault();
-				Produtos.edit(ret.produto.id);
-			});
-
 			//Função que faz pular na tela um aviso
-			Warning.on(
+			Warning.show(
 				'Produto '+ ret.produto.id +' salvo com sucesso',
-				btn
+
+				$new('button', {
+					html: 'Detalhar',
+					attr: {
+						type: 'button',
+						class: 'R4',
+					},
+					event: {
+						click: function(ev) {
+							ev.preventDefault();
+							Produtos.edit(ret.produto.id);
+						}
+					}
+				})
 			);
 
 			//Após salvar, roda a função definida.
@@ -214,13 +211,13 @@ const Produtos = {
 			//já apareçam na lista
 			Produtos.onSave();
 
-			$('#formProdutos').dialog('close');
+			Dialog.close($('#formProdutos'));
 
 		})
 
 		//.catch é a função de retorno com erro
 		.catch(err => {
-			Warning.on('Erro ao salvar o produto');
+			Warning.show('Erro ao salvar o produto');
 			console.log(err);
 		})
 	},
@@ -241,7 +238,7 @@ const Produtos = {
 		let ids = (isNaN(id)) ? Table.getAllSel(id) : id;
 
 		if(!ids.length) {
-			Warning.on('Nenhum código informado para exclusão');
+			Warning.show('Nenhum código informado para exclusão');
 			return;
 		}
 
@@ -258,18 +255,23 @@ const Produtos = {
 
 				//Ao confirmar a exclusão, o sistema mostra no aviso
 				//um botão de desfazer a exclusão
-				let btn = document.createElement('button');
-				btn.setAttribute('type', 'button');
-				btn.classList.add('R4');
-				btn.innerHTML = 'Desfazer';
-				btn.addEventListener('click', ev => {
-					ev.preventDefault();
-					Produtos.undel(ret.deleted.join(','));
-				});
 
-				Warning.on(
+				Warning.show(
 					'Itens excluidos: '+ ret.deleted.join(', '),
-					btn
+
+					$new('button', {
+						html: 'Desfazer',
+						attr: {
+							type: 'button',
+							class: 'R4',
+						},
+						event: {
+							click: function(ev) {
+								ev.preventDefault();
+								Produtos.undel(ret.deleted.join(','));
+							}
+						}
+					})
 				);
 
 				Produtos.list();
@@ -278,7 +280,7 @@ const Produtos = {
 			if(ret.alert) {
 				let k;
 				for(k in ret.alert) {
-					Warning.on('Erro na exclusão do item '+ k, ret.alert[k]);
+					Warning.show('Erro na exclusão do item '+ k, ret.alert[k]);
 				}
 			}
 		});
@@ -290,7 +292,7 @@ const Produtos = {
 	undel: ids => {
 
 		if(!ids.length) {
-			Warning.on('Nenhum código informado para recuperação');
+			Warning.show('Nenhum código informado para recuperação');
 			return;
 		}
 
@@ -303,14 +305,14 @@ const Produtos = {
 
 		.then(ret => {
 			if(ret.recovered.length) {
-				Warning.on('Itens recuperados: '+ ret.recovered.join(', '));
+				Warning.show('Itens recuperados: '+ ret.recovered.join(', '));
 				Produtos.list();
 			}
 
 			if(ret.alert) {
 				let k;
 				for(k in ret.alert) {
-					Warning.on('Erro na recuperação do item '+ k, ret.alert[k]);
+					Warning.show('Erro na recuperação do item '+ k, ret.alert[k]);
 				}
 			}
 		});
@@ -338,15 +340,13 @@ const Produtos = {
 
 		if(!arrFilter) arrFilter = {};
 
-		let params = {
+		R4.getJSON(Produtos.pathAjax, {
 			com: 'list',
 			listParams: arrFilter.listParams,
 			listFilter: arrFilter.listFilter
-		};
+		})
 
-		R4.getJSON(Produtos.pathAjax, params)
 		.then(ret => {
-
 			let goodVal = '';
 			let check   = '';
 			let body    = [];
@@ -391,38 +391,39 @@ const Produtos = {
 				]
 			});
 
-
 			//Depois de preparar os dados de body e foot,
 			//é só atualizar o conteúdo da table
 			Table.updateContent(destiny, body, foot);
-
 		})
+
 		.catch(err => {
 			console.log(err);
-			Warning.on('Erro', err);
+			Warning.show('Erro', err);
 		})
 	},
 
 
 	importForm: () => {
 		return new Promise((resolve, reject) => {
-			Produtos.setPaths();
 
 			R4.getHTML(Produtos.pathForm)
+
 			.then(html => {
 
-				let div = document.createElement('div');
-				div.innerHTML = html;
+				let div = $new('div', {html: html});
+
 				$('body').append(div.firstChild);
 
 				R4.importCSS(Produtos.pathCSS);
 			})
+
 			.then(() => {
 				Produtos.getInit();
 				Produtos.initForm();
 				Produtos.onSave = function(){};
 				resolve();
 			})
+
 			.catch(err => {
 				reject(err);
 			});

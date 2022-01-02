@@ -18,15 +18,15 @@
 				{ id: 'fieldButton', type:'button' }
 			], 'prefix')
 
-			$('#dialogSimples').click(event => {
+			$('#dialogSimples').on('click', event => {
 				event.preventDefault();
-				$('#formDialog').dialog('open');
-			})
+				Dialog.open($('#formDialog'));
+			});
 
-			$('#warningOn').click(event => {
+			$('#warningOn').on('click', event => {
 				event.preventDefault();
-				Warning.on('Exemplo de warning', 'Linha debaixo');
-			})
+				Warning.show('Exemplo de warning', 'Linha debaixo');
+			});
 		}
 		</script>
 
@@ -168,10 +168,10 @@
 
 			<p><b>Warning</b>
 			<pre>
-			Warning.on('Exemplo de warning', 'Linha debaixo');
+			Warning.show('Exemplo de warning', 'Linha debaixo');
 			</pre>
 
-			<a href="#" id="warningOn">Warning.on</a>
+			<a href="#" id="warningOn">Warning.show</a>
 			</p>
 
 

@@ -126,7 +126,7 @@ const Usuarios = {
 
 		.then(ret => {
 
-			Warning.on('Usuario id '+ ret.usuario.id);
+			Warning.show('Usuario id '+ ret.usuario.id);
 
 			Usuarios.list();
 
@@ -135,7 +135,7 @@ const Usuarios = {
 		})
 
 		.catch(err => {
-			Warning.on('Erro ao salvar o usuário');
+			Warning.show('Erro ao salvar o usuário');
 			console.log(err);
 		})
 	},
@@ -147,7 +147,7 @@ const Usuarios = {
 		let ids = (isNaN(id)) ? Table.getAllSel(id) : id;
 
 		if(!ids.length) {
-			Warning.on('Nenhum código informado para exclusão');
+			Warning.show('Nenhum código informado para exclusão');
 			return;
 		}
 
@@ -160,14 +160,14 @@ const Usuarios = {
 
 		.then(ret => {
 			if(ret.deleted.length) {
-				Warning.on('Itens excluídos: '+ ret.deleted.join(', '));
+				Warning.show('Itens excluídos: '+ ret.deleted.join(', '));
 				Usuarios.list();
 			}
 
 			if(ret.alert) {
 				let k;
 				for(k in ret.alert) {
-					Warning.on('Erro na exclusão do item '+ k, ret.alert[k]);
+					Warning.show('Erro na exclusão do item '+ k, ret.alert[k]);
 				}
 			}
 		});
@@ -241,7 +241,7 @@ const Usuarios = {
 		})
 		.catch(err => {
 			console.log(err);
-			Warning.on('Erro', err);
+			Warning.show('Erro', err);
 		})
 	}
 };

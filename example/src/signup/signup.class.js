@@ -42,7 +42,7 @@ const SignUp = {
 			})
 			.catch(dados => {
 				if(dados.status == '10') {
-					Warning.on('<a href="'+ _CONFIG.rootURL +'login/">Clique aqui para recuperar o acesso</a>');
+					Warning.show('<a href="'+ _CONFIG.rootURL +'login/">Clique aqui para recuperar o acesso</a>');
 				}
 			});
 		}

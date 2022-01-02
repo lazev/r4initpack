@@ -1,6 +1,6 @@
 var Warning = {
 
-	on: function(msg, obs, opts) {
+	show: function(msg, obs, opts) {
 		if(!opts) opts = {};
 
 		let fixed = opts.fixed || false;
@@ -24,12 +24,12 @@ var Warning = {
 			closer.innerHTML = '&#x2716;';
 			closer.style.float = 'right';
 			closer.addEventListener('click', function(event) {
-				Warning.off(elem);
+				Warning.hide(elem);
 			});
 			elem.appendChild(closer);
 		} else {
 			elem.addEventListener('click', function(event) {
-				Warning.off(this);
+				Warning.hide(this);
 			});
 		}
 
@@ -51,7 +51,7 @@ var Warning = {
 	},
 
 
-	off: function(elem) {
+	hide: function(elem) {
 		elem.remove();
 	}
 
