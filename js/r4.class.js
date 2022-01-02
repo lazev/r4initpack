@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 let methods = {
 
 	on: function(ev, func) {
-		this.addEventListener(ev, event => { func(event.target, event) });
+		this.addEventListener(ev, func );
 	},
 
 	trigger: function(ev) {
@@ -69,7 +69,7 @@ $new = function(tag, params, content, events) {
 	}
 
 	for(k in params) el.setAttribute(k, params[k]);
-	for(k in events) el.addEventListener(k, event => { events[k](event.target, event) });
+	for(k in events) el.addEventListener(k, events[k] );
 
 	return $(el);
 };

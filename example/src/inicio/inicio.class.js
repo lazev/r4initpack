@@ -151,11 +151,13 @@ const Inicio = {
 
 		$('#boxContas').append(elem);
 
-		$('.linhaConta[idConta="'+ dados.id +'"]').on('click', (item, ev) => {
+		$('.linhaConta[idConta="'+ dados.id +'"]').on('click', event => {
+
+			console.log(event);
 
 			let params = {
 				com: 'selConta',
-				id:  item.attr('idConta')
+				id:  $(event.target).attr('idConta')
 			};
 
 			R4.getJSON(Inicio.pathAjax, params)
