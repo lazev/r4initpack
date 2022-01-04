@@ -200,7 +200,8 @@ var Table = {
 			td = document.createElement('td');
 
 			if(Table.dom[idDestiny].head[position].type == 'decimal') {
-				value = R4.numberMask(value);
+				let precision = Table.dom[idDestiny].head[position].precision ?? 0;
+				value = R4.numberMask(value, precision);
 				td.classList.add('right');
 			}
 			else if(Table.dom[idDestiny].head[position].type == 'date') {

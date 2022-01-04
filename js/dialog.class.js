@@ -156,11 +156,11 @@ var Dialog = {
 	},
 
 
-	open: async function(idElemOrOpts) {
+	open: async function(idElemOrOpts, opts) {
 		let idElem;
 
 		if(typeof idElemOrOpts === 'object') {
-			idElem = await Dialog.create(idElemOrOpts);
+			idElem = await Dialog.create(idElemOrOpts, opts);
 		} else {
 			idElem = idElemOrOpts;
 		}

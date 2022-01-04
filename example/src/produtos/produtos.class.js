@@ -116,7 +116,7 @@ const Produtos = {
 			arrHead:      [
 				{ label: 'Cod',   orderBy: 'id' },
 				{ label: 'Nome',  orderBy: 'nome' },
-				{ label: 'Preco', orderBy: 'preco', type: 'decimal' }
+				{ label: 'Preco', orderBy: 'preco', type: 'decimal', precision: 2 }
 			],
 			withCheck:    true,
 			onLineClick:  value => { Produtos.edit(value);   },
