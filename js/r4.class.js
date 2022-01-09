@@ -277,6 +277,15 @@ var R4 = {
 	},
 
 
+	loadOverlay: function(bool) {
+		if(bool) {
+			$('.loadOverlay').classList.remove('hidden');
+		} else {
+			$('.loadOverlay').classList.add('hidden');
+		}
+	},
+
+
 	getScript: function(files) {
 		return new Promise((resolve, reject) => {
 			let counter  = 0;

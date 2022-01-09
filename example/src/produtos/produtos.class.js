@@ -144,12 +144,16 @@ const Produtos = {
 	edit: idProduto => {
 		if(!idProduto) return;
 
+		R4.loadOverlay(true);
+
 		R4.getJSON(Produtos.pathAjax, {
 			com: 'read',
 			idProduto: idProduto
 		})
 
 		.then(ret => {
+			R4.loadOverlay(false);
+
 			Produtos.idProduto = ret.produto.id;
 
 			$('#prod_nome').val(       ret.produto.nome       );
@@ -162,6 +166,7 @@ const Produtos = {
 		})
 
 		.catch(err => {
+			R4.loadOverlay(false);
 			Warning.show('Erro ao buscar os dados do produto');
 			console.log(err);
 		})

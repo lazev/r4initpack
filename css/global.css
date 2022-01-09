@@ -79,6 +79,10 @@ SVG Icons - svgicons.sparkk.fr
 	animation: highlight-bg 0.5s;
 }
 
+.loadOverlay {
+	opacity: 0.7;
+}
+
 @keyframes spin-animation {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(359deg); }
