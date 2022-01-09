@@ -80,7 +80,7 @@ class DB {
 				foreach($dataFields as $field => $value) {
 					if(!empty($field)) {
 						$fields[] = addslashes($field);
-						
+
 						if((is_numeric($value)) || ($value === 'now()'))
 							$values[] = $value;
 						elseif($value === NULL)
@@ -117,7 +117,11 @@ class DB {
 		}
 
 		//Do the sql command
-		if(!$result = $this->DBCon->query($com)) {
+		try {
+
+			$result = $this->DBCon->query($com);
+
+		} catch (Exception $e) {
 			if($errorAlert) {
 				$this->errorMonitor(
 					'MySQL error on '

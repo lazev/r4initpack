@@ -1,5 +1,7 @@
 var Fields = {
 
+	listActiveErrFields: {},
+
 	createFromFile: function(source, fieldsPrefix) {
 		return new Promise((resolve, reject) => {
 			if(!fieldsPrefix) fieldsPrefix = '';
@@ -403,9 +405,60 @@ var Fields = {
 
 	reset: function(elem) {
 		elem.reset();
-		elem.querySelectorAll('input').forEach(   elem => { elem.dispatchEvent(new Event('blur')); });
-		elem.querySelectorAll('select').forEach(  elem => { elem.dispatchEvent(new Event('blur')); });
-		elem.querySelectorAll('textarea').forEach(elem => { elem.dispatchEvent(new Event('blur')); });
+		elem.querySelectorAll('input, select, textarea').forEach(
+			elem => { elem.dispatchEvent(new Event('blur')); }
+		);
 		elem.querySelectorAll('input[R4Type=tags]').forEach(elem => { FieldsTags.clrTag(elem); });
+	},
+
+
+	objectize: function(elem) {
+		let r = {};
+
+		elem.querySelectorAll('input[name]:not([disabled]), select[name]:not([disabled])').forEach(elem => {
+			r[elem.getAttribute('name')] = Fields.getVal(elem);
+		});
+
+		elem.querySelectorAll('textarea[name]:not([disabled])').forEach(elem => {
+			r[elem.getAttribute('name')] = Fields.getVal(elem).replace(/\r?\n|\r/g, '\r\n');
+		});
+
+		return r;
+	},
+
+
+	setErrFields: function(err, prefix) {
+		if(err.errFields) {
+			var t, r;
+
+			for(var campo in err.errFields) {
+				$('#'+ prefix +'_'+ campo).classList.add('errField');
+
+				t = '';
+				err.errFields[campo].forEach(item => {
+					t += '» '+ item +'<br>';
+				});
+
+				r = Pop.hint($('#'+ prefix +'_'+ campo), t);
+
+				Fields.listActiveErrFields[r.id] = r.fn;
+			}
+		}
+	},
+
+
+	remErrFields: function(el) {
+		let id = el.id;
+		el.classList.remove('errField');
+		el.removeEventListener('mouseenter', Fields.listActiveErrFields[id]);
+		Fields.listActiveErrFields[id];
+		delete Fields.listActiveErrFields[id];
+	},
+
+
+	remAllErrFields: function() {
+		for(let id in Fields.listActiveErrFields) {
+			Fields.remErrFields($('#'+ id));
+		}
 	}
 };

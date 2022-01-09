@@ -226,9 +226,6 @@ var R4 = {
 		if (!opts)   opts   = {};
 		if (!params) params = {};
 
-
-
-
 		return new Promise(function(resolve, reject) {
 
 			let arr = [],
@@ -261,6 +258,7 @@ var R4 = {
 								Warning.show(jResp.errMsg, jResp.errObs);
 								reject(jResp);
 							} else {
+								console.log('A');
 								resolve(jResp);
 							}
 						} catch(err) {

@@ -17,12 +17,30 @@
 	background-color: inherit;
 }
 
+.R4Fields:not(.switch):not(.tags) > input:disabled,
+.R4Fields > textarea:disabled,
+.R4Fields > select:disabled {
+	background-color: lightgray;
+}
+
+.R4Fields:not(.switch):not(.tags) > input.errField,
+.R4Fields > textarea.errField,
+.R4Fields > select.errField {
+	border-bottom: 1px solid red;
+}
 
 .R4Fields:not(.switch):not(.tags) > input:focus,
 .R4Fields > textarea:focus,
 .R4Fields > select:focus {
 	outline: none;
 	border-bottom: 1px solid #337ab7;
+}
+
+.R4Fields:not(.switch):not(.tags) > input.errField:focus,
+.R4Fields > textarea.errField:focus,
+.R4Fields > select.errField:focus {
+	outline: none;
+	border-bottom: 1px solid red;
 }
 
 /*LABEL ======================================= */

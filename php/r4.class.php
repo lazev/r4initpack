@@ -7,8 +7,9 @@ class R4 {
 		echo json_encode($params);
 	}
 
-	public static function dieAPI($stat=0, $msg='', $obs='') {
-		echo '{"error": 1, "status": "'. $stat .'", "errMsg": "'. $msg .'", "errObs": "'. $obs .'"}';
+	public static function dieAPI($stat=0, $msg='', $obs='', $fields=[]) {
+		if(count($fields)) $jsonfields = ', "errFields":'. json_encode($fields);
+		echo '{"error": 1, "status": "'. $stat .'", "errMsg": "'. $msg .'", "errObs": "'. $obs .'"'. $jsonfields .'}';
 		require 'r4iniend.php';
 		die();
 	}
@@ -22,7 +23,7 @@ class R4 {
 		if(!isset($_SESSION[SYSTEMID][$index])) return null;
 		return $_SESSION[SYSTEMID][$index];
 	}
-	
+
 	public static function intArray($val) {
 		if(is_array($val)) {
 			$arr = $val;
@@ -33,18 +34,18 @@ class R4 {
 				$arr = [$val];
 			}
 		}
-	
+
 		foreach($arr as $item) {
 			$ret[] = (int)$item;
 		}
-		
+
 		return $ret;
 	}
-	
+
 	public static function mergeNewArr($old, $new) {
 		$merged  = [];
 		$changed = [];
-		
+
 		foreach($old as $key => $val) {
 			//Se o campo está informado no new
 			if(array_key_exists($key, $new)) {

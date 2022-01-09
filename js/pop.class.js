@@ -1,22 +1,31 @@
 var Pop = {
 	openPops: {},
 
+	listMouseOverHintFuncs: {},
+
 	//Pop.hint(elem, txt) - Cria hints ao posicionar o cursor do mouse
 	hint: function(el, txt) {
 		let popel;
 
-		el.addEventListener('mouseenter', function(){
+		fn = function(ev){
 			popel = Pop.create({
 				html: txt,
 				destiny: el,
 				classes: 'R4PopHint',
 				id: 'R4PopHint'+ R4.uniqid()
 			});
-		});
+		};
+
+		el.addEventListener('mouseenter', fn);
 
 		el.addEventListener('mouseleave', function(){
 			Pop.destroyElem(popel);
 		});
+
+		return {
+			id: el.id,
+			fn: fn
+		};
 
 	},
 
@@ -93,7 +102,6 @@ var Pop = {
 		}
 
 		if(topLeft.top+popPos.height > document.body.clientHeight) {
-			console.log('maio rque altura');
 			pop.style.top = topLeft.top-(topLeft.top+popPos.height-document.body.clientHeight)-destPos.height +'px';
 		}
 
