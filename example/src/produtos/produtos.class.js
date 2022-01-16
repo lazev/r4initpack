@@ -24,19 +24,16 @@ const Produtos = {
 
 
 	//Roda as funções de inicialização do módulo
-	init: () => {
-		return new Promise((resolve, reject) => {
+	init: callback => {
 
-			Produtos.getInit()
-			.then(res => {
-				Produtos.initForm();
-				Produtos.initList();
-				resolve();
-			})
-			.catch(err => {
-				reject(err);
-			});
+		Produtos.getInit(() => {
+			Produtos.initFilter();
 
+			Produtos.initForm();
+
+			Produtos.initList();
+
+			if(typeof callback == 'function') callback();
 		});
 	},
 
@@ -45,20 +42,34 @@ const Produtos = {
 	//Ela busca dados essenciais pro funcionamento do módulo.
 	//Por exemplo, pode buscar uma lista de situações ou categorias
 	//pra guardar na memória ao carregar a tela.
-	getInit: () => {
-		return new Promise((resolve, reject) => {
+	getInit: callback => {
 
-			R4.getJSON(Produtos.pathAjax, {com: 'getInit'})
+		R4.getJSON(Produtos.pathAjax, {com: 'getInit'})
 
-			.then(ret => {
-				Produtos.listaCores = ret.listaCores;
-				resolve();
-			})
+		.then(ret => {
+			Produtos.listaCores = ret.listaCores;
 
-			.catch(err => {
-				Warning.show('Erro ao buscar os dados iniciais', err);
-				reject(err);
-			});
+			if(typeof callback == 'function') callback();
+		})
+
+		.catch(err => {
+			Warning.show('Erro ao buscar os dados iniciais', err);
+			reject(err);
+		});
+	},
+
+
+	//Inicia os filtros da tela
+	initFilter: () => {
+		Fields.create([
+			{ id:'busca', type: 'text'   },
+			{ id:'btn',   type: 'submit', classes: 'bgInfo' }
+		], 'filtro');
+
+
+		$('#filtroProdutos').on('submit', function(ev) {
+			ev.preventDefault();
+			Produtos.filter();
 		});
 	},
 
@@ -120,9 +131,9 @@ const Produtos = {
 			],
 			withCheck:    true,
 			onLineClick:  value => { Produtos.edit(value);   },
-			onOrderBy:    value => { Produtos.filter(value); },
-			onPagination: value => { Produtos.filter(value); },
-			onRegPerPage: value => { Produtos.filter(value); }
+			onOrderBy:    value => { Produtos.filter(); },
+			onPagination: value => { Produtos.filter(); },
+			onRegPerPage: value => { Produtos.filter(); }
 		});
 	},
 
@@ -144,7 +155,7 @@ const Produtos = {
 	edit: idProduto => {
 		if(!idProduto) return;
 
-		R4.loadOverlay(true);
+		R4.blockScreen(true);
 
 		R4.getJSON(Produtos.pathAjax, {
 			com: 'read',
@@ -152,7 +163,7 @@ const Produtos = {
 		})
 
 		.then(ret => {
-			R4.loadOverlay(false);
+			R4.blockScreen(false);
 
 			Produtos.idProduto = ret.produto.id;
 
@@ -166,7 +177,8 @@ const Produtos = {
 		})
 
 		.catch(err => {
-			R4.loadOverlay(false);
+			R4.blockScreen(false);
+
 			Warning.show('Erro ao buscar os dados do produto');
 			console.log(err);
 		})
@@ -192,40 +204,31 @@ const Produtos = {
 
 		//.then é a função de retorno Ok
 		.then(ret => {
+			R4.blockScreen(false);
+
+			let btn = $new('<button type="button" class="R4">Detalhar</button>');
+			btn.on('click', function(ev) {
+				ev.preventDefault();
+				Produtos.edit(ret.produto.id);
+			});
 
 			//Função que faz pular na tela um aviso
-			Warning.show(
-				'Produto '+ ret.produto.id +' salvo com sucesso',
-
-				$new('button', {
-					html: 'Detalhar',
-					attr: {
-						type: 'button',
-						class: 'R4',
-					},
-					event: {
-						click: function(ev) {
-							ev.preventDefault();
-							Produtos.edit(ret.produto.id);
-						}
-					}
-				})
-			);
+			Warning.show('Produto '+ ret.produto.id +' salvo com sucesso', btn);
 
 			//Após salvar, roda a função definida.
 			//Dentro do próprio módulo, a função padrão
 			//é a de listar, para que as alterações
 			//já apareçam na lista
 			Produtos.onSave();
-			R4.blockScreen(false);
 
 			Dialog.close($('#formProdutos'));
 		})
 
 		//.catch é a função de retorno com erro
 		.catch(err => {
-			Produtos.onSaveError(err);
 			R4.blockScreen(false);
+
+			Produtos.onSaveError(err);
 		})
 	},
 
@@ -255,37 +258,23 @@ const Produtos = {
 			return;
 		}
 
-		let params = {
+		R4.getJSON(Produtos.pathAjax, {
 			com: 'delete',
 			ids: ids
-		}
-
-		R4.getJSON(Produtos.pathAjax, params)
+		})
 
 		.then(ret => {
 			if(ret.deleted.length) {
 
-
 				//Ao confirmar a exclusão, o sistema mostra no aviso
 				//um botão de desfazer a exclusão
+				let btn = $new('<button type="button" class="R4">Desfazer</button>');
+				btn.on('click', function(ev){
+					ev.preventDefault();
+					Produtos.undel(ret.deleted.join(','));
+				});
 
-				Warning.show(
-					'Itens excluidos: '+ ret.deleted.join(', '),
-
-					$new('button', {
-						html: 'Desfazer',
-						attr: {
-							type: 'button',
-							class: 'R4',
-						},
-						event: {
-							click: function(ev) {
-								ev.preventDefault();
-								Produtos.undel(ret.deleted.join(','));
-							}
-						}
-					})
-				);
+				Warning.show('Itens excluidos: '+ ret.deleted.join(', '), btn);
 
 				Produtos.list();
 			}
@@ -309,12 +298,10 @@ const Produtos = {
 			return;
 		}
 
-		let params = {
+		R4.getJSON(Produtos.pathAjax, {
 			com: 'undel',
 			ids: ids
-		}
-
-		R4.getJSON(Produtos.pathAjax, params)
+		})
 
 		.then(ret => {
 			if(ret.recovered.length) {
@@ -336,13 +323,9 @@ const Produtos = {
 	//essa função e ela chama a que lista. Se for só pra
 	//atualizar a lista, é só chamar direto a .list
 	filter: () => {
-		let filter = {};
-
-		//PEDRINHA: Click no onRegPerPage não tá funcionando
-
 		Produtos.list({
 			listParams: Table.getInfo($('#listaProdutos')),
-			listFilter: filter
+			listFilter: Fields.objectize($('#filtroProdutos'))
 		});
 	},
 
@@ -399,7 +382,7 @@ const Produtos = {
 			foot.push({
 				cells: [
 					'',
-					'TOTAL',
+					'TOTAL LISTADO',
 					R4.round(vTotal, 2)
 				]
 			});
@@ -416,30 +399,29 @@ const Produtos = {
 	},
 
 
+	//Usado pra outros módulos importarem o form desse módulo
 	importForm: () => {
-		return new Promise((resolve, reject) => {
 
-			R4.getHTML(Produtos.pathForm)
+		R4.getHTML(Produtos.pathForm)
 
-			.then(html => {
+		.then(html => {
 
-				let div = $new('div', {html: html});
+			let div = $new(html);
 
-				$('body').append(div.firstChild);
+			$('body').append(div);
 
-				R4.importCSS(Produtos.pathCSS);
-			})
+			R4.importCSS(Produtos.pathCSS);
 
-			.then(() => {
-				Produtos.getInit();
+			Produtos.getInit(() => {
 				Produtos.initForm();
 				Produtos.onSave = function(){};
-				resolve();
-			})
-
-			.catch(err => {
-				reject(err);
 			});
+
+			resolve();
+		})
+
+		.catch(err => {
+			reject(err);
 		});
 	}
 };

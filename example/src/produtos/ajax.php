@@ -31,9 +31,6 @@ switch($_REQUEST['com']) {
 
 	case 'read':
 
-		sleep(10);
-
-
 		$id = (int)$_REQUEST['idProduto'];
 
 		$dados = $produtos->read($id);

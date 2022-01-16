@@ -60,7 +60,7 @@ var $each = function(el, func) {
 var $new = function(html, fn) {
 	let parent = document.createElement('div');
 	parent.innerHTML = html;
-	let el = parent.firstChild;
+	let el = $(parent.firstChild);
 	return el;
 };
 

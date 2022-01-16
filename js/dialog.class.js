@@ -145,8 +145,6 @@ var Dialog = {
 				onCreate();
 			}
 
-			for(let k in style) modl.style[k] = style[k];
-
 			if(typeof onOpen === 'function') {
 				Dialog.onOpenFuncs[idElem] = onOpen;
 			}
@@ -162,6 +160,8 @@ var Dialog = {
 			if(open) {
 				Dialog.open(idElem);
 			}
+
+			for(let k in style) modl.style[k] = style[k];
 
 			resolve(idElem);
 		});

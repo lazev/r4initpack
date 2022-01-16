@@ -7,21 +7,32 @@ const Inicio = {
 	pathFields:     _CONFIG.rootURL +'inicio/fields.json',
 	pathAoSelConta: _CONFIG.rootURL +'produtos/',
 
-	init: () => {
-		Inicio.getInit();
-		Inicio.initForm();
-		Inicio.initFields();
+	init: callback => {
+
+		Inicio.getInit(() => {
+
+			Inicio.initForm();
+
+			Inicio.initFields();
+
+			if(typeof callback == 'function') callback();
+		});
+
 	},
 
 
-	getInit: () => {
+	getInit: callback => {
 		let params = {
 			com: 'getInit'
 		};
 		R4.getJSON(Inicio.pathAjax, params)
 		.then(ret => {
+
 			Inicio.setHTMLNome(ret.dados.userNome);
+
 			Inicio.setListaContas(ret.contas);
+
+			if(typeof callback == 'function') callback();
 		});
 	},
 
@@ -100,11 +111,11 @@ const Inicio = {
 	salvarNome: nome => {
 		if(!nome) return;
 
-		let params = {
+		R4.getJSON(Inicio.pathAjax, {
 			com: 'salvarNome',
 			val: nome
-		};
-		R4.getJSON(Inicio.pathAjax, params)
+		})
+
 		.then(ret => {
 			Inicio.setHTMLNome(ret.dados.userNome);
 		})
@@ -120,12 +131,11 @@ const Inicio = {
 
 	inserirConta: () => {
 
-		let params = {
+		R4.getJSON(Inicio.pathAjax, {
 			com: 'inserirConta',
 			nome: $('#inicioNomeConta').val()
-		};
+		})
 
-		R4.getJSON(Inicio.pathAjax, params)
 		.then(ret => {
 			Inicio.addHTMLConta(ret.dados);
 			Dialog.close($('#formCriarConta'));
@@ -134,33 +144,24 @@ const Inicio = {
 
 
 	addHTMLConta:  dados => {
+		let elem = $new(
+			'<div class="linhaConta" idConta="'+ dados.id +'">'+
+				'<div>'+ dados.id                    +'</div>'+
+				'<div>'+ dados.nome                  +'</div>'+
+				'<div>'+ R4.dateMask(dados.dtAcesso) +'</div>'+
+			'</div>'
+		);
 
-		let html = ''+
-			'<div>'+ dados.id                    +'</div>'+
-			'<div>'+ dados.nome                  +'</div>'+
-			'<div>'+ R4.dateMask(dados.dtAcesso) +'</div>';
+		elem.on('click', function(ev) {
 
-		let elem = $new('div', {
-			html: html,
+			R4.getJSON(Inicio.pathAjax, {
+				com: 'selConta',
+				id:  this.attr('idConta')
+			})
 
-			attr: {
-				class:  'linhaConta',
-				idConta: dados.id
-			},
-
-			event: {
-				click: function(event) {
-					let params = {
-						com: 'selConta',
-						id:  this.attr('idConta')
-					};
-
-					R4.getJSON(Inicio.pathAjax, params)
-					.then(ret => {
-						window.location = Inicio.pathAoSelConta;
-					});
-				}
-			}
+			.then(ret => {
+				window.location = Inicio.pathAoSelConta;
+			});
 		});
 
 		$('#boxContas').append(elem);

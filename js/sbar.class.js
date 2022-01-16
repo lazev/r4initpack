@@ -28,17 +28,15 @@ var Sbar = {
 
 	create: (opts) => {
 
-		let idElem       = opts.id;
-		let direction    = opts.direction;
-		let onOpen       = opts.onOpen;
-		let onClose      = opts.onClose;
-		let opened       = opts.opened;
-		let touchMonitor = opts.touchMonitor ?? true;
-		let classes      = [];
+		let idElem       = opts.id,
+		    direction    = opts.direction,
+		    onOpen       = opts.onOpen,
+		    onClose      = opts.onClose,
+		    opened       = opts.opened,
+		    touchMonitor = opts.touchMonitor ?? true,
+		    classes      = [];
 
-		let elem;
-
-		elem = document.getElementById(idElem);
+		let elem = document.getElementById(idElem);
 
 		if(!elem) return;
 

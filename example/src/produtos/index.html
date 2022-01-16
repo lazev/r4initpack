@@ -11,16 +11,25 @@
 
 		<!--R4TEMPLATE-innerHead-->
 
-		<nav class="onRight">
-			<button onclick="Produtos.insert()" class="R4 bgSuccess white bold"> + </button>
-			<button onclick="Produtos.delete('listaProdutos')" class="R4 bgDanger white bold"> x </button>
-		</nav>
 
 		<main>
 
 			<h2>
 				Produtos
 			</h2>
+
+			<nav class="row">
+				<button onclick="Produtos.insert()" class="R4 bgSuccess white bold"> + </button>
+				<button onclick="Produtos.delete('listaProdutos')" class="R4 bgDanger white bold"> x </button>
+
+				<form id="filtroProdutos" class="row col-6 onRight">
+					<div id="filtro_busca" class="col-4">Busca</div>
+					<div id="filtro_btn"   class="col-1">S</div>
+				</form>
+
+			</nav>
+
+
 
 			<div id="listaProdutos"></div>
 
@@ -34,8 +43,7 @@
 		<script defer src="produtos/produtos.class.js"></script>
 		<script>
 		const R4Init = () => {
-			Produtos.init()
-			.then(Produtos.list);
+			Produtos.init(Produtos.list);
 		}
 		</script>
 
