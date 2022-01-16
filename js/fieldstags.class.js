@@ -1,5 +1,7 @@
 FieldsTags = {
 
+	timeoutTimer: null,
+
 	dom: {},
 
 	create: (elem, info) => {
@@ -20,17 +22,23 @@ FieldsTags = {
 				ev.preventDefault();
 				FieldsTags.addTag(elem, elem.value);
 			}
+
 			else if(ev.keyCode == 13) {
 				ev.preventDefault();
 				if(info.typeahead) {
 					let listElem = elem.parentNode.querySelector('.typeAheadList');
 					let marked = listElem.querySelector('.marked');
 					if(marked) {
-						FieldsTags.addTag( elem, marked.querySelector('div').innerHTML );
+						FieldsTags.addTag(
+							elem,
+							marked.getAttribute('value'),
+							marked.querySelector('div').innerHTML
+						);
 						elem.parentNode.querySelector('.typeAheadList').innerHTML = '';
 					}
 				}
 			}
+
 			else if(ev.keyCode == 8) {
 				if(elem.value == '') {
 					FieldsTags.remTag(
@@ -39,9 +47,11 @@ FieldsTags = {
 					);
 				}
 			}
+
 			else if(ev.keyCode == 38) {
 				FieldsTags.typeAheadMarkItem(ev.target, -1);
 			}
+
 			else if(ev.keyCode == 40) {
 				FieldsTags.typeAheadMarkItem(ev.target, 1);
 			}
@@ -53,7 +63,6 @@ FieldsTags = {
 				FieldsTags.addTag(elem, elem.value);
 				FieldsTags.withContent(event.target);
 			}, 100);
-
 		});
 
 		elem.addEventListener('paste', function(event){
@@ -86,11 +95,10 @@ FieldsTags = {
 				if(typeof info.source == 'string') {
 					list = FieldsTags.typeAheadFilterList(eval(info.source), value);
 				}
+
 				else if(typeof info.source == 'object') {
 					list = FieldsTags.typeAheadFilterList(info.source, value);
 				}
-
-				destiny.innerHTML = '';
 
 				if(parseInt(info.minLength) > 0) {
 					if(value.length < info.minLength) return;
@@ -98,16 +106,27 @@ FieldsTags = {
 
 				listElem = FieldsTags.typeAheadFormatList(elem, list);
 
+				destiny.innerHTML = '';
 				destiny.appendChild(listElem);
 			}
+
 			else if(info.typeahead == 'function') {
 				if(typeof eval(info.source) === 'function') {
 
-					list = eval(info.source +'("'+ value +'")' );
+					clearTimeout(FieldsTags.timeoutTimer);
+					FieldsTags.timeoutTimer = setTimeout(function(){
 
-					listElem = FieldsTags.typeAheadFormatList(elem, list);
+						eval(info.source +'("'+ value +'")' )
 
-					destiny.appendChild(listElem);
+						.then(list => {
+
+							listElem = FieldsTags.typeAheadFormatList(elem, list);
+
+							destiny.innerHTML = '';
+							destiny.append(listElem);
+						});
+
+					}, 300);
 				}
 			}
 		};
@@ -152,9 +171,6 @@ FieldsTags = {
 
 	typeAheadFilterList: (source, value) => {
 
-		console.log(source);
-		console.log(value);
-
 		value = value.toLowerCase();
 
 		let ret = source.filter((item) => {
@@ -173,6 +189,7 @@ FieldsTags = {
 		});
 
 		ul.querySelectorAll('li').forEach(li => {
+
 			li.addEventListener('mouseenter', ev => {
 				ev.target.parentNode.querySelectorAll('li').forEach(item => {
 					item.classList.remove('marked');
@@ -180,8 +197,12 @@ FieldsTags = {
 				ev.target.classList.add('marked');
 			});
 
-			li.addEventListener('click', ev => {
-				FieldsTags.addTag( elem, ev.target.parentNode.querySelector('div').innerHTML );
+			li.addEventListener('click', function(ev) {
+				FieldsTags.addTag(
+					elem,
+					this.getAttribute('value'),
+					this.parentNode.querySelector('div').innerHTML
+				);
 				elem.focus();
 			});
 		});
@@ -223,7 +244,8 @@ FieldsTags = {
 	},
 
 
-	addTag: (elem, val) => {
+	addTag: (elem, val, label) => {
+
 		val = val.trim();
 
 		if(!val) return;
@@ -253,7 +275,8 @@ FieldsTags = {
 		el.classList.add('corner');
 		el.setAttribute('value', val);
 
-		let txt = document.createTextNode(val);
+		let txt = (label) ? label : val;
+		el.setAttribute('text', txt);
 
 		let rem = document.createElement('span');
 		rem.innerHTML = 'x';
@@ -263,7 +286,7 @@ FieldsTags = {
 		});
 
 		el.appendChild(rem);
-		el.appendChild(txt);
+		el.appendChild(document.createTextNode(txt));
 
 		elem.parentNode.querySelector('.tagList').appendChild(el);
 		elem.value = '';
@@ -310,6 +333,18 @@ FieldsTags = {
 		});
 		if(retArr) return ret;
 		return ret.join(',');
+	},
+
+
+	getText: (elem, retArr) => {
+
+		let ret = [];
+		elem.parentNode.querySelector('.tagList').querySelectorAll('.tagItem').forEach(el => {
+			ret.push(el.getAttribute('text'));
+		});
+		if(retArr) return ret;
+		return ret.join(',');
+
 	}
 
 };

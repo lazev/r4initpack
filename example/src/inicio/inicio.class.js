@@ -70,7 +70,7 @@ const Inicio = {
 			$('.labelUserNome').innerHTML = 'desconhecido <small><a href="#" id="linkTenhoNome">'
 			                              + 'Ei, eu tenho nome</a></small>';
 
-			Pop.push($('#linkTenhoNome'), {
+			Pop.click($('#linkTenhoNome'), {
 				preventDefault: true,
 				classes: 'paspatur',
 				html: '<div id="inputUserNome">Diga seu nome</div><div id="btnUserNome">Gravar</div>',

@@ -89,7 +89,7 @@ button.R4:active::after {
 /* Disabled */
 button.R4:disabled {
 	color: rgba(0, 0, 0, 0.38);
-	background-color: rgba(0, 0, 0, 0.12);
+	background-color: rgba(0, 0, 0, 0.12) !important;
 	box-shadow: none;
 	cursor: initial;
 }

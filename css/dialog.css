@@ -8,7 +8,7 @@
 	bottom: 0;
 	background-color: black;
 	background-color: rgba(0, 0, 0, 0.5);
-	z-index: 20;
+	z-index: 9999;
 	overflow: auto;
 }
 

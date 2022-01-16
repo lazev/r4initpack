@@ -50,6 +50,10 @@ SVG Icons - svgicons.sparkk.fr
 .onRight  { float: right;       }
 .onLeft   { float: left;        }
 
+.btnAlignFix {
+	padding-top: 10px;
+}
+
 .small {
 	color: gray;
 	font-size: 0.6rem;
@@ -195,7 +199,6 @@ small {
 
 
 /* DO NOT USE */
-
 .dialogOpen, .sbarOpen {
 	overflow: hidden;
 }

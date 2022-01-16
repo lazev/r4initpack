@@ -178,6 +178,8 @@ const Produtos = {
 	//definido o código em Produtos.idProduto
 	save: () => {
 
+		R4.blockScreen(true);
+
 		R4.getJSON(Produtos.pathAjax, {
 			com:        'save',
 			idProduto:  Produtos.idProduto,
@@ -215,21 +217,27 @@ const Produtos = {
 			//é a de listar, para que as alterações
 			//já apareçam na lista
 			Produtos.onSave();
+			R4.blockScreen(false);
 
 			Dialog.close($('#formProdutos'));
-
 		})
 
 		//.catch é a função de retorno com erro
 		.catch(err => {
-			Warning.show('Erro ao salvar o produto');
-			console.log(err);
+			Produtos.onSaveError(err);
+			R4.blockScreen(false);
 		})
 	},
 
 
 	onSave: id => {
 		Produtos.list();
+	},
+
+
+	onSaveError: err => {
+		Fields.setErrFields(err, 'prod');
+		console.log(err);
 	},
 
 

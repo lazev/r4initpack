@@ -115,10 +115,22 @@ var Dialog = {
 						});
 					}
 
+					if(strClasses.indexOf('R4DialogSaver') > -1) {
+						modl.addEventListener('keydown', function(ev) {
+							if(ev.keyCode == 13 && ev.ctrlKey) {
+								if(!btn.disabled) {
+									btn.trigger('click');
+								}
+							}
+						});
+					}
+
 					btn.setAttribute('class', strClasses);
 					btn.innerHTML = item.label;
 
 					if(item.id) btn.setAttribute('id', item.id);
+
+					if(item.disabled) btn.disabled = true;
 
 					if(typeof item.onClick === 'function') {
 						btn.addEventListener('click', item.onClick);

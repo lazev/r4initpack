@@ -53,6 +53,13 @@ var Warning = {
 
 	hide: function(elem) {
 		elem.remove();
+	},
+
+
+	hideAll: function() {
+		document.querySelectorAll('.R4Warning').forEach(elem => {
+			elem.remove();
+		});
 	}
 
 };

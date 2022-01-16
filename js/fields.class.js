@@ -244,20 +244,37 @@ var Fields = {
 				}
 			}
 
+			let opt;
+
 			for(let k in item.options) {
 				if(typeof item.options[k] == 'string') {
-					let opt = document.createElement('option');
+					opt = document.createElement('option');
 
 					opt.setAttribute('value', k);
+					opt.innerHTML = item.options[k];
 
 					if(item.value == k) {
 						opt.setAttribute('selected', 'selected');
 						withContent = true;
 					}
 
-					opt.innerHTML = item.options[k];
-
 					elem.append(opt);
+				}
+				else if(typeof item.options[k] == 'object') {
+					if(typeof item.options[k].key == 'string') {
+
+						opt = document.createElement('option');
+
+						opt.setAttribute('value', item.options[k].key);
+						opt.innerHTML = item.options[k].value;
+
+						if(item.value == item.options[k].key) {
+							opt.setAttribute('selected', 'selected');
+							withContent = true;
+						}
+
+						elem.append(opt);
+					}
 				}
 			}
 		}
@@ -406,9 +423,14 @@ var Fields = {
 	reset: function(elem) {
 		elem.reset();
 		elem.querySelectorAll('input, select, textarea').forEach(
-			elem => { elem.dispatchEvent(new Event('blur')); }
+			el => { el.dispatchEvent(new Event('blur')); }
 		);
-		elem.querySelectorAll('input[R4Type=tags]').forEach(elem => { FieldsTags.clrTag(elem); });
+		elem.querySelectorAll('input[R4Type=password]').forEach(
+			el => { el.setAttribute('type', 'password'); }
+		);
+		elem.querySelectorAll('input[R4Type=tags]').forEach(
+			el => { FieldsTags.clrTag(el); }
+		);
 	},
 
 

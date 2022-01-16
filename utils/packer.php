@@ -48,6 +48,35 @@ foreach($content as $file => $html) {
 }
 
 
+/*
+function searchAll($rootFolder, $ext) {
+	global $headerFile;
+
+	$allContent = [];
+
+	$arrFiles = scandir($rootFolder);
+
+	foreach($arrFiles as $file) {
+		if(substr($file, 0, 1) == '.')   continue;
+		if(is_link($rootFolder . $file)) continue;
+
+		if(is_dir($rootFolder . $file))  {
+
+			$allContent = array_merge($allContent, searchAll($rootFolder . $file .'/', $ext));
+
+		} else {
+
+			if(in_array(pathinfo($rootFolder . $file, PATHINFO_EXTENSION), $ext)) {
+				$allContent[$rootFolder . $file] = file_get_contents($rootFolder . $file);
+			}
+		}
+	}
+
+	return $allContent;
+}
+//*/
+
+
 function getFilesContent($dir, $ext) {
 	$allContent = [];
 	if($handle = opendir($dir)) {

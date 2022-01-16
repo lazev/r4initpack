@@ -224,7 +224,7 @@ var Table = {
 			}
 
 			if(line.classes) {
-				if(line.classes[position]) td.classList.add(line.classes[position]);
+				if(line.classes[position]) td.setAttribute('class', line.classes[position]);
 			}
 
 			tr.appendChild(td);
@@ -493,6 +493,8 @@ var Table = {
 					);
 
 					Table.dom[idDestiny].onRegPerPage(item);
+
+					Pop.destroyAll(true);
 				}
 			});
 
@@ -502,7 +504,8 @@ var Table = {
 		let btnSel = document.createElement('button');
 		btnSel.setAttribute('class', 'R4 bgWhite grey');
 		btnSel.innerHTML = 'reg/pag';
-		Pop.push(btnSel, { html: ul });
+
+		Pop.click(btnSel, { html: ul });
 
 		let rcpt = document.createElement('div');
 		rcpt.setAttribute('class', 'col-2 R4TableRegPerPage');

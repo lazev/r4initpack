@@ -32,7 +32,7 @@ let methods = {
 
 
 //Seletor de elementos (dom)
-$ = function(el) {
+var $ = function(el) {
 
 	let elem, k;
 
@@ -48,7 +48,7 @@ $ = function(el) {
 
 
 //Roda uma função em uma lista de elementos
-$each = function(el, func) {
+var $each = function(el, func) {
 	let list = document.querySelectorAll(el);
 	list.forEach((item, key) => {
 		func( $(item), key );
@@ -57,25 +57,11 @@ $each = function(el, func) {
 
 
 //Criador de elementos
-$new = function(tag, params) {
-
-	let k;
-	let el = document.createElement(tag);
-
-	let content = params.html  ?? '';
-	let attr    = params.attr  ?? {};
-	let event   = params.event ?? {};
-
-	if(typeof content === 'string') {
-		el.insertAdjacentHTML('beforeend', content);
-	} else if (content instanceof Element) {
-		el.appendChild(content.cloneNode(true));
-	}
-
-	for(k in attr)  el.setAttribute(k, attr[k]);
-	for(k in event) el.addEventListener(k, event[k]);
-
-	return $(el);
+var $new = function(html, fn) {
+	let parent = document.createElement('div');
+	parent.innerHTML = html;
+	let el = parent.firstChild;
+	return el;
 };
 
 
@@ -102,8 +88,11 @@ var R4 = {
 			}
 		});
 
-		document.addEventListener('mousedown', function(event) {
-			Pop.destroyAll();
+		window.addEventListener('click', function(ev) {
+			if(ev.target.tagName.toLowerCase() != 'button') {
+				Pop.destroyAll();
+				Warning.hideAll();
+			}
 		});
 	},
 
@@ -163,6 +152,7 @@ var R4 = {
 		     + dt.substr(3, 2) +'-'
 		     + dt.substr(0, 2);
 	},
+
 
 	round: function(num, dec) {
 		if(!num) return 0;
@@ -258,7 +248,6 @@ var R4 = {
 								Warning.show(jResp.errMsg, jResp.errObs);
 								reject(jResp);
 							} else {
-								console.log('A');
 								resolve(jResp);
 							}
 						} catch(err) {
@@ -277,10 +266,18 @@ var R4 = {
 	},
 
 
-	loadOverlay: function(bool) {
+	blockScreen: function(bool) {
 		if(bool) {
+			$each('button:enabled', function(item){
+				item.disabled = true;
+				item.classList.add('R4Disabled');
+			});
 			$('.loadOverlay').classList.remove('hidden');
 		} else {
+			$each('button.R4Disabled', function(item){
+				item.disabled = false;
+				item.classList.remove('R4Disabled');
+			});
 			$('.loadOverlay').classList.add('hidden');
 		}
 	},
@@ -455,7 +452,6 @@ var R4 = {
 			return retElem.firstChild;
 		}
 	},
-
 
 
 	render2: (templateElem, payload) => {

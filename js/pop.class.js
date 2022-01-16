@@ -31,11 +31,11 @@ var Pop = {
 
 
 	//Pop.push(elem, opts) - cria box ao clicar com o mouse
-	push: function(el, opts) {
+	click: function(el, opts) {
 		el.addEventListener('click', function(ev){
 			if(opts.preventDefault) ev.preventDefault();
 			opts.destiny = el;
-			Pop.create(opts);
+			return Pop.create(opts);
 		});
 	},
 
@@ -92,7 +92,7 @@ var Pop = {
 			left: destPos.left   + window.pageXOffset
 		};
 
-		pop.style.top  = topLeft.top + 'px';
+		pop.style.top  = topLeft.top  + 'px';
 		pop.style.left = topLeft.left + 'px';
 
 		let popPos = pop.getBoundingClientRect();

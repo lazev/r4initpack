@@ -115,9 +115,11 @@
 }
 
 .R4Fields.tags > .typeAheadList {
+	z-index: 20;
 	position: absolute;
 	margin-top: 40px;
 	background: white;
+	width: 100%;
 }
 
 .R4Fields.tags > .typeAheadList > ul {

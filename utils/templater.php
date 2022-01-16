@@ -35,7 +35,7 @@ function searchAll($rootFolder, $version, $head) {
 		if(substr($file, 0, 1) == '.') continue;
 		if($rootFolder . $file == $headerFile) continue;
 
-		if(is_dir($rootFolder . $file)) {
+		if(is_dir($rootFolder . $file) && !is_link($rootFolder . $file))  {
 
 			searchAll($rootFolder . $file .'/', $version, $head);
 
@@ -68,7 +68,7 @@ function moduleSearchAll($rootFolder) {
 		if(substr($file, 0, 1) == '.') continue;
 		if($rootFolder . $file == $headerFile) continue;
 
-		if(is_dir($rootFolder . $file)) {
+		if(is_dir($rootFolder . $file) && !is_link($rootFolder . $file)) {
 
 			if($file == 'templates') {
 
