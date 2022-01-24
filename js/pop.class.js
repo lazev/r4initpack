@@ -126,6 +126,17 @@ var Pop = {
 	},
 
 
+	destroyAllExcept: function(idExcept) {
+		for(let idElem in Pop.openPops) {
+			if(idExcept != idElem) {
+				if(Pop.openPops[idElem]) {
+					Pop.destroyById(idElem);
+				}
+			}
+		};
+	},
+
+
 	destroyById: function(idElem, force) {
 		let elem = document.getElementById(idElem);
 		Pop.destroyElem(elem, force);

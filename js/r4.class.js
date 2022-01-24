@@ -50,9 +50,14 @@ var $ = function(el) {
 //Roda uma função em uma lista de elementos
 var $each = function(el, func) {
 	let list = document.querySelectorAll(el);
-	list.forEach((item, key) => {
-		func( $(item), key );
-	});
+
+	if(typeof func === 'function') {
+		list.forEach((item, key) => {
+			func( $(item), key );
+		});
+	}
+
+	return list;
 };
 
 
@@ -88,9 +93,9 @@ var R4 = {
 			}
 		});
 
-		window.addEventListener('click', function(ev) {
+		document.addEventListener('click', function(ev) {
 			if(ev.target.tagName.toLowerCase() != 'button') {
-				Pop.destroyAll();
+				Pop.destroyAllExcept(ev.target.getAttribute('R4PopTarget'));
 				Warning.hideAll();
 			}
 		});
@@ -212,6 +217,155 @@ var R4 = {
 	},
 
 
+	stripAccents: function(str) {
+
+		let out = [
+			'À','Á','Â','Ã','Ä','Å','à','á','â','ã','ä','å','Ò','Ó','Ô','Õ','Õ','Ö','Ø',
+			'ò','ó','ô','õ','ö','ø','È','É','Ê','Ë','è','é','ê','ë','ð','Ç','ç','Ð',
+			'Ì','Í','Î','Ï','ì','í','î','ï','Ù','Ú','Û','Ü','ù','ú','û','ü','Ñ','ñ',
+			'Š','š','Ÿ','ÿ','ý','Ž','ž'];
+
+		let inx = [
+			'A','A','A','A','A','A','a','a','a','a','a','a','O','O','O','O','O','O','O',
+			'o','o','o','o','o','o','E','E','E','E','e','e','e','e','e','C','c','D',
+			'I','I','I','I','i','i','i','i','U','U','U','U','u','u','u','u','N','n',
+			'S','s','Y','y','y','Z','z'];
+
+		for(var i = 0; i < out.length; i++) {
+			str = str.replaceAll(out[i], inx[i]);
+		}
+
+		return str;
+	},
+
+
+	friendlyName: function(v) {
+		v = R4.stripAccents(v);
+
+		let allowedchars = 'abcdefghijklmnopqrstuvwxyz.0123456789-_@'
+
+		let ret = '';
+		for(var i = 0; i < v.length; i++)
+			if(allowedchars.indexOf(v[i].toLowerCase()) > -1)
+				ret += v[i];
+
+		return ret;
+	},
+
+
+	onlyNumbers: function(v) {
+		return v.replace(/\D/g, '');
+	},
+
+
+	integerMask: function(v) {
+		return v.replace(/([^0-9-])/g, '');
+	},
+
+
+	decimalMask: function(v) {
+		return v.replace(/([^0-9-.,])/g, '');
+	},
+
+
+	cepMask: function(v) {
+		return v
+			.replace(/\D/g, '')
+			.replace(/^(\d{5})(\d)/, '$1-$2');
+	},
+
+
+	phoneMask: function(v) {
+		return v
+			.replace(/\D/g, '')
+			.replace(/^(\d\d)(\d)/g, '($1) $2')
+			.replace(/(\d{4})(\d)/, '$1-$2');
+	},
+
+
+	cpfcnpjMask: function(v) {
+		v = v.replace(/\D/g, '');
+		if(v.length < 12) return R4.cpfMask(v);
+		else return R4.cnpjMask(v);
+	},
+
+
+	cpfMask: function(v){
+		return v
+			.replace(/\D/g, '')
+			.replace(/(\d{3})(\d)/, '$1.$2')
+			.replace(/(\d{3})(\d)/, '$1.$2')
+			.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+	},
+
+
+	cnpjMask: function(v){
+		return v
+			.replace(/\D/g, '')
+			.replace(/(\d{2})(\d)/, '$1.$2')
+			.replace(/(\d{3})(\d)/, '$1.$2')
+			.replace(/(\d{3})(\d)/, '$1/$2')
+			.replace(/(\d{4})(\d)/, '$1-$2');
+
+	},
+
+
+/*
+function soNumeros(v){
+    return v.replace(/\D/g,"")
+}
+function telefone(v){
+    v=v.replace(/\D/g,"")                 //Remove tudo o que não é dígito
+    v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parênteses em volta dos dois primeiros dígitos
+    v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hífen entre o quarto e o quinto dígitos
+    return v
+}
+function cpf(v){
+    v=v.replace(/\D/g,"")                    //Remove tudo o que não é dígito
+    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
+    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
+                                             //de novo (para o segundo bloco de números)
+    v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hífen entre o terceiro e o quarto dígitos
+    return v
+}
+function cep(v){
+    v=v.replace(/D/g,"")                //Remove tudo o que não é dígito
+    v=v.replace(/^(\d{5})(\d)/,"$1-$2") //Esse é tão fácil que não merece explicações
+    return v
+}
+
+function telefone(v){
+    v=v.replace(/\D/g,"")                 //Remove tudo o que não é dígito
+    v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parênteses em volta dos dois primeiros dígitos
+    v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hífen entre o quarto e o quinto dígitos
+    return v
+}
+function cpf(v){
+    v=v.replace(/\D/g,"")                    //Remove tudo o que não é dígito
+    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
+    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
+                                             //de novo (para o segundo bloco de números)
+    v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hífen entre o terceiro e o quarto dígitos
+    return v
+}
+function mdata(v){
+    v=v.replace(/\D/g,"");
+    v=v.replace(/(\d{2})(\d)/,"$1/$2");
+    v=v.replace(/(\d{2})(\d)/,"$1/$2");
+
+    v=v.replace(/(\d{2})(\d{2})$/,"$1$2");
+    return v;
+}
+function mcc(v){
+    v=v.replace(/\D/g,"");
+    v=v.replace(/^(\d{4})(\d)/g,"$1 $2");
+    v=v.replace(/^(\d{4})\s(\d{4})(\d)/g,"$1 $2 $3");
+    v=v.replace(/^(\d{4})\s(\d{4})\s(\d{4})(\d)/g,"$1 $2 $3 $4");
+    return v;
+}
+*/
+
+
 	getJSON: function(url, params, opts) {
 		if (!opts)   opts   = {};
 		if (!params) params = {};
@@ -246,6 +400,9 @@ var R4 = {
 
 							if(jResp.error === 1) {
 								Warning.show(jResp.errMsg, jResp.errObs);
+								if(jResp.status == 401) {
+									window.location = _CONFIG.rootURL +'login/';
+								}
 								reject(jResp);
 							} else {
 								resolve(jResp);

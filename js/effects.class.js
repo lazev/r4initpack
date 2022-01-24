@@ -9,7 +9,7 @@ var Effects = {
 		let height = elem.scrollHeight + 'px';
 		elem.style.display = '';
 
-		elem.classList.add('is-visible');
+		elem.classList.add('isVisible');
 		elem.style.height = height;
 
 		window.setTimeout(function () {
@@ -24,7 +24,7 @@ var Effects = {
 	slideUp: function(elem, callback) {
 
 		elem.classList.add('slider');
-		elem.classList.add('is-visible');
+		elem.classList.add('isVisible');
 
 		elem.style.height = elem.scrollHeight + 'px';
 
@@ -33,7 +33,7 @@ var Effects = {
 		}, 1);
 
 		window.setTimeout(function () {
-			elem.classList.remove('is-visible');
+			elem.classList.remove('isVisible');
 
 			if(typeof callback == 'function') callback(elem);
 		}, 200);

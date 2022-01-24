@@ -46,7 +46,6 @@
 .col-xs-10 { width: 79.33%; }
 .col-xs-11 { width: 87.66%; }
 .col-xs-12 { width: 96%;    }
-.hidden-xs { display: none; }
 
 
 @media only screen and (min-width: 33.75em) {  /* 540px */
@@ -54,6 +53,11 @@
 		width: 80%;
 	}
 }
+
+@media only screen and (max-width: 45em) {  /* 720px */
+	.hidden-xs { display: none !important; }
+}
+
 
 @media only screen and (min-width: 45em) {  /* 720px */
 	.col-1     { width: 4.33%;   }
@@ -68,7 +72,7 @@
 	.col-10    { width: 79.33%;  }
 	.col-11    { width: 87.66%;  }
 	.col-12    { width: 96%;     }
-	.hidden-xs { display: block; }
+	.hidden-sm { display: none !important; }
 }
 
 @media only screen and (min-width: 60em) { /* 960px */

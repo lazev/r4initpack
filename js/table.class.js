@@ -68,10 +68,10 @@ var Table = {
 
 		let info = Table.getInfo(destiny);
 
-		if(params.orderBy)     info.orderBy     = params.orderBy.trim();
-		if(params.currentPage) info.currentPage = params.currentPage;
-		if(params.regPerPage)  info.regPerPage  = params.regPerPage;
-		if(params.totalReg)    info.totalReg    = params.totalReg;
+		if(typeof params.orderBy     !== 'undefined') info.orderBy     = params.orderBy.trim();
+		if(typeof params.currentPage !== 'undefined') info.currentPage = params.currentPage;
+		if(typeof params.regPerPage  !== 'undefined') info.regPerPage  = params.regPerPage;
+		if(typeof params.totalReg    !== 'undefined') info.totalReg    = params.totalReg;
 
 		destiny.setAttribute('orderBy',     info.orderBy     );
 		destiny.setAttribute('currentPage', info.currentPage );

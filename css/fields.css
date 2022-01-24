@@ -67,12 +67,26 @@
 	color: #337ab7;
 }
 
+/* DATE ================================= */
+input[type="date"]:in-range::-webkit-datetime-edit-year-field,
+input[type="date"]:in-range::-webkit-datetime-edit-month-field,
+input[type="date"]:in-range::-webkit-datetime-edit-day-field,
+input[type="date"]:in-range::-webkit-datetime-edit-text,
+input[type="datetime-local"]:in-range::-webkit-datetime-edit-year-field,
+input[type="datetime-local"]:in-range::-webkit-datetime-edit-month-field,
+input[type="datetime-local"]:in-range::-webkit-datetime-edit-day-field,
+input[type="datetime-local"]:in-range::-webkit-datetime-edit-text {
+	color: transparent;
+}
+
 /* PASSWORD EYE ================================= */
 .R4Fields > .passEye {
 	margin-left: -30px;
 	cursor: pointer;
 	position: relative;
 }
+
+td div{position:relative;}
 
 
 /* TAGS ================================= */

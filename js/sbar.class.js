@@ -85,8 +85,6 @@ var Sbar = {
 		else if(direction == 'down') elem.style.top    = 0;
 		else if(direction == 'up')   elem.style.bottom = 0;
 
-		document.getElementsByTagName('body')[0].classList.add('sbarOpen');
-
 		Sbar.opened[idElem] = 1;
 
 		if(typeof Sbar.onOpenFuncs[direction][idElem] == 'function') {

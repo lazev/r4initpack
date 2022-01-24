@@ -116,7 +116,7 @@ body, html {
 
 body {
 	font-weight: 400;
-	background: #F1F3F4;
+	background: #FAFDFB;
 }
 
 a {
@@ -198,12 +198,6 @@ small {
 }
 
 
-/* DO NOT USE */
-.dialogOpen, .sbarOpen {
-	overflow: hidden;
-}
-
-
 .R4Sbar {
 	overflow: auto;
 }
@@ -216,7 +210,7 @@ small {
 	transition: height 200ms ease-in-out, opacity 300ms ease-in-out;
 }
 
-.slider.is-visible {
+.slider.isVisible {
 	display: block;
 	height: auto;
 	opacity: 1;

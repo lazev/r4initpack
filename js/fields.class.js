@@ -86,7 +86,7 @@ var Fields = {
 
 	createInput: function(item, prefix) {
 
-		let elem, type, label, passEye, wrapClass, tagList;
+		let elem, type, inputmode, label, passEye, wrapClass, tagList;
 
 		let id   = (prefix)   ? prefix +'_'+ item.id : item.id;
 		let name = item.name || item.id;
@@ -118,6 +118,10 @@ var Fields = {
 
 					break;
 
+				case 'username':
+					elem.addEventListener('input', function(ev){ this.value = R4.friendlyName(this.value); });
+					break;
+
 				case 'password':
 					type = item.type;
 					passEye = document.createElement('span');
@@ -131,9 +135,20 @@ var Fields = {
 					});
 					break;
 
+				case 'date':
+					type = 'date';
+					break;
+
+				case 'datetime':
+					type = 'datetime-local';
+					break;
+
 				case 'integer':
 				case 'integer-':
-					type = 'number';
+					type = 'text';
+					inputmode = 'numeric';
+
+					elem.addEventListener('input', function(ev){ this.value = R4.integerMask(this.value); });
 
 					if(item.type == 'integer') {
 						if(item.min < 0) item.min = 0;
@@ -141,8 +156,29 @@ var Fields = {
 					break;
 
 				case 'money':
+				case 'money-':
 				case 'decimal':
+				case 'decimal-':
 					type = 'text';
+					inputmode = 'decimal';
+
+					elem.addEventListener('input', function(ev){ this.value = R4.decimalMask(this.value); });
+
+					break;
+
+				case 'cep':
+					type = 'tel';
+					elem.addEventListener('input', function(ev){ this.value = R4.cepMask(this.value); });
+					break;
+
+				case 'cpfcnpj':
+					type = 'tel';
+					elem.addEventListener('input', function(ev){ this.value = R4.cpfcnpjMask(this.value); });
+					break;
+
+				case 'phone':
+					type = 'tel';
+					elem.addEventListener('input', function(ev){ this.value = R4.phoneMask(this.value); });
 					break;
 
 				default:
@@ -151,6 +187,7 @@ var Fields = {
 		}
 
 		if(type)             attrib.type        = type;
+		if(inputmode)        attrib.inputmode   = inputmode;
 		if(item.value)       attrib.value       = item.value;
 		if(item.min)         attrib.min         = item.min;
 		if(item.max)         attrib.max         = item.max;
@@ -293,7 +330,7 @@ var Fields = {
 		}
 
 		elem.addEventListener('blur', function(event){
-			if(event.target.value && event.target.value != 0) {
+			if(this.selectedIndex > -1 && this.options[this.selectedIndex].innerHTML) {
 				wrap.classList.add('withContent');
 			} else {
 				wrap.classList.remove('withContent');
@@ -393,7 +430,13 @@ var Fields = {
 			switch(type) {
 				case 'switch': return (elem.checked) ? elem.value : 0;
 				case 'money':  return R4.toUSNumber(elem.value);
+				case 'date':   return R4.dateUnmask(elem.value);
 				case 'tags':   return FieldsTags.getVal(elem);
+				case 'cpfcnpj':
+				case 'cpf':
+				case 'cnpj':
+				case 'cep':
+				case 'phone':  return R4.onlyNumbers(elem.value);
 				default:       return elem.value;
 			}
 		}
@@ -409,6 +452,20 @@ var Fields = {
 				break;
 			case 'money':
 				elem.value = R4.toEUNumber(value);
+				break;
+			case 'cpf':
+			case 'cnpj':
+			case 'cpfcnpj':
+				elem.value = R4.cpfcnpjMask(value);
+				break;
+			case 'date':
+				elem.value = R4.dateMask(value);
+				break;
+			case 'phone':
+				elem.value = R4.phoneMask(value);
+				break;
+			case 'cep':
+				elem.value = R4.cepMask(value);
 				break;
 			case 'tags':
 				FieldsTags.setVal(elem, value);
