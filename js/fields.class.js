@@ -110,11 +110,17 @@ var Fields = {
 
 			switch(item.type) {
 				case 'tags':
+				case 'mailtags':
+				case 'phonetags':
 					wrapClass = 'tags';
 					tagList = document.createElement('span');
 					tagList.classList.add('tagList');
 
 					elem = FieldsTags.create(elem, item);
+
+					if(item.type == 'phonetags') {
+						elem.addEventListener('input', function(ev){ this.value = R4.phoneMask(this.value); });
+					}
 
 					break;
 
@@ -136,11 +142,21 @@ var Fields = {
 					break;
 
 				case 'date':
-					type = 'date';
+					type = 'text';
+
+					elem.addEventListener('focus', function(ev){
+						Pop.create({
+							destiny: elem,
+							html: FieldsDtPicker.create(elem)
+						})
+					});
+
+					inputmode = 'date';
 					break;
 
 				case 'datetime':
-					type = 'datetime-local';
+					type = 'text';
+					inputmode = 'datetime-local';
 					break;
 
 				case 'integer':
@@ -428,16 +444,18 @@ var Fields = {
 		} else {
 			let type = elem.getAttribute('R4Type');
 			switch(type) {
-				case 'switch': return (elem.checked) ? elem.value : 0;
-				case 'money':  return R4.toUSNumber(elem.value);
-				case 'date':   return R4.dateUnmask(elem.value);
-				case 'tags':   return FieldsTags.getVal(elem);
+				case 'switch':    return (elem.checked) ? elem.value : 0;
+				case 'money':     return R4.toUSNumber(elem.value);
+				case 'date':      return R4.dateUnmask(elem.value, '0000-00-00');
+				case 'tags':
+				case 'mailtags':
+				case 'phonetags': return FieldsTags.getVal(elem);
 				case 'cpfcnpj':
 				case 'cpf':
 				case 'cnpj':
 				case 'cep':
-				case 'phone':  return R4.onlyNumbers(elem.value);
-				default:       return elem.value;
+				case 'phone':     return R4.onlyNumbers(elem.value);
+				default:          return elem.value;
 			}
 		}
 	},
@@ -468,6 +486,8 @@ var Fields = {
 				elem.value = R4.cepMask(value);
 				break;
 			case 'tags':
+			case 'mailtags':
+			case 'phonetags':
 				FieldsTags.setVal(elem, value);
 				break;
 			default:

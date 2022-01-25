@@ -317,10 +317,18 @@ FieldsTags = {
 			if(val.indexOf(',') > -1) {
 				let arr = val.split(',');
 				arr.forEach(item => {
-					FieldsTags.addTag(elem, item);
+					if(elem.getAttribute('R4Type') == 'phonetags') {
+						FieldsTags.addTag(elem, R4.phoneMask(item));
+					} else {
+						FieldsTags.addTag(elem, item);
+					}
 				});
 			} else {
-				FieldsTags.addTag(elem, val);
+				if(elem.getAttribute('R4Type') == 'phonetags') {
+					FieldsTags.addTag(elem, R4.phoneMask(val));
+				} else {
+					FieldsTags.addTag(elem, val);
+				}
 			}
 		}
 	},
@@ -331,6 +339,13 @@ FieldsTags = {
 		elem.parentNode.querySelector('.tagList').querySelectorAll('.tagItem').forEach(el => {
 			ret.push(el.getAttribute('value'));
 		});
+
+		if(elem.getAttribute('R4Type') == 'phonetags') {
+			ret.forEach(function(item, key){
+				ret[key] = R4.onlyNumbers(item);
+			});
+		}
+
 		if(retArr) return ret;
 		return ret.join(',');
 	},

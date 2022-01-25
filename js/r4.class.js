@@ -27,6 +27,10 @@ let methods = {
 		} else {
 			this.setAttribute(name, value);
 		}
+	},
+
+	visible: function() {
+		return (this.offsetParent !== null);
 	}
 };
 
@@ -143,6 +147,7 @@ var R4 = {
 
 	dateMask: function(dt) {
 		if(!dt) return '';
+		if(dt == '0000-00-00' || dt == '0000-00-00 00:00:00') return '';
 
 		return dt.substr(8, 2) +'/'
 		     + dt.substr(5, 2) +'/'
@@ -150,8 +155,8 @@ var R4 = {
 	},
 
 
-	dateUnmask: function(dt) {
-		if(!dt) return '';
+	dateUnmask: function(dt, ifempty) {
+		if(!dt) return ifempty ?? '';
 
 		return dt.substr(6, 4) +'-'
 		     + dt.substr(3, 2) +'-'

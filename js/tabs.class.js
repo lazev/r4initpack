@@ -46,9 +46,6 @@ var Tabs = {
 				let newTargetId = item.getAttribute('target');
 				let itemColor = item.getAttribute('color');
 
-				item.style.backgroundColor = itemColor;
-				elem.style.borderColor = itemColor;
-
 				if(newTargetId) {
 					if(typeof onClick === 'function') onClick(newTargetId);
 					newTarget = document.getElementById(newTargetId);
@@ -66,6 +63,8 @@ var Tabs = {
 				});
 
 				item.classList.add('R4TabOn');
+				item.style.backgroundColor = itemColor;
+				elem.style.borderColor = itemColor;
 
 			});
 		});
