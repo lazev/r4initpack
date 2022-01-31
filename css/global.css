@@ -225,7 +225,7 @@ small {
 	border: 1px solid #c9c9c9;
 	border-radius: 2px;
 	position: absolute;
-	z-index: 50;
+	z-index: 5050;
 }
 
 .R4PopHint {

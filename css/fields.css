@@ -68,6 +68,23 @@
 }
 
 
+/* DATE PICKER ================================= */
+
+.R4FieldsDtPicker .selDay {
+	border: 1px solid blue;
+	border-radius: 2px;
+}
+
+
+.R4FieldsDtPicker button,
+.R4FieldsDtPicker select {
+	color: #333;
+	background-color: white;
+	height: 25px;
+	border: 1px solid grey;
+	border-radius: 2px;
+}
+
 /* PASSWORD EYE ================================= */
 .R4Fields > .passEye {
 	margin-left: -30px;

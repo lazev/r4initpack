@@ -133,6 +133,152 @@ var R4 = {
 	},
 
 
+	isDate: function(x) {
+		if(x.indexOf('-') == -1) return false;
+		else if (x.indexOf('-') == x.lastIndexOf('-')) return false;
+		else {
+			year  = x.substring(0, x.indexOf('-'));
+			month = x.substring(x.indexOf('-')+1,     x.lastIndexOf('-'));
+			day   = x.substring(x.lastIndexOf('-')+1, x.length);
+
+			if(
+				(month>12) || (month < 1) || (year.length == 3)
+				|| ((year%4!=0) && (month==2) && (day==29))
+				|| ((month==2) && (day>29))
+				|| (
+						((month==4) || (month==6) || (month==9) || (month==11))
+					&& (day > 30)
+				)
+				|| (
+						((month==1) || (month==3)  || (month==5)   || (month==7)
+					|| (month==8)  || (month==10) || (month==12)) && (day > 31)
+				)
+			) return false;
+		}
+		return true;
+	},
+
+
+	completeDate: function(str) {
+		let today = new Date();
+		let ret   = '';
+		let day, mon, yea;
+
+		str = str.replaceAll('_', '');
+
+		if(str.indexOf('/') > -1) {
+			while(str.indexOf('/') > -1) {
+				str = str.replace('/', '');
+			}
+			ret = this.completeDate(str);
+
+		} else {
+
+			if((str.length == 1) || (str.length == 2)) {
+
+				if(str.length == 1) {
+					str = '0' + str;
+					if(str === '00') str = today.getDate();
+				}
+
+				mon = (today.getMonth()+1);
+				if(mon < 10) mon = '0' + mon;
+				ret =  str + '/' + mon + '/' + today.getFullYear();
+
+			} else if((str.length == 3)) {
+
+				day = str.substr(0, 2);
+				mon = '0' + str.substr(2, 1);
+
+				if(mon === '00') mon = today.getMonth()+1;
+				ret =  day + '/' + mon + '/' + today.getFullYear();
+
+			} else if((str.length == 4) || (str.length == 5)) {
+
+				day = str.substr(0, 2);
+				mon = str.substr(2, 2);
+				ret =  day + '/' + mon + '/' + today.getFullYear();
+
+			} else if((str.length >= 6)) {
+
+				day = str.substr(0, 2);
+				mon = str.substr(2, 2);
+				yea = str.substr(4, str.length);
+				if(yea.length == 2)      yea = '20' + yea;
+				else if(yea.length == 3) yea = '2' + yea;
+				else if(yea.length > 4)  yea = today.getFullYear()
+
+				ret =  day + '/' + mon + '/' + yea;
+			}
+		}
+		return ret
+	},
+
+
+	completeTime: function(str) {
+		var now  = new Date();
+		var ret  = '';
+		var hour = (now.getHours()  <10 ? '0' : '') + now.getHours();
+		var min  = (now.getMinutes()<10 ? '0' : '') + now.getMinutes();
+		var sec  = (now.getSeconds()<10 ? '0' : '') + now.getSeconds();
+
+		while(str.indexOf('_') > -1) {
+			str = str.replace('_', '');
+		}
+
+		while(str.indexOf(':') > -1) {
+			str = str.replace(':', '');
+		}
+
+		if(str.length == 0) {
+			ret = hour + ':' + min + ':' + sec;
+		}
+		else if(str.length == 1 || str.length == 2) {
+			if(str.length == 1) {
+				str = (parseInt(str) < 3) ? str + '0' : '0' + str;
+			}
+			ret =  str + ':' + min + ':' + sec;
+		}
+		else if(str.length == 3 || str.length == 4) {
+			hour = str.substr(0, 2);
+			if(str.length == 3) {
+				str = str.substr(2, 1);
+				str = (parseInt(str) < 6) ? str + '0' : '0' + str;
+			}
+			ret =  hour + ':' + str + ':' + sec;
+		}
+		else {
+			hour = str.substr(0, 2);
+			min  = str.substr(2, 2);
+			if(str.length == 5) {
+				str = str.substr(4, 1);
+				str = (parseInt(str) < 6) ? str + '0' : '0' + str;
+			}
+			else {
+				str = str.substr(4, 2);
+			}
+			ret =  hour + ':' + min + ':' + str;
+		}
+		return ret;
+	},
+
+
+	completeDateTime: function(str) {
+		var dateTime, date, time, ret;
+
+		if(Roda.trim(str) == '') {
+			ret = '';
+		}
+		else {
+			dateTime = str.split(' ');
+			date     = this.completeDate(dateTime[0]);
+			time     = this.completeTime(dateTime[1]);
+			ret      = date + ' ' + time;
+		}
+		return ret;
+	},
+
+
 	currentDate: function() {
 		let now = new Date().toISOString();
 		return now.substr(0, 10);
@@ -269,7 +415,7 @@ var R4 = {
 
 
 	decimalMask: function(v) {
-		return v.replace(/([^0-9-.,])/g, '');
+		return v.replace(/([^0-9-.,=])/g, '');
 	},
 
 

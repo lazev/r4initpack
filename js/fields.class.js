@@ -143,6 +143,14 @@ var Fields = {
 
 				case 'date':
 					type = 'text';
+					inputmode = 'date';
+
+					elem.addEventListener('click', function(ev){
+						Pop.create({
+							destiny: elem,
+							html: FieldsDtPicker.create(elem)
+						})
+					});
 
 					elem.addEventListener('focus', function(ev){
 						Pop.create({
@@ -151,7 +159,11 @@ var Fields = {
 						})
 					});
 
-					inputmode = 'date';
+					elem.addEventListener('blur', function(ev){
+						elem.value = R4.completeDate(elem.value);
+						Pop.destroyByParent(elem);
+					});
+
 					break;
 
 				case 'datetime':
@@ -179,6 +191,15 @@ var Fields = {
 					inputmode = 'decimal';
 
 					elem.addEventListener('input', function(ev){ this.value = R4.decimalMask(this.value); });
+
+					elem.addEventListener('keypress', function(ev){
+						if(ev.keyCode == 13) {
+							if(elem.value.substr(0, 1) == '=') {
+								console.log('modo calc');
+								elem.value = eval(elem.value.substr(1));
+							}
+						}
+					});
 
 					break;
 

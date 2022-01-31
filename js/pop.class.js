@@ -143,6 +143,11 @@ var Pop = {
 	},
 
 
+	destroyByParent: function(elem, force) {
+		Pop.destroyElem($('#'+ elem.getAttribute('R4PopTarget')), force);
+	},
+
+
 	destroyElem: function(elem, force) {
 		if(elem) {
 			if((!elem.classList.contains('R4MouseOver')) || (force)) {
