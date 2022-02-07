@@ -21,7 +21,7 @@ var FieldsDtPicker = {
 
 		elValue = Fields.getVal(elem);
 
-		if(elValue && R4.isDate(elValue)) {
+		if(elValue && R4.checkDate(elValue)) {
 			let arr = elValue.split('-');
 			month = parseInt(arr[1])-1;
 			year  = arr[0];

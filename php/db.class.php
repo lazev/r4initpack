@@ -81,8 +81,10 @@ class DB {
 					if(!empty($field)) {
 						$fields[] = addslashes($field);
 
-						if((is_numeric($value)) || ($value === 'now()'))
+						if($value === 'now()')
 							$values[] = $value;
+						elseif(is_numeric($value))
+							$values[] = "'$value'";
 						elseif($value === NULL)
 							$values[] = 'NULL';
 						else {
@@ -91,7 +93,7 @@ class DB {
 							$value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/u', '', $value);
 							$value = str_replace('\0', '/0', $value);
 							$value = addslashes($value);
-							$values[] = "'". $value ."'";
+							$values[] = "'$value'";
 						}
 					}
 				}

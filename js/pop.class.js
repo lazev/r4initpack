@@ -101,8 +101,8 @@ var Pop = {
 			pop.style.left = topLeft.left-(topLeft.left+popPos.width-document.body.clientWidth)-10 +'px';
 		}
 
-		if(topLeft.top+popPos.height > document.body.clientHeight) {
-			pop.style.top = topLeft.top-(topLeft.top+popPos.height-document.body.clientHeight)-destPos.height +'px';
+		if(popPos.bottom >= document.body.clientHeight) {
+			pop.style.top = document.body.clientHeight+window.pageYOffset-popPos.height +'px';
 		}
 
 		destiny.setAttribute('R4PopTarget', id);

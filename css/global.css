@@ -50,9 +50,11 @@ SVG Icons - svgicons.sparkk.fr
 .onRight  { float: right;       }
 .onLeft   { float: left;        }
 
-.btnAlignFix {
-	padding-top: 10px;
-}
+.corner    { border-radius: 3px; }
+.paspatur  { padding: 20px;      }
+.clickable { cursor: pointer;    }
+
+.btnAlignFix { padding-top: 10px; }
 
 .small {
 	color: gray;
@@ -66,26 +68,24 @@ SVG Icons - svgicons.sparkk.fr
 	color: white;
 }
 
-.corner { border-radius: 3px; }
-
-.paspatur { padding: 20px; }
-
 .transition { transition: 0.2s ease-out; }
 
-.clickable { cursor: pointer; }
+.loadOverlay { opacity: 0.7; }
+
+.clearer { clear: both; }
+
+.clearfix::after {
+	content: "";
+	clear: both;
+	display: table;
+}
 
 .spinning {
 	animation: spin-animation 0.5s infinite;
 	display: inline-block;
 }
 
-.highlight {
-	animation: highlight-bg 0.5s;
-}
-
-.loadOverlay {
-	opacity: 0.7;
-}
+.highlight { animation: highlight-bg 0.5s; }
 
 @keyframes spin-animation {
 	0% { transform: rotate(0deg); }
@@ -97,13 +97,14 @@ SVG Icons - svgicons.sparkk.fr
 	100% { background: transparent; }
 }
 
-.blink {
-	animation: blink 0.3s infinite;
-}
+.blink { animation: blink 0.3s infinite; }
 
 @keyframes blink {
 	50% { opacity: 0.0; }
 }
+
+
+/* STRUCTURE */
 
 * {
 	font-family: 'Lato', Helvetica, sans-serif;
@@ -119,6 +120,10 @@ body {
 	background: #FAFDFB;
 }
 
+main {
+	padding: 0 10px;
+}
+
 a {
 	color: #2196f3;
 	text-decoration: none;
@@ -128,12 +133,7 @@ a:hover, a:focus {
 	text-decoration: underline;
 }
 
-p {
-	margin: 0 0 10px;
-}
-
-ul,
-ol {
+ul, ol {
 	margin-top: 0;
 	margin-bottom: 10px;
 }
@@ -155,8 +155,6 @@ abbr[title] {
 	cursor: help;
 	text-decoration-color: #2196f3;
 }
-
-/* TYPOGRAPHY */
 
 h1, h2, h3 {
 	margin: 0;
@@ -185,16 +183,6 @@ p {
 
 small {
 	font-size: 0.7rem;
-}
-
-.clearer {
-	clear: both;
-}
-
-.clearfix::after {
-	content: "";
-	clear: both;
-	display: table;
 }
 
 .R4Sbar {

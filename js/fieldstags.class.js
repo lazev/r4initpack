@@ -62,7 +62,7 @@ FieldsTags = {
 				//Small delay to run typeahead elem click before blur
 				FieldsTags.addTag(elem, elem.value);
 				FieldsTags.withContent(event.target);
-			}, 100);
+			}, 1);
 		});
 
 		elem.addEventListener('paste', function(event){

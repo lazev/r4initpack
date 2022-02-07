@@ -118,7 +118,7 @@ class ValidFields {
 		switch($type) {
 			case 'integer':
 			case 'integer-':
-				if($value != Roda::onlyNumbers($value)) {
+				if($value != R4::onlyNumbers($value)) {
 					$this->retErrors[$this->prefix . $field . $this->sufix][] = $this->getMsg('intValue', $value);
 					return false;
 				}
@@ -146,7 +146,7 @@ class ValidFields {
 			case 'date':
 				if(!empty($value) && $value != '0000-00-00'
 				&& $value != '0000-00-00 00:00:00'
-				&& !Roda::isDate($value)) {
+				&& !R4::isDate($value)) {
 					$this->retErrors[$this->prefix . $field . $this->sufix][] = $this->getMsg('pattern', $value);
 					return false;
 				}

@@ -20,6 +20,8 @@ if(empty($cfgstr)) {
 
 $cfg = json_decode($cfgstr, 1);
 
+print_r($cfg);
+
 $jsPacker       = $cfg['jsPacker'] ?? '';
 $monitorFolders = $cfg['foldersToMonitor'];
 

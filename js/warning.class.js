@@ -26,6 +26,7 @@ var Warning = {
 			closer.addEventListener('click', function(event) {
 				Warning.hide(elem);
 			});
+			elem.classList.add('R4WarningFixed');
 			elem.appendChild(closer);
 		} else {
 			elem.addEventListener('click', function(event) {
@@ -47,7 +48,7 @@ var Warning = {
 
 		container.append(elem);
 
-		return id;
+		return elem;
 	},
 
 
@@ -57,7 +58,7 @@ var Warning = {
 
 
 	hideAll: function() {
-		document.querySelectorAll('.R4Warning').forEach(elem => {
+		document.querySelectorAll('.R4Warning:not(.R4WarningFixed)').forEach(elem => {
 			elem.remove();
 		});
 	}

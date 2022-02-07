@@ -47,10 +47,13 @@ var Table = {
 
 		Table.updateContent(destiny, arrBody, arrFoot);
 
-		if(opts.onPagination) {
-			let aftertbl = document.createElement('div');
-			aftertbl.setAttribute('class', 'row clearfix');
+		let aftertbl = document.createElement('div');
+		aftertbl.setAttribute('class', 'row clearfix');
 
+		let descrTotalReg = document.createElement('div');
+		descrTotalReg.setAttribute('class', 'R4DescrTotalReg col-4 center onLeft small paspatur');
+
+		if(opts.onPagination) {
 			let pgntn = Table.createPagination(destiny);
 			if(pgntn) aftertbl.appendChild(pgntn);
 
@@ -59,6 +62,8 @@ var Table = {
 
 			destiny.appendChild(aftertbl);
 		}
+
+		aftertbl.append(descrTotalReg);
 	},
 
 
@@ -81,6 +86,9 @@ var Table = {
 		Table.updateOrderBy(destiny,    info.orderBy, clicked);
 		Table.updatePagination(destiny, info.regPerPage, info.totalReg, info.currentPage);
 		Table.updateRegPerPage(destiny, info.regPerPage);
+
+		let descrRegs = info.totalReg + ((info.totalReg == 1) ? ' registro encontrado' : ' registros encontrados');
+		destiny.querySelector('.R4DescrTotalReg').innerHTML = descrRegs;
 	},
 
 
@@ -90,7 +98,7 @@ var Table = {
 
 		arr.orderBy     = destiny.getAttribute('orderBy')     || '';
 		arr.currentPage = destiny.getAttribute('currentPage') || 1;
-		arr.regPerPage  = destiny.getAttribute('regPerPage')  || 15;
+		arr.regPerPage  = destiny.getAttribute('regPerPage')  || 50;
 		arr.totalReg    = destiny.getAttribute('totalReg')    || 0;
 
 		return arr;
@@ -373,7 +381,7 @@ var Table = {
 		let next  = document.createElement('div');
 		let last  = document.createElement('div');
 
-		pgntn.setAttribute('class', 'col-4   onRight R4TablePgntn'     );
+		pgntn.setAttribute('class', 'col-4 onRight R4TablePgntn'       );
 		first.setAttribute('class', 'col-xs-3 center R4TablePageFirst' );
 		prev.setAttribute('class',  'col-xs-3 center R4TablePagePrev'  );
 		next.setAttribute('class',  'col-xs-3 center R4TablePageNext'  );
@@ -508,7 +516,7 @@ var Table = {
 		Pop.click(btnSel, { html: ul });
 
 		let rcpt = document.createElement('div');
-		rcpt.setAttribute('class', 'col-2 R4TableRegPerPage');
+		rcpt.setAttribute('class', 'col-4 onLeft R4TableRegPerPage');
 		rcpt.appendChild(btnSel);
 
 		return rcpt;

@@ -1,7 +1,7 @@
 .R4Fields {
 	position: relative;
 	margin-top: 10px;
-	margin-bottom: 10px;
+	line-height: 0;
 }
 
 .R4Fields:not(.switch):not(.tags) > input,
@@ -9,12 +9,17 @@
 .R4Fields > select,
 .R4Fields.tags {
 	font-size: 18px;
-	padding: 10px 10px 10px 5px;
+	padding: 4px 3px 6px 5px;
+	margin-top: 10px;
 	width: 100%;
 	border: none;
 	border-bottom: 1px solid #757575;
 	box-sizing: border-box;
 	background-color: inherit;
+}
+
+.R4Fields > select {
+	padding: 2px 0 6px 0;
 }
 
 .R4Fields:not(.switch):not(.tags) > input:disabled,
@@ -23,22 +28,23 @@
 	background-color: lightgray;
 }
 
-.R4Fields:not(.switch):not(.tags) > input.errField,
-.R4Fields > textarea.errField,
-.R4Fields > select.errField {
-	border-bottom: 1px solid red;
-}
-
 .R4Fields:not(.switch):not(.tags) > input:focus,
 .R4Fields > textarea:focus,
 .R4Fields > select:focus {
 	outline: none;
+	background-color: #fffdeb;
 	border-bottom: 1px solid #337ab7;
 }
 
-.R4Fields:not(.switch):not(.tags) > input.errField:focus,
-.R4Fields > textarea.errField:focus,
-.R4Fields > select.errField:focus {
+.R4Fields.errField:not(.switch):not(.tags) > input,
+.R4Fields.errField > textarea,
+.R4Fields.errField > select {
+	border-bottom: 1px solid red;
+}
+
+.R4Fields.errField:not(.switch):not(.tags) > input:focus,
+.R4Fields.errField > textarea:focus,
+.R4Fields.errField > select:focus {
 	outline: none;
 	border-bottom: 1px solid red;
 }
@@ -62,9 +68,17 @@
 .R4Fields > select:focus ~ label,
 .R4Fields > input:-webkit-autofill ~ label,
 .R4Fields.withContent > label {
-	top: -20px;
+	top: -13px;
 	font-size: 14px;
 	color: #337ab7;
+}
+
+.R4Fields.errField:not(.switch) > input:focus ~ label,
+.R4Fields.errField > textarea:focus ~ label,
+.R4Fields.errField > select:focus ~ label,
+.R4Fields.errField > input:-webkit-autofill ~ label,
+.R4Fields.errField.withContent > label {
+	color: red;
 }
 
 
@@ -101,8 +115,12 @@
 	flex-wrap: wrap;
 }
 
+.R4Fields > .tagList {
+	padding-top: 5px;
+}
+
 .R4Fields > .tagList > .tagItem {
-	padding: 5px 3px;
+	padding: 3px 3px;
 	margin-left: 5px;
 	display: inline-block;
 
@@ -112,7 +130,7 @@
 	cursor: pointer;
 	position: relative;
 	float: right;
-	top: -9px;
+	top: -8px;
 	font-size: 13px;
 	font-weight: bold;
 	color: yellow;
@@ -201,11 +219,12 @@
 
 /* SWITCH ================================= */
 .R4Fields.switch {
+/*
 	display: inline-block;
 	position: relative;
 	font-size: 16px;
 	line-height: 24px;
-	margin-bottom: 29px;
+*/
 }
 .R4Fields.switch > input {
 	position: absolute;
@@ -214,7 +233,7 @@
 }
 .R4Fields.switch > label {
 	display: block;
-	padding: 9px 0 8px 44px;
+	padding: 9px 0 0 44px;
 	cursor: pointer;
 }
 .R4Fields.switch > label:before {

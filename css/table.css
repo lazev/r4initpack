@@ -2,10 +2,18 @@ table.R4 {
 	width: 100%;
 }
 
-table.R4 > thead > tr > th,
+table.R4 > thead > tr > th {
+	padding: 15px 5px;
+	text-align: left;
+}
+
+table.R4.compact > thead > tr > th {
+	padding: 4px 2px;
+}
+
 table.R4 > tbody > tr > td,
 table.R4 > tfoot > tr > td {
-	padding: 5px 3px;
+	padding: 5px 5px;
 	text-align: left;
 }
 
@@ -36,4 +44,8 @@ table.R4 > tbody > tr > td.nonClickCol {
 table.R4 > tbody > tr:hover,
 table.R4.striped > tbody > tr:hover {
 	background: #f0e68c;
+}
+
+.R4TablePgntn {
+	margin: 0 !important;
 }

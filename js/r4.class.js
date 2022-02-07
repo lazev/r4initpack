@@ -38,11 +38,9 @@ let methods = {
 //Seletor de elementos (dom)
 var $ = function(el) {
 
-	let elem, k;
+	let elem = (typeof el === 'object') ? el : document.querySelector(el);
 
-	if(typeof el === 'object') elem = el;
-	else elem = document.querySelector(el);
-
+	let k;
 	if(elem)
 		for(k in methods)
 			elem.__proto__[k] = methods[k];
@@ -51,7 +49,7 @@ var $ = function(el) {
 };
 
 
-//Roda uma função em uma lista de elementos
+//Executa uma função em uma lista de elementos
 var $each = function(el, func) {
 	let list = document.querySelectorAll(el);
 
@@ -133,7 +131,16 @@ var R4 = {
 	},
 
 
-	isDate: function(x) {
+	plural: function(txt, num, pluralTxt, singularTxt) {
+
+		if(typeof pluralTxt   != 'string') pluralTxt   = 's';
+		if(typeof singularTxt != 'string') singularTxt = '';
+
+		return (num == 1) ? txt.replaceAll('(#)', singularTxt) : txt.replaceAll('(#)', pluralTxt);
+	},
+
+
+	checkDate: function(x) {
 		if(x.indexOf('-') == -1) return false;
 		else if (x.indexOf('-') == x.lastIndexOf('-')) return false;
 		else {
@@ -156,6 +163,67 @@ var R4 = {
 			) return false;
 		}
 		return true;
+	},
+
+
+	checkCPF: function(CPF) {
+		var invalid = false;
+		if(CPF=='') {
+			invalid = true;
+		} else {
+			if(CPF == '00000000000' || CPF == '11111111111' ||
+				CPF == '22222222222' ||	CPF == '33333333333' || CPF == '44444444444' ||
+				CPF == '55555555555' || CPF == '66666666666' || CPF == '77777777777' ||
+				CPF == '88888888888' || CPF == '99999999999' || CPF == '00000000000') {
+				invalid = true;
+			}
+			sum = 0;
+			for(i=0; i<9; i++) sum += parseInt(CPF.charAt(i)) * (10-i);
+			rest = 11 - (sum % 11);
+			if (rest == 10 || rest == 11) rest = 0;
+			if (rest != parseInt(CPF.charAt(9))) invalid = true;
+			sum = 0;
+			for(i=0; i<10; i++) sum += parseInt(CPF.charAt(i)) * (11-i);
+			rest = 11-(sum % 11);
+			if (rest == 10 || rest == 11) rest = 0;
+			if (rest != parseInt(CPF.charAt(10))) invalid = true;
+		}
+		if(invalid) return false;
+		else return true;
+	},
+
+
+	checkCNPJ: function(CNPJ) {
+		var invalid = false;
+		if(CNPJ.length == 15) {
+			CNPJ = CNPJ.substr(1,14);
+		}
+		if(CNPJ != '00000000000000') {
+			var c = CNPJ.substr(0,12);
+			var dv = CNPJ.substr(12,2);
+			var d1 = 0;
+			for (i = 0; i < 12; i++) d1 += c.charAt(11-i)*(2+(i % 8));
+			if (d1 == 0) invalid = true;
+			d1 = 11 - (d1 % 11);
+			if (d1 > 9) d1 = 0;
+			if(dv.charAt(0) != d1) invalid = true;
+			d1 *= 2;
+			for (i = 0; i < 12; i++) d1 += c.charAt(11-i)*(2+((i+1) % 8));
+			d1 = 11 - (d1 % 11);
+			if (d1 > 9) d1 = 0;
+			if (dv.charAt(1) != d1) invalid = true;
+		}
+		if(invalid) return false;
+		else return true;
+	},
+
+
+	checkCPFCNPJ: function(cpfcnpj) {
+		if(cpfcnpj.length < 13) {
+			return R4.checkCPF(cpfcnpj);
+		} else {
+			return R4.checkCNPJ(cpfcnpj);
+		}
 	},
 
 
@@ -266,7 +334,7 @@ var R4 = {
 	completeDateTime: function(str) {
 		var dateTime, date, time, ret;
 
-		if(Roda.trim(str) == '') {
+		if(R4.trim(str) == '') {
 			ret = '';
 		}
 		else {
@@ -415,7 +483,7 @@ var R4 = {
 
 
 	decimalMask: function(v) {
-		return v.replace(/([^0-9-.,=])/g, '');
+		return v.replace(/([^0-9-.,=+*\/\(\)])/g, '');
 	},
 
 

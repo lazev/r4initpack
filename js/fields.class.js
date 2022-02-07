@@ -7,26 +7,25 @@ var Fields = {
 			if(!fieldsPrefix) fieldsPrefix = '';
 
 			R4.getJSON(source, '', {method: 'GET'})
-				.then(json => {
 
-					for(let k in json) {
-						//If it's not an integer, then it's a prefix to fields group
-						if(!Number.isInteger(k)) {
-							Fields.create(json[k], k);
-						} else {
-							Fields.create(json[k], fieldsPrefix);
-							break;
-						}
+			.then(json => {
+
+				for(let k in json) {
+					//If it's not an integer, then it's a prefix to fields group
+					if(!Number.isInteger(k)) {
+						Fields.create(json[k], k);
+					} else {
+						Fields.create(json[k], fieldsPrefix);
+						break;
 					}
+				}
 
-					resolve();
-				})
-				.catch(err => {
-					reject('Erro ao abrir o JSON do fields');
-				});
-
+				resolve();
+			})
+			.catch(err => {
+				reject('Erro ao abrir o JSON do fields');
+			});
 		});
-
 	},
 
 
@@ -96,15 +95,64 @@ var Fields = {
 		let attrib = {
 			id: id,
 			name: name,
-			//required: 'required',
 			autocomplete: 'off',
 			R4Type: item.type
 		};
 
+		let wrap = document.createElement('div');
+		let bar  = document.createElement('div');
+
+		wrap.setAttribute('class', 'R4Fields');
+
+		bar.setAttribute('class', 'bar');
+
+
+		if(type)             attrib.type        = type;
+		if(inputmode)        attrib.inputmode   = inputmode;
+		if(item.value)       attrib.value       = item.value;
+		if(item.placeholder) attrib.placeholder = item.placeholder;
+		if(item.classes)     attrib.classes     = item.classes;
+
+		if(item.attr) {
+			for(let k in item.attr) attrib[k] = item.attr[k];
+		}
+
+		if(item.label) {
+			label = document.createElement('label');
+			label.setAttribute('for', attrib.id);
+			label.innerHTML = item.label;
+		}
+
+		if(attrib.value) {
+			wrap.classList.add('withContent');
+		}
+
 		if(item.type == 'textarea') {
 			elem = document.createElement('textarea');
 
+			if(item.autosize) {
+				elem.addEventListener('keyup', function(ev){
+					if(elem.clientHeight < elem.scrollHeight) {
+						let limit = 0;
+						while(elem.offsetHeight < elem.scrollHeight) {
+							elem.style.height = elem.offsetHeight+3 +'px';
+							limit++;
+							if(limit >= 100) break;
+						}
+					}
+					else {
+						let limit = 0;
+						while(elem.offsetHeight >= elem.scrollHeight) {
+							elem.style.height = elem.offsetHeight-3 +'px';
+							limit++;
+							if(limit >= 100) break;
+						}
+						elem.style.height = elem.offsetHeight+3 +'px';
+					}
+				});
+			}
 		}
+
 		else {
 			elem = document.createElement('input');
 
@@ -112,13 +160,20 @@ var Fields = {
 				case 'tags':
 				case 'mailtags':
 				case 'phonetags':
-					wrapClass = 'tags';
 					tagList = document.createElement('span');
 					tagList.classList.add('tagList');
 
+					wrap.classList.add('tags');
+					wrap.append(tagList);
+
 					elem = FieldsTags.create(elem, item);
 
-					if(item.type == 'phonetags') {
+					if(item.type == 'tags') {
+						let typeAheadList = document.createElement('div');
+						typeAheadList.classList.add('typeAheadList');
+						wrap.append(typeAheadList);
+					}
+					else if(item.type == 'phonetags') {
 						elem.addEventListener('input', function(ev){ this.value = R4.phoneMask(this.value); });
 					}
 
@@ -190,16 +245,8 @@ var Fields = {
 					type = 'text';
 					inputmode = 'decimal';
 
+					elem = Fields.setCalcEvents(elem);
 					elem.addEventListener('input', function(ev){ this.value = R4.decimalMask(this.value); });
-
-					elem.addEventListener('keypress', function(ev){
-						if(ev.keyCode == 13) {
-							if(elem.value.substr(0, 1) == '=') {
-								console.log('modo calc');
-								elem.value = eval(elem.value.substr(1));
-							}
-						}
-					});
 
 					break;
 
@@ -223,55 +270,17 @@ var Fields = {
 			}
 		}
 
-		if(type)             attrib.type        = type;
-		if(inputmode)        attrib.inputmode   = inputmode;
-		if(item.value)       attrib.value       = item.value;
-		if(item.min)         attrib.min         = item.min;
-		if(item.max)         attrib.max         = item.max;
-		if(item.step)        attrib.step        = item.step;
-		if(item.placeholder) attrib.placeholder = item.placeholder;
-		if(item.classes)     attrib.classes     = item.classes;
-
-		if(item.attr) {
-			for(let k in item.attr) attrib[k] = item.attr[k];
-		}
-
-		for(let k in attrib) elem.setAttribute(k, attrib[k]);
-
-		if(item.label) {
-			label = document.createElement('label');
-			label.setAttribute('for', attrib.id);
-			label.innerHTML = item.label;
-		}
-
-		let bar = document.createElement('div');
-		bar.setAttribute('class', 'bar');
-
-		let wrap = document.createElement('div');
-		wrap.setAttribute('class', 'R4Fields');
-
-		if(tagList) wrap.append(tagList);
-
 		wrap.append(elem);
 
 		if(passEye) wrap.append(passEye);
 
 		wrap.append(bar);
+
 		if(label) wrap.append(label);
 
-		if(wrapClass) {
-			wrap.classList.add(wrapClass);
-		}
+		for(let k in attrib) elem.setAttribute(k, attrib[k]);
 
-		if(attrib.value) {
-			wrap.classList.add('withContent');
-		}
-
-		if(item.type == 'tags') {
-			let typeAheadList = document.createElement('div');
-			typeAheadList.classList.add('typeAheadList');
-			wrap.append(typeAheadList);
-		} else {
+		if(item.type != 'tags') {
 			elem.addEventListener('blur', function(event){
 				if(event.target.value) {
 					wrap.classList.add('withContent');
@@ -280,6 +289,8 @@ var Fields = {
 				}
 			});
 		}
+
+		Fields.setValidateRules(elem, item);
 
 		return wrap;
 	},
@@ -374,6 +385,8 @@ var Fields = {
 			}
 		});
 
+		Fields.setValidateRules(elem, item);
+
 		return wrap;
 	},
 
@@ -458,6 +471,285 @@ var Fields = {
 	},
 
 
+	setValidateRules: function(elem, prop) {
+
+		if(prop.required) {
+			elem.classList.add('RequiredField');
+			elem.classList.add('WithValidate');
+		}
+		if(prop.minSize) {
+			elem.setAttribute('minSize', prop.minSize);
+			elem.classList.add('WithValidate');
+		}
+		if(prop.maxSize) {
+			elem.setAttribute('maxSize', prop.maxSize);
+			elem.classList.add('WithValidate');
+		}
+		if(prop.exactSize) {
+			elem.setAttribute('exactSize', prop.exactSize);
+			elem.classList.add('WithValidate');
+		}
+		if(prop.regex) {
+			elem.setAttribute('regexRules', prop.regex);
+			elem.classList.add('WithValidate');
+		}
+
+		elem.addEventListener('keyup', function(ev){
+			if(elem.parentNode.classList.contains('errField')) {
+				Fields.validate(this);
+			}
+		});
+
+		elem.addEventListener('click', function(ev){
+			if(elem.parentNode.classList.contains('errField')) {
+				Fields.validate(this);
+			}
+		});
+
+		elem.addEventListener('blur', function(ev) {
+			Fields.validate(elem);
+		});
+	},
+
+
+	validate: function(elem) {
+		var arrRet = Fields.getValErrArr($(elem));
+		if(arrRet.length) {
+			Fields.setError(elem, '» '+ arrRet.join('<br>» '));
+			return false;
+		} else {
+			Fields.remError(elem);
+			return true;
+		}
+	},
+
+
+	setErrFields: function(err, prefix) {
+		if(err.errFields) {
+			var txt, r, elem;
+
+			for(var campo in err.errFields) {
+				elem = document.getElementById(prefix +'_'+ campo);
+
+				txt = '';
+				err.errFields[campo].forEach(item => {
+					txt += '» '+ item +'<br>';
+				});
+
+				Fields.setError(elem, txt);
+			}
+		}
+	},
+
+
+	setError: function(elem, errTxt) {
+		elem.parentNode.classList.add('errField');
+
+		let r = Pop.hint(elem, errTxt);
+
+		Fields.listActiveErrFields[r.id] = r.fn;
+	},
+
+
+	remError: function(elem) {
+		let id = elem.id;
+		elem.parentNode.classList.remove('errField');
+		elem.removeEventListener('mouseenter', Fields.listActiveErrFields[id]);
+		Fields.listActiveErrFields[id];
+		delete Fields.listActiveErrFields[id];
+	},
+
+
+	remAllErrFields: function(form) {
+
+		let wrap = (typeof form == 'object') ? form : document;
+
+		let elem;
+		wrap.querySelectorAll('.errField').forEach(item => {
+			 elem = item.querySelector('input, select, textarea');
+			 Fields.remError(elem);
+		});
+	},
+
+
+	getValErrArr: function(elem) {
+		Fields.remError(elem);
+		var valid = true;
+		var arrErrors = [];
+
+
+		if(elem.visible()) {
+			var val = Fields.getVal(elem);
+			if(elem.classList.contains('RequiredField')) {
+
+				if(elem.tagName.toLowerCase() == 'select') {
+					if(!val.trim()) valid = false;
+				} else {
+					if(val == '' || val == '0000-00-00') valid = false;
+				}
+
+				if(!valid) arrErrors.push('Campo obrigatório');
+			}
+
+
+			if(elem.attr('minSize')) {
+				if((val.length < elem.attr('minSize')) && (val.length != 0)) {
+					valid = false;
+					arrErrors.push('Mínimo de '+ elem.attr('minSize') +' caracteres');
+				}
+			}
+
+
+			if(elem.attr('maxSize')) {
+				if(val.length > elem.attr('maxSize')) {
+					valid = false;
+					arrErrors.push('Máximo de '+ elem.attr('maxSize') +' caracteres');
+				}
+			}
+
+
+			if(elem.attr('exactSize')) {
+				if(val.length != 0) {
+					sizes = elem.attr('exactSize').split(',');
+					valid = false;
+					for(k in sizes) {
+						if(val.length == sizes[k]) {
+							valid = true;
+							break;
+						}
+					}
+					if(!valid) {
+						arrErrors.push('Deve ter exatamente '+ elem.attr('exactSize') +' caracteres');
+					}
+				}
+			}
+
+
+			if((elem.attr('decimal')) && (val.length != 0)) {
+				var splits = elem.attr('decimal').split(',');
+				var decVal = parseInt(splits[1]);
+				var intVal = parseInt(splits[0])-decVal;
+
+				if(decVal > 0) {
+					var regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
+				} else {
+					var regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
+				}
+
+				valid = regExp.test(val);
+
+				if(!valid) {
+					arrErrors.push('Valor inválido');
+				}
+			}
+
+
+			if((elem.attr('regexRules')) && (val.length != 0)) {
+				var rules  = elem.attr('regexRules');
+				var regExp = new RegExp(rules, 'gi');
+
+				valid = regExp.test(val);
+				if(!valid) {
+					arrErrors.push('Conteúdo fora do padrão');
+				}
+			}
+
+			switch(elem.attr('R4Type')) {
+				case 'email':
+					if(val) {
+						if(!R4.isMail(val)) {
+							valid = false;
+							arrErrors.push('Email inválido');
+						}
+					}
+				break;
+
+				case 'date':
+				case 'datetime':
+					if((val) && (val != '0000-00-00')) {
+						if(!R4.checkDate(val)) {
+							valid = false;
+							arrErrors.push('Data inválida');
+						}
+					}
+				break;
+				case 'autocomplete':
+					if((R4.trim(elem.val()) != '') && (!elem.hasClass('AllowZero'))) {
+						if(LazevAc.getVal(elem) == 0) {
+							valid = false;
+							arrErrors.push('Necessário selecionar uma opção');
+						}
+					}
+				break;
+				case 'cep':
+					if(val) {
+						if(val.length < 8) {
+							valid = false;
+							arrErrors.push('CEP inválido');
+						}
+					}
+				break;
+				case 'cpfcnpj':
+				case 'cnpjcpf':
+					if(val) {
+						if(!R4.checkCPFCNPJ(val)) {
+							valid = false;
+							arrErrors.push('CPF/CNPJ inválido');
+						}
+					}
+				break;
+
+				case 'cpf':
+					if(val) {
+						if(!R4.checkCPF(val)) {
+							valid = false;
+							arrErrors.push('CPF inválido');
+						}
+					}
+				break;
+
+				case 'cnpj':
+					if(val) {
+						if(!R4.checkCNPJ(val)) {
+							valid = false;
+							arrErrors.push('CNPJ inválido');
+						}
+					}
+				break;
+			}
+		}
+		return arrErrors;
+	},
+
+
+	validateAndGetVal: function(fieldArr) {
+		let countErr = 0;
+		fieldArr.forEach(el => {
+			el.dispatchEvent(new Event('blur'));
+			if(el.parentNode.classList.contains('errField')) countErr++;
+		});
+
+		if(countErr) {
+			Warning.show(
+				R4.plural('Há '+ countErr +' erro(#) no formulário', countErr),
+				'Não foi possível enviar os dados'
+			);
+			return false;
+		}
+
+		let ret = {};
+		fieldArr.forEach(elem => {
+			ret[elem.getAttribute('name')] = Fields.getVal(elem);
+		});
+		return ret;
+	},
+
+
+	validateForm: function(form) {
+		return Fields.validateAndGetVal(form.querySelectorAll('input, select, textarea'));
+	},
+
+
 	getVal: function(elem) {
 		if(typeof elem === 'undefined') {
 			console.warn('Undefined field');
@@ -518,17 +810,67 @@ var Fields = {
 	},
 
 
-	reset: function(elem) {
-		elem.reset();
-		elem.querySelectorAll('input, select, textarea').forEach(
-			el => { el.dispatchEvent(new Event('blur')); }
+	setCalcEvents: function(elem) {
+
+		elem.addEventListener('keypress', function(ev){
+
+			if(ev.keyCode == 13) {
+				if(elem.value.substr(0, 1) == '=') {
+					elem.setAttribute('R4CtrlZ', elem.value);
+					elem.value = '='+ Fields.calc(elem.value.substr(1));
+				}
+			}
+			else if(ev.keyCode == 26 && ev.ctrlKey) {
+				let ctrlz = elem.getAttribute('R4CtrlZ');
+				if(ctrlz) elem.value = ctrlz;
+			}
+			else if(ev.keyCode == 61) {
+				ev.preventDefault();
+				if(elem.value.substr(0, 1) == '=') {
+					elem.value = elem.value.replaceAll('=', '');
+				} else {
+					elem.value = '='+ elem.value.replaceAll('=', '');
+				}
+			}
+		});
+
+		elem.addEventListener('blur', function(ev){
+			elem.value = elem.value.replaceAll('=', '');
+		});
+
+		return elem;
+	},
+
+
+	calc: function(formula) {
+		let form = formula.replaceAll(',', '.');
+		let result;
+
+		try {
+			result = eval(form);
+		} catch (e) {
+			Warning.show('Erro na fórmula', e);
+			console.warn(e);
+			return formula;
+		}
+
+		return R4.numberMask(result, 0, 4);
+	},
+
+
+	reset: function(form) {
+		form.reset();
+		form.querySelectorAll('input, select, textarea').forEach(
+			el => el.dispatchEvent(new Event('blur'))
 		);
-		elem.querySelectorAll('input[R4Type=password]').forEach(
-			el => { el.setAttribute('type', 'password'); }
+		form.querySelectorAll('input[R4Type=password]').forEach(
+			el => el.setAttribute('type', 'password')
 		);
-		elem.querySelectorAll('input[R4Type=tags]').forEach(
-			el => { FieldsTags.clrTag(el); }
-		);
+		form.querySelectorAll('input[R4Type=tags]').forEach(     el => FieldsTags.clrTag(el));
+		form.querySelectorAll('input[R4Type=phonetags]').forEach(el => FieldsTags.clrTag(el));
+		form.querySelectorAll('input[R4Type=mailtags]').forEach( el => FieldsTags.clrTag(el));
+
+		setTimeout(() => Fields.remAllErrFields(form), 50);
 	},
 
 
@@ -544,41 +886,5 @@ var Fields = {
 		});
 
 		return r;
-	},
-
-
-	setErrFields: function(err, prefix) {
-		if(err.errFields) {
-			var t, r;
-
-			for(var campo in err.errFields) {
-				$('#'+ prefix +'_'+ campo).classList.add('errField');
-
-				t = '';
-				err.errFields[campo].forEach(item => {
-					t += '» '+ item +'<br>';
-				});
-
-				r = Pop.hint($('#'+ prefix +'_'+ campo), t);
-
-				Fields.listActiveErrFields[r.id] = r.fn;
-			}
-		}
-	},
-
-
-	remErrFields: function(el) {
-		let id = el.id;
-		el.classList.remove('errField');
-		el.removeEventListener('mouseenter', Fields.listActiveErrFields[id]);
-		Fields.listActiveErrFields[id];
-		delete Fields.listActiveErrFields[id];
-	},
-
-
-	remAllErrFields: function() {
-		for(let id in Fields.listActiveErrFields) {
-			Fields.remErrFields($('#'+ id));
-		}
 	}
 };
