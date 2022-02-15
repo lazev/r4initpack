@@ -275,3 +275,15 @@
 	left: 16px;
 	background-color: #337ab7;
 }
+
+fieldset.R4,
+fieldset.R4Fields {
+	border-radius: 5px;
+	border: 1px solid #999;
+}
+
+fieldset.R4 > legend,
+fieldset.R4Fields > legend {
+	padding: 0 5px;
+	border-radius: 3px;
+}

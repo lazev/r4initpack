@@ -4,8 +4,8 @@ var Operacoes = {
 
 		Tabs.create({
 			idElem:  'tabMenu',
-			targetOn: tabAtiva,
-			click:    Operacoes.carregarModulo
+			primary: tabAtiva,
+			click:   Operacoes.carregarModulo
 		});
 
 	},

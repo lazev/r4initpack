@@ -18,7 +18,7 @@ FieldsTags = {
 				}
 			}
 
-			if(ev.keyCode == 188) {
+			if(ev.keyCode == 108 || ev.keyCode == 188) {
 				ev.preventDefault();
 				FieldsTags.addTag(elem, elem.value);
 			}

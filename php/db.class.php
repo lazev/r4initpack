@@ -251,7 +251,7 @@ class DB {
 		if(defined(DEVMODE) && DEVMODE == true) {
 			echo PHP_EOL. $msg .PHP_EOL;
 		}
-		error_log('************');
+		error_log(PHP_EOL. '******* DB ERROR *******' .PHP_EOL);
 		error_log(PHP_EOL. $msg .PHP_EOL);
 	}
 

@@ -189,7 +189,7 @@ var R4 = {
 			if (rest != parseInt(CPF.charAt(10))) invalid = true;
 		}
 		if(invalid) return false;
-		else return true;
+		else return 'CPF';
 	},
 
 
@@ -214,7 +214,7 @@ var R4 = {
 			if (dv.charAt(1) != d1) invalid = true;
 		}
 		if(invalid) return false;
-		else return true;
+		else return 'CNPJ';
 	},
 
 

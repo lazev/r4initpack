@@ -197,6 +197,24 @@ var Dialog = {
 	},
 
 
+	title: function(elem, title) {
+		let id = elem.id;
+
+		let el = document.getElementById('R4Dialog-'+ id);
+
+		el.querySelector('.R4DialogTitle').innerHTML = title;
+	},
+
+
+	appendOnFooter: function(elem, html) {
+		let id = elem.id;
+
+		let el = document.getElementById('R4Dialog-'+ id);
+
+		el.querySelector('footer').append(html);
+	},
+
+
 	close: function(idElem) {
 		if(typeof idElem === 'object') {
 			Dialog.closeOverlay('R4Overlay-'+ idElem.id);

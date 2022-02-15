@@ -46,6 +46,7 @@ SVG Icons - svgicons.sparkk.fr
 .right    { text-align: right;  }
 .left     { text-align: left;   }
 .hidden   { display: none;      }
+.block    { display: block;     }
 .onCenter { margin: auto;       }
 .onRight  { float: right;       }
 .onLeft   { float: left;        }
@@ -139,10 +140,9 @@ ul, ol {
 }
 
 hr {
-	margin-top: 20px;
-	margin-bottom: 20px;
+	margin: 10px 20px;
 	border: 0;
-	height: 1px;
+	height: 1px !important;
 	background-color: black;
 	background-color: rgba(0, 0, 0, 0.12);
 }

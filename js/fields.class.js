@@ -73,6 +73,8 @@ var Fields = {
 
 				rcpt.id += '_rcpt';
 
+				if(item.type == 'hidden') rcpt.classList.add('hidden');
+
 				rcpt.innerHTML = '';
 
 				rcpt.append(elem);
@@ -100,12 +102,8 @@ var Fields = {
 		};
 
 		let wrap = document.createElement('div');
-		let bar  = document.createElement('div');
 
 		wrap.setAttribute('class', 'R4Fields');
-
-		bar.setAttribute('class', 'bar');
-
 
 		if(type)             attrib.type        = type;
 		if(inputmode)        attrib.inputmode   = inputmode;
@@ -265,16 +263,26 @@ var Fields = {
 					elem.addEventListener('input', function(ev){ this.value = R4.phoneMask(this.value); });
 					break;
 
+				case 'hidden':
+					type = 'hidden';
+					break;
+
 				default:
 					type = 'text';
 			}
 		}
 
+		elem.setAttribute('type', type);
+
 		wrap.append(elem);
 
 		if(passEye) wrap.append(passEye);
 
-		wrap.append(bar);
+		if(type != 'hidden') {
+			let bar  = document.createElement('div');
+			bar.setAttribute('class', 'bar');
+			wrap.append(bar);
+		}
 
 		if(label) wrap.append(label);
 
@@ -758,7 +766,10 @@ var Fields = {
 			let type = elem.getAttribute('R4Type');
 			switch(type) {
 				case 'switch':    return (elem.checked) ? elem.value : 0;
-				case 'money':     return R4.toUSNumber(elem.value);
+				case 'decimal':
+				case 'decimal-':
+				case 'money':
+				case 'money-':    return R4.toUSNumber(elem.value);
 				case 'date':      return R4.dateUnmask(elem.value, '0000-00-00');
 				case 'tags':
 				case 'mailtags':
@@ -782,7 +793,11 @@ var Fields = {
 				else elem.checked = true;
 				break;
 			case 'money':
-				elem.value = R4.toEUNumber(value);
+			case 'money-':
+			case 'decimal':
+			case 'decimal-':
+				if(value == 0) elem.value = '';
+				else elem.value = R4.toEUNumber(value);
 				break;
 			case 'cpf':
 			case 'cnpj':
@@ -874,7 +889,7 @@ var Fields = {
 	},
 
 
-	objectize: function(elem) {
+	objectize: function(elem, concatObj) {
 		let r = {};
 
 		elem.querySelectorAll('input[name]:not([disabled]), select[name]:not([disabled])').forEach(elem => {
@@ -884,6 +899,12 @@ var Fields = {
 		elem.querySelectorAll('textarea[name]:not([disabled])').forEach(elem => {
 			r[elem.getAttribute('name')] = Fields.getVal(elem).replace(/\r?\n|\r/g, '\r\n');
 		});
+
+		if(concatObj) {
+			for(var k in concatObj) {
+				r[k] = concatObj[k];
+			}
+		}
 
 		return r;
 	}

@@ -9,7 +9,7 @@ class R4 {
 
 
 	public static function dieAPI($stat=0, $msg='', $obs='', $fields=[]) {
-		if(count($fields)) $jsonfields = ', "errFields":'. json_encode($fields);
+		$jsonfields = (count($fields)) ? $jsonfields = ', "errFields":'. json_encode($fields) : '';
 		echo '{"error": 1, "status": "'. $stat .'", "errMsg": "'. $msg .'", "errObs": "'. $obs .'"'. $jsonfields .'}';
 		require 'r4iniend.php';
 		die();
@@ -77,6 +77,99 @@ class R4 {
 	}
 
 
+	public static function onlyNumbers($string) {
+		$result = preg_replace('/[^0-9]/', '', $string);
+		return $result;
+	}
+
+
+	public static function changeDate($date, $year=0, $month=0, $day=0, $hour=0, $min=0, $sec=0) {
+		if(strlen($date) > 12) { //Date time (Y-m-d H:i:s)
+			$temp = explode(' ', $date);
+			$dat = explode('-', $temp[0]);
+			$tim = explode(':', $temp[1]);
+			return date('Y-m-d H:i:s', mktime($tim[0]+$hour, $tim[1]+$min, $tim[2]+$sec, $dat[1]+$month, $dat[2]+$day, $dat[0]+$year));
+		} else {
+			$split = explode('-', $date);
+			return date('Y-m-d', mktime(0, 0, 0, (int)$split[1]+$month, (int)$split[2]+$day, (int)$split[0]+$year));
+		}
+	}
+
+
+	public static function checkDate($date) {
+		if(strlen($date) > 12) { //Datetime
+			if(preg_match('/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/', $date, $matches)) {
+				if(checkdate($matches[2], $matches[3], $matches[1])) return true;
+			}
+		} else { //Only date
+			if(preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $matches)) {
+				if(checkdate($matches[2], $matches[3], $matches[1])) return true;
+			}
+		}
+
+		return false;
+	}
+
+
+	public static function checkMail($email) {
+		return preg_match('|^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]+)$|i', $email);
+	}
+
+
+	public static function CPForCNPJ($x) {
+		if(strlen(R4::onlyNumbers($x)) == 11)     return 'CPF';
+		elseif(strlen(R4::onlyNumbers($x)) == 14) return 'CNPJ';
+		elseif(strlen(R4::onlyNumbers($x)) == 15) return 'CNPJ';
+		return false;
+	}
+
+
+	public static function checkCPFCNPJ($cpfcnpj) {
+		$cpfcnpj = R4::onlyNumbers($cpfcnpj);
+		if(strlen($cpfcnpj) <= 12) return R4::checkCPF($cpfcnpj);
+		else return R4::checkCNPJ($cpfcnpj);
+	}
+
+
+	public static function checkCPF($cpf) {
+		$cpf = R4::onlyNumbers($cpf);
+
+		// Verifica se nenhuma das sequências abaixo foi digitada, caso seja, retorna falso
+		if(strlen($cpf) != 11 || $cpf == '00000000000' || $cpf == '11111111111' ||
+		$cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' ||
+		$cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' ||
+		$cpf == '88888888888' || $cpf == '99999999999') {
+			return false;
+		} else {
+			for($t = 9; $t < 11; $t++) {
+				for($d = 0, $c = 0; $c < $t; $c++) $d += $cpf[$c] * (($t + 1) - $c);
+				$d = ((10 * $d) % 11) % 10;
+				if($cpf[$c] != $d) return false;
+			}
+			return true;
+		}
+	}
+
+
+	public static function checkCNPJ($cnpj) {
+		$cnpj = R4::onlyNumbers($cnpj);
+		if(strlen($cnpj) == 15) $cnpj = substr($cnpj, 1);
+		if(strlen($cnpj) <> 14) return false;
+		$soma = 0;
+		$soma += ($cnpj[0]*5)+($cnpj[1]*4)+($cnpj[2]*3)+($cnpj[3]*2)+($cnpj[4]*9)+($cnpj[5]*8);
+		$soma += ($cnpj[6]*7)+($cnpj[7]*6)+($cnpj[8]*5)+($cnpj[9]*4)+($cnpj[10]*3)+($cnpj[11]*2);
+		$d1 = $soma % 11;
+		$d1 = $d1 < 2 ? 0 : 11 - $d1;
+		$soma = 0;
+		$soma += ($cnpj[0]*6)+($cnpj[1]*5)+($cnpj[2]*4)+($cnpj[3]*3)+($cnpj[4]*2)+($cnpj[5]*9)+($cnpj[6]*8);
+		$soma += ($cnpj[7]*7)+($cnpj[8]*6)+($cnpj[9]*5)+($cnpj[10]*4)+($cnpj[11]*3)+($cnpj[12]*2);
+		$d2 = $soma % 11;
+		$d2 = $d2 < 2 ? 0 : 11 - $d2;
+		if($cnpj[12] == $d1 && $cnpj[13] == $d2) return true;
+		else return false;
+	}
+
+
 	public static function numberMask($value, $mindec=2, $maxdec=0, $ifzero=null) {
 		$mindec = (int)$mindec;
 		if(($ifzero!==null) && ((float)$value==0)) return $ifzero;
@@ -110,18 +203,6 @@ class R4 {
 		else return $number;
 	}
 
-
-	public static function changeDate($date, $year=0, $month=0, $day=0, $hour=0, $min=0, $sec=0) {
-		if(strlen($date) > 12) { //Date time (Y-m-d H:i:s)
-			$temp = explode(' ', $date);
-			$dat = explode('-', $temp[0]);
-			$tim = explode(':', $temp[1]);
-			return date('Y-m-d H:i:s', mktime($tim[0]+$hour, $tim[1]+$min, $tim[2]+$sec, $dat[1]+$month, $dat[2]+$day, $dat[0]+$year));
-		} else {
-			$split = explode('-', $date);
-			return date('Y-m-d', mktime(0, 0, 0, (int)$split[1]+$month, (int)$split[2]+$day, (int)$split[0]+$year));
-		}
-	}
 
 	public static function dateMask($date='') {
 		if(($date == '')
@@ -161,21 +242,15 @@ class R4 {
 	}
 
 
-	public static function onlyNumbers($string) {
-		$result = preg_replace('/[^0-9]/', '', $string);
-		return $result;
-	}
-
-
 	public static function cepMask($cep) {
-		$cep = Roda::onlyNumbers($cep);
+		$cep = R4::onlyNumbers($cep);
 
 		return substr($cep, 0, 5) .'-'. substr($cep, 5);
 	}
 
 
 	public static function cpfCnpjMask($x) {
-		$x = Roda::onlyNumbers($x);
+		$x = R4::onlyNumbers($x);
 		if(strlen($x) == 0) return '';
 		if(strlen($x) > 12) {
 			if(strlen($x) == 14) {
@@ -195,7 +270,7 @@ class R4 {
 			$size=$size/1024;
 			$i++;
 		}
-		return Roda::numberMask(substr($size, 0, strpos($size,'.')+4)).$iec[$i];
+		return R4::numberMask(substr($size, 0, strpos($size,'.')+4)).$iec[$i];
 	}
 
 
@@ -214,7 +289,7 @@ class R4 {
 
 		$x = str_replace($charout, $charin, $x);
 		$x = strtolower($x);
-		$x = Roda::stripAccent($x);
+		$x = R4::stripAccent($x);
 
 		for($ii=0; $ii<strlen($x); $ii++) {
 			if(stripos($allowed, $x[$ii]) !== false) {
@@ -244,6 +319,5 @@ class R4 {
 			      'U','U','U','U', 'Y'),
 			$string);
 	}
-
 
 }

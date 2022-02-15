@@ -8,8 +8,8 @@ var Tabs = {
 
 		let elem         = opts.elem         ?? null;
 		let idElem       = opts.idElem       ?? '';
+		let primary      = opts.primary      ?? '';
 		let itemSelector = opts.itemSelector ?? 'button';
-		let targetOn     = opts.targetOn     ?? '';
 		let onClick      = opts.click        ?? function(){};
 
 		if(!elem && idElem) {
@@ -29,6 +29,11 @@ var Tabs = {
 		elem.querySelectorAll(itemSelector).forEach(item => {
 
 			let targetId = item.getAttribute('target');
+
+			if(targetId == primary) {
+				item.classList.add('R4PrimaryTab');
+			}
+
 			document.getElementById(targetId).classList.add('hidden');
 
 			item.classList.add('R4TabItem');
@@ -69,15 +74,17 @@ var Tabs = {
 			});
 		});
 
-
-		if(targetOn) Tabs.click(targetOn);
+		if(primary) Tabs.click(primary);
 	},
 
 
 	click: targetId => {
-
 		document.querySelector('[target='+ targetId +']').click();
+	},
 
+
+	reset: tabElem => {
+		let elId = tabElem.querySelector('.R4PrimaryTab').getAttribute('target');
+		Tabs.click(elId);
 	}
-
 };

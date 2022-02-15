@@ -223,6 +223,7 @@ var Table = {
 				chkelem.value = value;
 
 				let labelem = document.createElement('label');
+				labelem.classList.add('block');
 				labelem.innerHTML = ' '+ value;
 				labelem.prepend(chkelem);
 				td.appendChild(labelem);

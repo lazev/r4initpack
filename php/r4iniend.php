@@ -14,9 +14,14 @@ if(!defined('R4ALREADYINIT')) {
 	$db = new DB();
 
 	if(defined('INDEXDB')) {
-		$dbtable = (defined('DBTABLE'))  ? DBTABLE : '';
+		$dbtable = (defined('DBTABLE')) ? DBTABLE : '';
 		$db->connect(INDEXDB, $dbtable);
 	}
+
+	spl_autoload_register(function($className) {
+		$className = strtolower($className);
+		require ROOT . $className .'/'. $className .'.class.php';
+	});
 
 } else {
 
