@@ -61,6 +61,8 @@
 	transition: 0.1s ease all;
 	-o-transition: 0.1s ease all;
 	-moz-transition: 0.1s ease all;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .R4Fields:not(.switch) > input:focus ~ label,

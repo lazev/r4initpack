@@ -889,6 +889,18 @@ var Fields = {
 	},
 
 
+	enable: function(elem, bool) {
+		if(bool || bool == undefined) {
+			elem.removeAttribute('readonly');
+			elem.removeAttribute('disabled');
+		}
+		else {
+			elem.setAttribute('readonly', true);
+			elem.setAttribute('disabled', true);
+		}
+	},
+
+
 	objectize: function(elem, concatObj) {
 		let r = {};
 

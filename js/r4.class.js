@@ -529,52 +529,19 @@ var R4 = {
 	},
 
 
+	arrayVal: function(arr, key) {
+		if(!arr.length) return undefined;
+
+		let ret = null;
+
+		arr.forEach(item => {
+			if(item.key == key) ret = item.value;
+		});
+
+		return ret;
+	},
+
 /*
-function soNumeros(v){
-    return v.replace(/\D/g,"")
-}
-function telefone(v){
-    v=v.replace(/\D/g,"")                 //Remove tudo o que não é dígito
-    v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parênteses em volta dos dois primeiros dígitos
-    v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hífen entre o quarto e o quinto dígitos
-    return v
-}
-function cpf(v){
-    v=v.replace(/\D/g,"")                    //Remove tudo o que não é dígito
-    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
-    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
-                                             //de novo (para o segundo bloco de números)
-    v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hífen entre o terceiro e o quarto dígitos
-    return v
-}
-function cep(v){
-    v=v.replace(/D/g,"")                //Remove tudo o que não é dígito
-    v=v.replace(/^(\d{5})(\d)/,"$1-$2") //Esse é tão fácil que não merece explicações
-    return v
-}
-
-function telefone(v){
-    v=v.replace(/\D/g,"")                 //Remove tudo o que não é dígito
-    v=v.replace(/^(\d\d)(\d)/g,"($1) $2") //Coloca parênteses em volta dos dois primeiros dígitos
-    v=v.replace(/(\d{4})(\d)/,"$1-$2")    //Coloca hífen entre o quarto e o quinto dígitos
-    return v
-}
-function cpf(v){
-    v=v.replace(/\D/g,"")                    //Remove tudo o que não é dígito
-    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
-    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
-                                             //de novo (para o segundo bloco de números)
-    v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hífen entre o terceiro e o quarto dígitos
-    return v
-}
-function mdata(v){
-    v=v.replace(/\D/g,"");
-    v=v.replace(/(\d{2})(\d)/,"$1/$2");
-    v=v.replace(/(\d{2})(\d)/,"$1/$2");
-
-    v=v.replace(/(\d{2})(\d{2})$/,"$1$2");
-    return v;
-}
 function mcc(v){
     v=v.replace(/\D/g,"");
     v=v.replace(/^(\d{4})(\d)/g,"$1 $2");
@@ -711,7 +678,6 @@ function mcc(v){
 				}
 				reject(err);
 			});
-
 		});
 	},
 

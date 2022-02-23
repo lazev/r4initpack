@@ -189,15 +189,15 @@ small {
 	overflow: auto;
 }
 
-.slider {
+.R4EffectSlider {
 	display: none;
 	height: 0;
 	opacity: 0;
 	overflow: hidden;
-	transition: height 200ms ease-in-out, opacity 300ms ease-in-out;
+	transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
 }
 
-.slider.isVisible {
+.R4EffectSlider.isVisible {
 	display: block;
 	height: auto;
 	opacity: 1;

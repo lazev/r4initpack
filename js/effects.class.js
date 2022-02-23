@@ -3,7 +3,7 @@ var Effects = {
 	slideDown: function(elem, callback) {
 
 		if(elem.offsetParent === null) { //Se invisível
-			elem.classList.add('slider');
+			elem.classList.add('R4EffectSlider');
 			elem.classList.remove('hidden');
 
 			elem.style.display = 'block';
@@ -15,12 +15,12 @@ var Effects = {
 
 			window.setTimeout(function () {
 				elem.style.height = '';
-				elem.classList.remove('slider');
-
+				elem.classList.remove('R4EffectSlider');
 				if(typeof callback == 'function') callback(elem);
-			}, 200);
+			}, 100);
 		} else {
 			elem.classList.remove('hidden');
+			if(typeof callback == 'function') callback(elem);
 		}
 	},
 
@@ -28,7 +28,7 @@ var Effects = {
 	slideUp: function(elem, callback) {
 
 		if(elem.offsetParent !== null) { //Se visível
-			elem.classList.add('slider');
+			elem.classList.add('R4EffectSlider');
 			elem.classList.add('isVisible');
 
 			elem.style.height = elem.scrollHeight + 'px';
@@ -39,11 +39,11 @@ var Effects = {
 
 			window.setTimeout(function () {
 				elem.classList.remove('isVisible');
-
 				if(typeof callback == 'function') callback(elem);
-			}, 200);
+			}, 100);
 		} else {
 			elem.classList.add('hidden');
+			if(typeof callback == 'function') callback(elem);
 		}
 	},
 
@@ -51,7 +51,7 @@ var Effects = {
 	fadeIn: function(elem, callback, duration, display) {
 		if(elem.offsetParent === null) {
 			elem.classList.remove('hidden');
-			var s = elem.style, step = 25/(duration || 300);
+			var s = elem.style, step = 25/(duration || 100);
 			s.opacity = s.opacity || 0;
 			s.display = display || 'block';
 
@@ -65,13 +65,14 @@ var Effects = {
 			})();
 		} else {
 			elem.classList.remove('hidden');
+			if(typeof callback == 'function') callback(elem);
 		}
 	},
 
 
 	fadeOut: function(elem, callback, duration) {
 		if(elem.offsetParent !== null) {
-			var s = elem.style, step = 25/(duration || 300);
+			var s = elem.style, step = 25/(duration || 100);
 			s.opacity = s.opacity || 1;
 
 			(function fade() {
@@ -84,6 +85,7 @@ var Effects = {
 			})();
 		} else {
 			elem.classList.add('hidden');
+			if(typeof callback == 'function') callback(elem);
 		}
 	},
 
