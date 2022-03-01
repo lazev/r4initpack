@@ -37,15 +37,25 @@ table.R4 > thead > tr > th > span[orderBy] {
 	cursor: pointer;
 }
 
+table.R4 > tbody > tr.R4SelRow {
+	background-color: #90EE90 !important;
+}
+
 table.R4 > tbody > tr > td.nonClickCol {
 	cursor: default;
 }
 
 table.R4 > tbody > tr:hover,
 table.R4.striped > tbody > tr:hover {
-	background: #f0e68c;
+	background-color:: #f0e68c !important;
 }
 
 .R4TablePgntn {
 	margin: 0 !important;
+}
+
+.R4FooterDescr {
+	margin-top: 20px;
+	text-align: center;
+	font-size: 0.6rem;
 }

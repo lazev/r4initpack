@@ -9,13 +9,41 @@ var Table = {
 
 		if(!opts) opts = {};
 
-		let idDestiny   = opts.idDestiny;
+		let idDestiny     = opts.idDestiny;
+		let listExtraCols = opts.listExtraCols;
+		let selExtraCols  = opts.selExtraCols;
+
+		if(typeof listExtraCols == 'object') {
+
+			let listCols    = [];
+			let objstorage  = {};
+			let jsonstorage = localStorage.getItem('listExtraCols');
+
+			if(jsonstorage) objstorage = JSON.parse(jsonstorage);
+			if(typeof objstorage[idDestiny] == 'string')
+				selExtraCols = objstorage[idDestiny].split(',');
+
+			opts.arrHead.forEach(col => {
+				if(col.listExtraCols) {
+					if(selExtraCols.length) {
+						selExtraCols.forEach(item => {
+							if(item) listCols.push(listExtraCols[item]);
+						});
+					}
+				} else {
+					listCols.push(col);
+				}
+			});
+
+			opts.arrHead = listCols;
+		}
 
 		Table.dom[idDestiny] = {
 			head:         opts.arrHead,
 			withCheck:    opts.withCheck,
-			onLineClick:  opts.onLineClick,
 			onOrderBy:    opts.onOrderBy,
+			onLineSel:    opts.onLineSel,
+			onLineClick:  opts.onLineClick,
 			onRegPerPage: opts.onRegPerPage,
 			onPagination: opts.onPagination
 		};
@@ -27,7 +55,6 @@ var Table = {
 		if(opts.classes) classes.push(opts.classes);
 
 		let head    = Table.createHead(opts.arrHead, idDestiny);
-
 		let destiny = document.getElementById(idDestiny);
 		let table   = document.createElement('table');
 		let tfoot   = document.createElement('tfoot');
@@ -51,7 +78,8 @@ var Table = {
 		aftertbl.setAttribute('class', 'row clearfix');
 
 		let descrTotalReg = document.createElement('div');
-		descrTotalReg.setAttribute('class', 'R4DescrTotalReg col-4 center onLeft small paspatur');
+		descrTotalReg.setAttribute('class', 'R4FooterDescr col-4 onLeft');
+		descrTotalReg.innerHTML = '<div class="R4TotalReg"></div>';
 
 		if(opts.onPagination) {
 			let pgntn = Table.createPagination(destiny);
@@ -64,6 +92,10 @@ var Table = {
 		}
 
 		aftertbl.append(descrTotalReg);
+
+		if(typeof listExtraCols == 'object') {
+			Table.listColSelector(idDestiny, listExtraCols, selExtraCols);
+		}
 	},
 
 
@@ -88,7 +120,7 @@ var Table = {
 		Table.updateRegPerPage(destiny, info.regPerPage);
 
 		let descrRegs = info.totalReg + ((info.totalReg == 1) ? ' registro encontrado' : ' registros encontrados');
-		destiny.querySelector('.R4DescrTotalReg').innerHTML = descrRegs;
+		destiny.querySelector('.R4FooterDescr > .R4TotalReg').innerHTML = descrRegs;
 	},
 
 
@@ -126,14 +158,20 @@ var Table = {
 				chkelem.setAttribute('type', 'checkbox');
 				chkelem.value = 'all';
 				chkelem.addEventListener('click', ev => {
-					chkelem.closest('table').querySelector('tbody').querySelectorAll('input[type=checkbox]').forEach(elem => {
+					chkelem.closest('table').querySelector('tbody').querySelectorAll('input[type=checkbox]')
+					.forEach(elem => {
 						elem.checked = chkelem.checked;
+						elem.dispatchEvent(new Event('change'));
 					});
 				});
 				th.prepend(chkelem);
 			}
 
-			if(cell.type == 'decimal') {
+			if(cell.type == 'integer' || cell.type == 'date') {
+				th.classList.add('center');
+			}
+
+			else if(cell.type == 'decimal') {
 				th.classList.add('right');
 			}
 
@@ -207,20 +245,44 @@ var Table = {
 
 			td = document.createElement('td');
 
-			if(Table.dom[idDestiny].head[position].type == 'decimal') {
-				let precision = Table.dom[idDestiny].head[position].precision ?? 0;
+			if(line.classes) {
+				if(line.classes[position]) {
+					if(line.classes[position].indexOf('R4KeepValue') > -1) {
+						td.setAttribute('value', value);
+					}
+					td.setAttribute('class', line.classes[position]);
+				}
+			}
+
+			let type = Table.dom[idDestiny].head[position].type;
+
+			if(type == 'integer') {
+				td.classList.add('center');
+			}
+			else if(type == 'decimal') {
+				let precision = Table.dom[idDestiny].head[position].precision ?? 2;
 				value = R4.numberMask(value, precision);
 				td.classList.add('right');
 			}
-			else if(Table.dom[idDestiny].head[position].type == 'date') {
+			else if(type == 'date') {
 				value = R4.dateMask(value);
-				td.classList.add('right');
+				td.classList.add('center');
+			}
+			else if(type == 'tags') {
+				value = value.replaceAll(',', ', ');
 			}
 
 			if((!footLine) && (position == 0) && (Table.dom[idDestiny].withCheck)) {
 				let chkelem = document.createElement('input');
 				chkelem.setAttribute('type', 'checkbox');
 				chkelem.value = value;
+				chkelem.addEventListener('change', function(ev) {
+					if(typeof Table.dom[idDestiny].onLineSel === 'function') {
+						setTimeout(Table.dom[idDestiny].onLineSel, 10);
+					}
+					if(this.checked) this.closest('tr').classList.add('R4SelRow');
+					else this.closest('tr').classList.remove('R4SelRow');
+				});
 
 				let labelem = document.createElement('label');
 				labelem.classList.add('block');
@@ -230,10 +292,6 @@ var Table = {
 			}
 			else {
 				td.innerHTML = ' '+ value;
-			}
-
-			if(line.classes) {
-				if(line.classes[position]) td.setAttribute('class', line.classes[position]);
 			}
 
 			tr.appendChild(td);
@@ -302,10 +360,11 @@ var Table = {
 							var endElem = posSel;
 							if(posSel <= shiftCheckFirstSel) {
 								iniElem = posSel;
-								endElem = shiftCheckFirstSel;
+								endElem = shiftCheckFirstSel+1;
 							}
 							for(var ii=iniElem; ii<endElem; ii++) {
 								document.querySelectorAll('input[type=checkbox]')[ii].checked = ev.target.checked;
+								document.querySelectorAll('input[type=checkbox]')[ii].dispatchEvent(new Event('change'));
 							}
 						}
 						shiftCheckFirstSel = posSel;
@@ -530,6 +589,53 @@ var Table = {
 		if(!regbtn) return;
 
 		regbtn.innerHTML = numPage +' reg/pag';
+	},
+
+
+	listColSelector: (idDestiny, listExtraCols, selExtraCols) => {
+
+		var btnElem = document.createElement('a');
+		btnElem.setAttribute('href', '#');
+		btnElem.innerHTML = 'Escolher colunas';
+
+		let html    = '<div id="'+ idDestiny +'ColSelOptBox" class="paspatur"><b>Opções de colunas</b>';
+		let fldsObj = [];
+		let checked = false;
+
+		for(var k in listExtraCols) {
+			checked = selExtraCols.includes(k);
+			html += '<div id="listColItem_'+ k +'">'+ listExtraCols[k].label +'</div>'
+			fldsObj.push({ id: 'listColItem_'+ k, type: 'switch', checked: checked, value: k });
+		}
+
+		html += '<button class="R4 bgSuccess" id="'+ idDestiny +'ColSelBtnSave">Salvar</button>'+
+		        '</div>';
+
+		Pop.click(btnElem, {
+			html: html,
+			preventDefault: true,
+			onOpen: () => {
+				Fields.create(fldsObj)
+				document.getElementById(idDestiny +'ColSelBtnSave').addEventListener('click', function(ev){
+					let ret = [];
+					document.getElementById(idDestiny +'ColSelOptBox').querySelectorAll('input').forEach(item => {
+						 if(item.checked) ret.push(item.value);
+					});
+
+					let obj  = {};
+					let json = localStorage.getItem('listExtraCols');
+					if(json) obj = JSON.parse(json);
+
+					obj[idDestiny] = ret.join(',');
+
+					localStorage.setItem('listExtraCols', JSON.stringify(obj));
+					document.location.reload();
+				});
+			}
+		});
+
+		document.querySelector('#'+ idDestiny).setAttribute('selExtraCols', selExtraCols.join(','));
+		document.querySelector('#'+ idDestiny +' .R4FooterDescr').append(btnElem);
 	},
 
 

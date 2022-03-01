@@ -65,6 +65,7 @@
 .R4Overlay .R4Dialog > footer {
 	position: sticky;
 	bottom: 0;
+	padding-left: 10px;
 	pointer-events: none;
 }
 

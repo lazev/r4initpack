@@ -83,9 +83,9 @@ var R4 = {
 
 	listeners: function() {
 		//mobile debuger
-		window.onerror = function (msg, url, lineNo, columnNo, error) {
-			Warning.show(msg, url +': '+ lineNo +':'+ columnNo +':'+ error);
-		};
+		//window.onerror = function (msg, url, lineNo, columnNo, error) {
+		//	Warning.show(msg, url +': '+ lineNo +':'+ columnNo +':'+ error);
+		//};
 
 		document.addEventListener('keydown', function(event) {
 			if(event.keyCode == 27) {
@@ -826,5 +826,15 @@ function mcc(v){
 
 
 		return html;
+	},
+
+
+	newTab: url => {
+ 		let formelem = document.createElement('form');
+		formelem.setAttribute('action', url);
+		formelem.setAttribute('target', '_blank');
+		document.body.append(formelem);
+		formelem.submit();
+		formelem.remove();
 	}
 };
