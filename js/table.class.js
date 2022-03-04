@@ -285,7 +285,7 @@ var Table = {
 				});
 
 				let labelem = document.createElement('label');
-				labelem.classList.add('block');
+				labelem.setAttribute('class', 'block nowrap');
 				labelem.innerHTML = ' '+ value;
 				labelem.prepend(chkelem);
 				td.appendChild(labelem);

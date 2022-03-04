@@ -51,10 +51,10 @@ SVG Icons - svgicons.sparkk.fr
 .onRight  { float: right;       }
 .onLeft   { float: left;        }
 
-.corner    { border-radius: 3px; }
-.paspatur  { padding: 20px;      }
-.clickable { cursor: pointer;    }
-
+.corner    { border-radius: 3px;  }
+.paspatur  { padding: 20px;       }
+.clickable { cursor: pointer;     }
+.nowrap    { white-space: nowrap; }
 .btnAlignFix { padding-top: 10px; }
 
 .small {

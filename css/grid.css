@@ -32,6 +32,7 @@
 .col-7,  .col-8,  .col-9,
 .col-10, .col-11, .col-12 {
 	width: 96%;
+	display: inline-block;
 }
 
 .col-xs-1  { width: 4.33%;  }

@@ -212,6 +212,7 @@ class R4 {
 		}
 		else {
 			//If it's datetime format
+			$hour = '';
 			if(strlen($date) > 12) {
 				$prima = explode(' ', $date);
 				$hour = ' '. $prima[1];
