@@ -253,6 +253,8 @@ var Fields = {
 					elem.addEventListener('input', function(ev){ this.value = R4.cepMask(this.value); });
 					break;
 
+				case 'cpf':
+				case 'cnpj':
 				case 'cpfcnpj':
 					type = 'tel';
 					elem.addEventListener('input', function(ev){ this.value = R4.cpfcnpjMask(this.value); });
@@ -311,8 +313,6 @@ var Fields = {
 		let id   = (prefix)   ? prefix +'_'+ item.id : item.id;
 		let name = item.name || item.id;
 
-		let withContent = false;
-
 		let attrib = {
 			id:   id,
 			name: name
@@ -329,49 +329,6 @@ var Fields = {
 
 		for(let k in attrib) elem.setAttribute(k, attrib[k]);
 
-		if(item.options) {
-
-			if(typeof item.options === 'string') {
-				if(typeof eval(item.options) === 'object') {
-					item.options = eval(item.options);
-				}
-			}
-
-			let opt;
-
-			for(let k in item.options) {
-				if(typeof item.options[k] == 'string') {
-					opt = document.createElement('option');
-
-					opt.setAttribute('value', k);
-					opt.innerHTML = item.options[k];
-
-					if(item.value == k) {
-						opt.setAttribute('selected', 'selected');
-						withContent = true;
-					}
-
-					elem.append(opt);
-				}
-				else if(typeof item.options[k] == 'object') {
-					if(typeof item.options[k].key == 'string') {
-
-						opt = document.createElement('option');
-
-						opt.setAttribute('value', item.options[k].key);
-						opt.innerHTML = item.options[k].value;
-
-						if(item.value == item.options[k].key) {
-							opt.setAttribute('selected', 'selected');
-							withContent = true;
-						}
-
-						elem.append(opt);
-					}
-				}
-			}
-		}
-
 		if(item.label) {
 			label = document.createElement('label');
 			label.innerHTML = item.label;
@@ -381,9 +338,6 @@ var Fields = {
 		wrap.setAttribute('class', 'R4Fields');
 		wrap.append(elem);
 		wrap.append(label);
-		if(withContent) {
-			wrap.classList.add('withContent');
-		}
 
 		elem.addEventListener('blur', function(event){
 			if(this.selectedIndex > -1 && this.options[this.selectedIndex].innerHTML) {
@@ -393,9 +347,59 @@ var Fields = {
 			}
 		});
 
+		if(item.options) {
+			Fields.setSelectOpts(elem, item.options, item.value);
+		}
+
 		Fields.setValidateRules(elem, item);
 
 		return wrap;
+	},
+
+
+	setSelectOpts: function(elem, options, value) {
+
+		elem.innerHTML = '';
+
+		if(typeof options === 'string') {
+			if(typeof eval(options) === 'object') {
+				options = eval(options);
+			}
+		}
+
+		let opt;
+
+		for(let k in options) {
+			if(typeof options[k] == 'string') {
+				opt = document.createElement('option');
+
+				opt.setAttribute('value', k);
+				opt.innerHTML = options[k];
+
+				if(value == k) {
+					opt.setAttribute('selected', 'selected');
+				}
+
+				elem.append(opt);
+			}
+			else if(typeof options[k] == 'object') {
+				if(typeof options[k].key == 'string') {
+
+					opt = document.createElement('option');
+
+					opt.setAttribute('value', options[k].key);
+					opt.innerHTML = options[k].value;
+
+					if(value == options[k].key) {
+						opt.setAttribute('selected', 'selected');
+					}
+
+					elem.append(opt);
+				}
+			}
+		}
+
+		elem.dispatchEvent(new Event('blur'));
 	},
 
 

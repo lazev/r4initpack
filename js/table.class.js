@@ -229,16 +229,18 @@ var Table = {
 		tr = document.createElement('tr');
 		tr.setAttribute('value', line.value);
 
-		if(typeof Table.dom[idDestiny].onLineClick === 'function') {
-			tr.classList.add('clickable');
-			tr.addEventListener('click', (event, elem) => {
-				if(!event.target.classList.contains('nonClickCol')) {
-					Table.dom[idDestiny].onLineClick(
-						event.target.parentNode.getAttribute('value'),
-						event.target.parentNode
-					);
-				}
-			});
+		if(!footLine) {
+			if(typeof Table.dom[idDestiny].onLineClick === 'function') {
+				tr.classList.add('clickable');
+				tr.addEventListener('click', (event, elem) => {
+					if(!event.target.classList.contains('nonClickCol')) {
+						Table.dom[idDestiny].onLineClick(
+							event.target.parentNode.getAttribute('value'),
+							event.target.parentNode
+						);
+					}
+				});
+			}
 		}
 
 		line.cells.forEach(function(value, position){
@@ -256,7 +258,9 @@ var Table = {
 
 			let type = Table.dom[idDestiny].head[position].type;
 
-			if(type == 'integer') {
+			if(value == null || value == undefined) value = '';
+
+			else if(type == 'integer') {
 				td.classList.add('center');
 			}
 			else if(type == 'decimal') {
@@ -293,6 +297,8 @@ var Table = {
 			else {
 				td.innerHTML = ' '+ value;
 			}
+
+			td.setAttribute('col-title', Table.dom[idDestiny].head[position].label +': ');
 
 			tr.appendChild(td);
 		});
@@ -441,7 +447,7 @@ var Table = {
 		let next  = document.createElement('div');
 		let last  = document.createElement('div');
 
-		pgntn.setAttribute('class', 'col-4 onRight R4TablePgntn'       );
+		pgntn.setAttribute('class', 'col-4 onRight R4TablePgntn hiddenPrint' );
 		first.setAttribute('class', 'col-xs-3 center R4TablePageFirst' );
 		prev.setAttribute('class',  'col-xs-3 center R4TablePagePrev'  );
 		next.setAttribute('class',  'col-xs-3 center R4TablePageNext'  );
@@ -576,7 +582,7 @@ var Table = {
 		Pop.click(btnSel, { html: ul });
 
 		let rcpt = document.createElement('div');
-		rcpt.setAttribute('class', 'col-4 onLeft R4TableRegPerPage');
+		rcpt.setAttribute('class', 'col-4 onLeft R4TableRegPerPage hiddenPrint');
 		rcpt.appendChild(btnSel);
 
 		return rcpt;
@@ -596,6 +602,7 @@ var Table = {
 
 		var btnElem = document.createElement('a');
 		btnElem.setAttribute('href', '#');
+		btnElem.setAttribute('class', 'hiddenPrint');
 		btnElem.innerHTML = 'Escolher colunas';
 
 		let html    = '<div id="'+ idDestiny +'ColSelOptBox" class="paspatur"><b>Opções de colunas</b>';

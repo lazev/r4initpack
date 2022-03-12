@@ -13,13 +13,14 @@
 	margin-top: 10px;
 	width: 100%;
 	border: none;
-	border-bottom: 1px solid #757575;
+	border-bottom: 1px solid #dedede;
 	box-sizing: border-box;
 	background-color: inherit;
+	color: #555;
 }
 
 .R4Fields > select {
-	padding: 2px 0 6px 0;
+	padding: 2px 0;
 }
 
 .R4Fields:not(.switch):not(.tags) > input:disabled,
@@ -288,4 +289,5 @@ fieldset.R4 > legend,
 fieldset.R4Fields > legend {
 	padding: 0 5px;
 	border-radius: 3px;
+	font-weight: bold;
 }

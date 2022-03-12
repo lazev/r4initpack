@@ -9,16 +9,16 @@ var Dialog = {
 
 			if(!opts) opts = {};
 
-			let elem         = opts.elem;
-			    id           = opts.id           || '',
-			    title        = opts.title        || '',
-			    html         = opts.html         || '',
-			    style        = opts.style        || {},
-			    open         = opts.open         || false,
-			    ephemeral    = opts.ephemeral    || false,
-			    closeMonitor = opts.closeMonitor || false,
-			    buttons      = opts.buttons      || [],
-			    classes      = [];
+			let elem          = opts.elem;
+			    id            = opts.id            || '',
+			    title         = opts.title         || '',
+			    html          = opts.html          || '',
+			    style         = opts.style         || {},
+			    open          = opts.open          || false,
+			    ephemeral     = opts.ephemeral     || false,
+			    changeMonitor = opts.changeMonitor || false,
+			    buttons       = opts.buttons       || [],
+			    classes       = [];
 
 			let onOpen    = opts.onOpen      || function(){},
 			    onCreate  = opts.onCreate    || function(){},
@@ -44,7 +44,7 @@ var Dialog = {
 				cont.id = idElem;
 			}
 
-			if($('#R4Overlay-'+ idElem)) {
+			if(document.getElementById('R4Overlay-'+ idElem)) {
 				resolve(idElem);
 				return;
 			}
@@ -163,6 +163,10 @@ var Dialog = {
 
 			for(let k in style) modl.style[k] = style[k];
 
+			if(changeMonitor) {
+				elem.setAttribute('changeMonitor', 'pendent');
+			}
+
 			resolve(idElem);
 		});
 	},
@@ -188,12 +192,35 @@ var Dialog = {
 			Dialog.onOpenFuncs[idElem]();
 		}
 
+		let elem = document.getElementById(idElem);
+
+		if(elem.getAttribute('changeMonitor')) {
+			setTimeout(() => Dialog.setChangeMonitor(elem), 500);
+		}
+
 		/*
 		let modl = document.getElementById('R4Dialog-'+ idElem);
 		if(modl.offsetHeight+100 < window.innerHeight) {
 			modl.style.marginTop = '50px';
 		}
 		*/
+	},
+
+
+	setChangeMonitor: elem => {
+
+		let check = elem.getAttribute('changeMonitor');
+
+		if(check == 'pendent') {
+			elem.setAttribute('changeMonitor', 1);
+			elem.querySelectorAll('input, select, textarea').forEach(item => {
+				item.addEventListener('change', function(ev){
+					elem.classList.add('contentChanged');
+				});
+			});
+		}
+
+		elem.classList.remove('contentChanged');
 	},
 
 
@@ -224,6 +251,17 @@ var Dialog = {
 	},
 
 
+	closeAnyway: function(idElem) {
+		if(typeof idElem === 'object') {
+			idElem.classList.remove('contentChanged');
+		} else {
+			document.getElementById(idElem).classList.remove('contentChanged');
+		}
+
+		Dialog.close(idElem);
+	},
+
+
 	closeOverlay: function(idOver) {
 		let over = document.getElementById(idOver);
 		let idElem = idOver.replace('R4Overlay-', '');
@@ -239,6 +277,16 @@ var Dialog = {
 			over.remove();
 		} else {
 			over.classList.add('hidden');
+			let elem = document.getElementById(idElem);
+			if(elem.getAttribute('changeMonitor') == 1 && elem.classList.contains('contentChanged')) {
+				let btn = document.createElement('button');
+				btn.setAttribute('class', 'R4');
+				btn.innerHTML = 'Recuperar';
+				btn.addEventListener('click', () => over.classList.remove('hidden'));
+				setTimeout(() => {
+					Warning.show('Fechou sem salvar as alterações', btn)
+				}, 200);
+			}
 		}
 
 		if(Dialog.getIdOpenOverlays().length === 0) {
