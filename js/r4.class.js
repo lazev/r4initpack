@@ -16,9 +16,9 @@ let methods = {
 		this.dispatchEvent(event);
 	},
 
-	val: function(val) {
+	val: function(val, label) {
 		if(arguments.length === 0) return Fields.getVal(this);
-		else return Fields.setVal(this, val);
+		else return Fields.setVal(this, val, label);
 	},
 
 	attr: function(name, value) {
@@ -89,15 +89,27 @@ var R4 = {
 
 		document.addEventListener('keydown', function(event) {
 			if(event.keyCode == 27) {
-				if(typeof Dialog === 'object') {
-					Dialog.closeLastOpen();
+				let ultAberto;
+				let arrOvers = document.querySelectorAll('.R4Overlay');
+				for (let i = 0; i < arrOvers.length; i++) {
+					if(!arrOvers[i].classList.contains('hidden')) {
+						ultAberto = arrOvers[i];
+					}
+				}
+
+				if(ultAberto.classList.contains('R4PopOverlay')) {
+					let elemId = ultAberto.id.replace('R4PopOverlay-', '');
+					Pop.destroyElem($('#'+ elemId), true);
+				} else {
+					if(typeof Dialog === 'object') {
+						Dialog.closeLastOpen();
+					}
 				}
 			}
 		});
 
 		document.addEventListener('click', function(ev) {
 			if(ev.target.tagName.toLowerCase() != 'button') {
-				Pop.destroyAllExcept(ev.target.getAttribute('R4PopTarget'));
 				Warning.hideAll();
 			}
 		});
@@ -359,13 +371,14 @@ var R4 = {
 	},
 
 
-	dateMask: function(dt) {
-		if(!dt) return '';
-		if(dt == '0000-00-00' || dt == '0000-00-00 00:00:00') return '';
+	dateMask: function(date) {
+		if(!date) return '';
+		if(date == '0000-00-00' || date == '0000-00-00 00:00:00') return '';
 
-		return dt.substr(8, 2) +'/'
-		     + dt.substr(5, 2) +'/'
-		     + dt.substr(0, 4);
+		let dthr = date.trim().split(' ');
+		let dt   = dthr[0].split('-');
+
+		return dt[2] +'/'+ dt[1] +'/'+ dt[0] + ((dthr[1]) ? ' '+ dthr[1] : '');
 	},
 
 
@@ -682,6 +695,11 @@ function mcc(v){
 	},
 
 
+	getTemplate: function(elem) {
+		return elem.content.cloneNode(true);
+	},
+
+
 	setRemoteHTML: function(destiny, source) {
 		return new Promise((resolve, reject) => {
 
@@ -751,6 +769,62 @@ function mcc(v){
 
 
 	render: (templateElem, payload) => {
+
+		let loopStr = '';
+
+		let elem = templateElem.content.cloneNode(true);
+
+		if(!payload) return elem;
+
+		if(elem.querySelector('[loop]')) {
+			for(var key in payload) {
+				if((typeof payload[key] == 'object') && (payload[key].length)) {
+					loopElem = elem.querySelector('[loop]');
+					loopResult = R4.renderLoop(loopElem, payload[key]);
+					loopElem.parentNode.innerHTML = loopResult;
+					//loopElem.remove();
+					delete payload[key];
+				}
+			}
+		}
+
+		let content = elem.firstElementChild.outerHTML;
+
+		for(var key in payload) {
+			if((typeof payload[key] != 'object') || (!payload[key].length)) {
+				content = content.split('{{'+ key +'}}').join(payload[key]);
+			}
+		}
+
+		let retElem = document.createElement('div');
+		retElem.innerHTML = content;
+
+		return retElem.firstChild;
+	},
+
+
+	renderLoop: (loopElem, payload) => {
+
+		loopElem.removeAttribute('loop');
+		let crude = loopElem.outerHTML;
+
+		let processed = '';
+
+		payload.forEach(row => {
+			content = crude;
+
+			for(var key in row) {
+				content = content.split('{{'+ key +'}}').join(row[key]);
+			}
+
+			processed += content;
+		});
+
+		return processed;
+	},
+
+/*
+	renderbak: (templateElem, payload) => {
 
 		let content;
 		let processed = '';
@@ -827,7 +901,7 @@ function mcc(v){
 
 		return html;
 	},
-
+*/
 
 	newTab: url => {
  		let formelem = document.createElement('form');

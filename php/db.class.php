@@ -29,7 +29,7 @@ class DB {
 						);
 					}
 					$this->errCod = $this->DBCon->connect_errno;
-					$this->errMsg = $this->DBCon->connect_error;
+					$this->errMsg = $this->DBCon->connect_errno .' - '. $this->DBCon->connect_error;
 					return false;
 				}
 
@@ -59,7 +59,7 @@ class DB {
 						);
 					}
 					$this->errCod = $this->DBCon->errno;
-					$this->errMsg = $this->DBCon->error;
+					$this->errMsg = $this->DBCon->errno .' - '. $this->DBCon->error;
 					return false;
 				}
 				$this->baseNow = $dbname;
@@ -135,7 +135,7 @@ class DB {
 				);
 			}
 			$this->errCod = $this->DBCon->errno;
-			$this->errMsg = $this->DBCon->error;
+			$this->errMsg = $this->DBCon->errno .' - '. $this->DBCon->error;
 			$this->errCom = $com;
 			return false;
 		}
@@ -176,7 +176,7 @@ class DB {
 				);
 			}
 			$this->errCod = $this->DBCon->errno;
-			$this->errMsg = $this->DBCon->error;
+			$this->errMsg = $this->DBCon->errno .' - '. $this->DBCon->error;
 			$this->errCom = $com;
 			return false;
 		}

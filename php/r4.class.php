@@ -48,26 +48,50 @@ class R4 {
 
 
 	public static function mergeNewArr($old, $new) {
-		$merged  = [];
-		$changed = [];
-
-		foreach($old as $key => $val) {
-			//Se o campo está informado no new
-			if(array_key_exists($key, $new)) {
-				//Se o valor novo é igual do old
-				if($old[$key] == $new[$key]) {
-					$merged[$key]  = $old[$key];
-				} else {
-					$merged[$key]  = $new[$key];
-					$changed[$key] = $new[$key];
+		$ret = [
+			'changed' => [],
+			'merged'  => []
+		];
+		foreach($new as $key => $val) {
+			$up = false;
+			//only if exists on DB
+			if(isset($old[$key])) {
+				//only if the new value is different from the DB value
+				if($old[$key] != $val) {
+					//but do the update if the new value is empty...
+					if(
+							(empty($val))
+						|| ($val == '0000-00-00')
+						|| ($val == '0000-00-00 00:00:00')
+					){
+						//...and the DB value is not empty
+						if(!empty($old[$key])) {
+							if(
+								($old[$key] != '0000-00-00')
+							&& ($old[$key] != '0000-00-00 00:00:00')
+							&& ($old[$key] !== 0)
+							){
+								$up = true;
+							}
+						}
+					}
+					elseif(R4::checkDate($val)) {
+						if($val .' 00:00:00' != $old[$key]) {
+							$up = true;
+						}
+					}
+					else {
+						$up = true;
+					}
 				}
 			}
+			if($up) {
+				$old[$key] = $val;
+				$ret['changed'][$key] = $val;
+			}
 		}
-
-		return [
-			'merged'  => $merged,
-			'changed' => $changed
-		];
+		$ret['merged'] = $old;
+		return $ret;
 	}
 
 

@@ -5,11 +5,21 @@ FieldsTags = {
 	dom: {},
 
 	create: (elem, info) => {
+
+		if(info.maxSel) {
+			elem.setAttribute('maxSel', info.maxSel);
+		}
+
+		if(info.hideInputOnMaxSel) {
+			elem.setAttribute('hideInputOnMaxSel', true);
+		}
+
+		if(info.onSel)    elem.setAttribute('onSel',    info.onSel   );
+		if(info.onAddTag) elem.setAttribute('onAddTag', info.onAddTag);
+
 		elem.addEventListener('keydown', ev => {
 
 			if(info.maxSel) {
-				elem.setAttribute('maxSel', info.maxSel);
-
 				if(ev.keyCode != 8 && ev.keyCode != 9) {
 					let vals = FieldsTags.getVal(elem, true);
 					if(vals.length >= info.maxSel) {
@@ -18,24 +28,12 @@ FieldsTags = {
 				}
 			}
 
-			if(ev.keyCode == 108 || ev.keyCode == 188) {
-				ev.preventDefault();
-				FieldsTags.addTag(elem, elem.value);
-			}
-
-			else if(ev.keyCode == 13) {
+			if(ev.keyCode == 108 || ev.keyCode == 188 || ev.keyCode == 13) {
 				ev.preventDefault();
 				if(info.typeahead) {
-					let listElem = elem.parentNode.querySelector('.typeAheadList');
-					let marked = listElem.querySelector('.marked');
-					if(marked) {
-						FieldsTags.addTag(
-							elem,
-							marked.getAttribute('value'),
-							marked.querySelector('div').innerHTML
-						);
-						elem.parentNode.querySelector('.typeAheadList').innerHTML = '';
-					}
+					FieldsTags.typeAheadSelItem(elem);
+				} else {
+					FieldsTags.addTag(elem, elem.value);
 				}
 			}
 
@@ -62,7 +60,7 @@ FieldsTags = {
 				//Small delay to run typeahead elem click before blur
 				FieldsTags.addTag(elem, elem.value);
 				FieldsTags.withContent(event.target);
-			}, 1);
+			}, 100);
 		});
 
 		elem.addEventListener('paste', function(event){
@@ -82,6 +80,152 @@ FieldsTags = {
 	},
 
 
+	withContent: elem => {
+		if(!elem.parentNode.querySelector('.tagList').querySelectorAll('.tagItem').length) {
+			elem.parentNode.classList.remove('withContent');
+		} else {
+			elem.parentNode.classList.add('withContent');
+		}
+	},
+
+
+	addTag: (elem, val, label) => {
+
+		val = val.toString().trim();
+
+		if(!val) return;
+
+		let maxSel = elem.getAttribute('maxSel');
+
+		let hideInputOnMaxSel = elem.getAttribute('hideInputOnMaxSel');
+
+		let onAddTag = elem.getAttribute('onAddTag');
+
+		let vals = FieldsTags.getVal(elem, true);
+
+		if(maxSel && vals.length >= maxSel) {
+			elem.value = '';
+			return;
+		}
+
+		for(let k in vals) {
+			if(vals[k] == val) {
+				k++;
+				Effects.blink(elem.parentNode.querySelector('.tagList').querySelector(':nth-child('+ k +')'));
+				elem.value = '';
+				return;
+			}
+		}
+
+		let el = document.createElement('div');
+		el.classList.add('tagItem');
+		el.classList.add('bgPrimary');
+		el.classList.add('white');
+		el.classList.add('corner');
+		el.setAttribute('value', val);
+
+		let txt = (label) ? label : val;
+		el.setAttribute('text', txt);
+
+		let rem = document.createElement('span');
+		rem.innerHTML = 'x';
+		rem.classList.add('closer');
+		rem.addEventListener('click', ev => {
+			FieldsTags.remTag(elem, ev.target.parentNode);
+		});
+
+		el.appendChild(rem);
+		el.appendChild(document.createTextNode(txt));
+
+		elem.parentNode.querySelector('.tagList').appendChild(el);
+		elem.value = '';
+
+		if(typeof eval(onAddTag) === 'function') {
+			eval(onAddTag +'("'+ val +'", "'+ label +'", el)');
+		}
+
+		if(hideInputOnMaxSel) {
+			vals = FieldsTags.getVal(elem, true);
+			if(maxSel && vals.length >= maxSel) {
+				elem.classList.add('hidden');
+			}
+		}
+	},
+
+
+	clrTag: elem => {
+		elem.parentNode.querySelector('.tagList').innerHTML = '';
+		elem.classList.remove('hidden');
+		FieldsTags.withContent(elem);
+	},
+
+
+	remTag: (elem, target) => {
+		if(target) target.remove();
+		elem.classList.remove('hidden');
+		FieldsTags.withContent(elem);
+	},
+
+
+	setVal: (elem, val, label) => {
+		FieldsTags.clrTag(elem);
+		FieldsTags.appendVal(elem, val, label);
+	},
+
+
+	appendVal: (elem, val, label) => {
+
+		elem.value = '';
+
+		if(val) {
+
+			val = val.toString();
+
+			let arr = (val.indexOf(',') > -1) ? val.split(',') : [val];
+
+			arr.forEach(item => {
+				if(elem.getAttribute('R4Type') == 'phonetags') {
+					FieldsTags.addTag(elem, R4.phoneMask(item));
+				} else {
+					FieldsTags.addTag(elem, item, label);
+				}
+			});
+
+		}
+	},
+
+
+	getVal: (elem, retArr) => {
+		let ret = [];
+		elem.parentNode.querySelector('.tagList').querySelectorAll('.tagItem').forEach(el => {
+			ret.push(el.getAttribute('value'));
+		});
+
+		if(elem.getAttribute('R4Type') == 'phonetags') {
+			ret.forEach(function(item, key){
+				ret[key] = R4.onlyNumbers(item);
+			});
+		}
+
+		if(retArr) return ret;
+		return ret.join(',');
+	},
+
+
+	getText: (elem, retArr) => {
+
+		let ret = [];
+		elem.parentNode.querySelector('.tagList').querySelectorAll('.tagItem').forEach(el => {
+			ret.push(el.getAttribute('text'));
+		});
+		if(retArr) return ret;
+		return ret.join(',');
+
+	},
+
+
+	//TYPEAHEAD ADDON
+
 	setDomTypeAheadEvent: (elem, info) => {
 		FieldsTags.dom[info.id] = ev => {
 			let list, listElem;
@@ -89,6 +233,13 @@ FieldsTags = {
 			let destiny = ev.target.parentNode.querySelector('.typeAheadList');
 
 			let value = ev.target.value;
+
+			if(parseInt(info.minLength) > 0) {
+				if(value.length < info.minLength) {
+					ev.target.parentNode.querySelector('.typeAheadList').innerHTML = '';
+					return;
+				}
+			}
 
 			if(info.typeahead == 'json') {
 
@@ -98,10 +249,6 @@ FieldsTags = {
 
 				else if(typeof info.source == 'object') {
 					list = FieldsTags.typeAheadFilterList(info.source, value);
-				}
-
-				if(parseInt(info.minLength) > 0) {
-					if(value.length < info.minLength) return;
 				}
 
 				listElem = FieldsTags.typeAheadFormatList(elem, list);
@@ -119,7 +266,6 @@ FieldsTags = {
 						eval(info.source +'("'+ value +'")' )
 
 						.then(list => {
-
 							listElem = FieldsTags.typeAheadFormatList(elem, list);
 
 							destiny.innerHTML = '';
@@ -132,7 +278,7 @@ FieldsTags = {
 		};
 
 		elem.addEventListener('keyup', ev => {
-			if((ev.keyCode != 38) && (ev.keyCode != 40)) {
+			if((ev.keyCode != 38) && (ev.keyCode != 40)) { //arrow up (38) and down (40)
 				FieldsTags.dom[ev.target.id](ev);
 			}
 		});
@@ -198,11 +344,7 @@ FieldsTags = {
 			});
 
 			li.addEventListener('click', function(ev) {
-				FieldsTags.addTag(
-					elem,
-					this.getAttribute('value'),
-					this.parentNode.querySelector('div').innerHTML
-				);
+				FieldsTags.typeAheadSelItem(elem);
 				elem.focus();
 			});
 		});
@@ -235,131 +377,27 @@ FieldsTags = {
 	},
 
 
-	withContent: elem => {
-		if(!elem.parentNode.querySelector('.tagList').querySelectorAll('.tagItem').length) {
-			elem.parentNode.classList.remove('withContent');
-		} else {
-			elem.parentNode.classList.add('withContent');
-		}
-	},
+	typeAheadSelItem: elem => {
 
+		let onSel = elem.getAttribute('onSel');
 
-	addTag: (elem, val, label) => {
+		let listElem = elem.parentNode.querySelector('.typeAheadList');
 
-		val = val.trim();
+		let marked = listElem.querySelector('.marked');
 
-		if(!val) return;
+		if(marked) {
 
-		let maxSel = elem.getAttribute('maxSel');
+			let val = marked.getAttribute('value');
+			let label = marked.querySelector('div').innerHTML;
 
-		let vals = FieldsTags.getVal(elem, true);
-
-		if(maxSel && vals.length >= maxSel) {
-			elem.value = '';
-			return;
-		}
-
-		for(let k in vals) {
-			if(vals[k] == val) {
-				k++;
-				Effects.blink(elem.parentNode.querySelector('.tagList').querySelector(':nth-child('+ k +')'));
-				elem.value = '';
-				return;
+			if(typeof eval(onSel) === 'function') {
+				eval(onSel +'("'+ val +'", "'+ label +'")');
 			}
+
+			FieldsTags.addTag(elem, val, label);
+
+			elem.parentNode.querySelector('.typeAheadList').innerHTML = '';
 		}
-
-		let el = document.createElement('div');
-		el.classList.add('tagItem');
-		el.classList.add('bgPrimary');
-		el.classList.add('white');
-		el.classList.add('corner');
-		el.setAttribute('value', val);
-
-		let txt = (label) ? label : val;
-		el.setAttribute('text', txt);
-
-		let rem = document.createElement('span');
-		rem.innerHTML = 'x';
-		rem.classList.add('closer');
-		rem.addEventListener('click', ev => {
-			FieldsTags.remTag(elem, ev.target.parentNode);
-		});
-
-		el.appendChild(rem);
-		el.appendChild(document.createTextNode(txt));
-
-		elem.parentNode.querySelector('.tagList').appendChild(el);
-		elem.value = '';
-	},
-
-
-	clrTag: elem => {
-		elem.parentNode.querySelector('.tagList').innerHTML = '';
-		FieldsTags.withContent(elem);
-	},
-
-
-	remTag: (elem, target) => {
-		if(target) target.remove();
-		FieldsTags.withContent(elem);
-	},
-
-
-	setVal: (elem, val) => {
-		FieldsTags.clrTag(elem);
-		FieldsTags.appendVal(elem, val);
-	},
-
-
-	appendVal: (elem, val) => {
-		elem.value = '';
-		if(val) {
-			if(val.indexOf(',') > -1) {
-				let arr = val.split(',');
-				arr.forEach(item => {
-					if(elem.getAttribute('R4Type') == 'phonetags') {
-						FieldsTags.addTag(elem, R4.phoneMask(item));
-					} else {
-						FieldsTags.addTag(elem, item);
-					}
-				});
-			} else {
-				if(elem.getAttribute('R4Type') == 'phonetags') {
-					FieldsTags.addTag(elem, R4.phoneMask(val));
-				} else {
-					FieldsTags.addTag(elem, val);
-				}
-			}
-		}
-	},
-
-
-	getVal: (elem, retArr) => {
-		let ret = [];
-		elem.parentNode.querySelector('.tagList').querySelectorAll('.tagItem').forEach(el => {
-			ret.push(el.getAttribute('value'));
-		});
-
-		if(elem.getAttribute('R4Type') == 'phonetags') {
-			ret.forEach(function(item, key){
-				ret[key] = R4.onlyNumbers(item);
-			});
-		}
-
-		if(retArr) return ret;
-		return ret.join(',');
-	},
-
-
-	getText: (elem, retArr) => {
-
-		let ret = [];
-		elem.parentNode.querySelector('.tagList').querySelectorAll('.tagItem').forEach(el => {
-			ret.push(el.getAttribute('text'));
-		});
-		if(retArr) return ret;
-		return ret.join(',');
-
 	}
 
 };

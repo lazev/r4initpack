@@ -130,6 +130,10 @@ var FieldsDtPicker = {
 		box.append(tbl);
 		box.append(btnToday);
 
+		box.addEventListener('click', function(ev) {
+			elem.focus();
+		});
+
 		return box;
 	},
 

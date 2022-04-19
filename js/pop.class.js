@@ -35,6 +35,7 @@ var Pop = {
 		el.addEventListener('click', function(ev){
 			if(opts.preventDefault) ev.preventDefault();
 			opts.destiny = el;
+			opts.withOver = true;
 			return Pop.create(opts);
 		});
 	},
@@ -49,12 +50,13 @@ var Pop = {
 			return false;
 		}
 
-		if(destiny.getAttribute('R4PopTarget')) return false;
-
 		let html     = opts.html     || '';
 		let classes  = [];
 		let onOpen   = opts.onOpen   || function(){};
 		let id       = opts.id       || destiny.id +'R4Pop';
+		let withOver = opts.withOver || false;
+
+		if(!withOver && destiny.getAttribute('R4PopTarget')) return false;
 
 		if((!id) || (id == 'R4Pop')) {
 			id = 'R4Pop'+ Math.random().toString().substr(-9);
@@ -68,12 +70,8 @@ var Pop = {
 		pop.setAttribute('id', id);
 		pop.setAttribute('class', classes.join(' '));
 
-		if(typeof html == 'string') {
-			pop.innerHTML = html;
-		}
-		else if(typeof html == 'object') {
-			pop.appendChild(html);
-		}
+		if(typeof html == 'string')      pop.innerHTML = html;
+		else if(typeof html == 'object') pop.append(html);
 
 		pop.addEventListener('mouseenter', function(event) {
 			event.target.classList.add('R4MouseOver');
@@ -83,7 +81,27 @@ var Pop = {
 			event.target.classList.remove('R4MouseOver');
 		});
 
-		document.body.appendChild(pop);
+
+		if(withOver) {
+			let over = document.createElement('div');
+			over.classList.add('R4Overlay');
+			over.classList.add('R4PopOverlay');
+			over.id = 'R4PopOverlay-'+ id;
+			over.append(pop);
+			over.addEventListener('mousedown', function(event) {
+				if(event.target !== this) return;
+				Pop.destroyById(id);
+			});
+
+			document.body.appendChild(over);
+
+			setTimeout(function(){
+				over.scrollTo(0, document.body.scrollHeight);
+			}, 50);
+
+		} else {
+			document.body.appendChild(pop);
+		}
 
 		let destPos = destiny.getBoundingClientRect();
 
@@ -116,11 +134,11 @@ var Pop = {
 		return pop;
 	},
 
-
+/*
 	destroyAll: function(force) {
 		for(let idElem in Pop.openPops) {
 			if(Pop.openPops[idElem]) {
-				Pop.destroyById(idElem, force);
+				Pop.destroyById('R4PopOverlay-'+ idElem, force);
 			}
 		};
 	},
@@ -130,12 +148,12 @@ var Pop = {
 		for(let idElem in Pop.openPops) {
 			if(idExcept != idElem) {
 				if(Pop.openPops[idElem]) {
-					Pop.destroyById(idElem);
+					Pop.destroyById('R4PopOverlay-'+ idElem);
 				}
 			}
 		};
 	},
-
+*/
 
 	destroyById: function(idElem, force) {
 		let elem = document.getElementById(idElem);
@@ -151,8 +169,14 @@ var Pop = {
 	destroyElem: function(elem, force) {
 		if(elem) {
 			if((!elem.classList.contains('R4MouseOver')) || (force)) {
-				elem.remove();
+
 				let idElem = elem.getAttribute('id');
+
+				let over = document.getElementById('R4PopOverlay-'+ idElem);
+
+				if(over) over.remove();
+				else elem.remove();
+
 				let origin = document.querySelector('[R4PopTarget='+ idElem +']');
 				if(origin) origin.removeAttribute('R4PopTarget');
 				Pop.openPops[idElem] = false;

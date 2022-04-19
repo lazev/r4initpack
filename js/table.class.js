@@ -568,22 +568,23 @@ var Table = {
 
 					Table.dom[idDestiny].onRegPerPage(item);
 
-					Pop.destroyAll(true);
+					Pop.destroyByParent(document.getElementById(idDestiny +'BtnRegPerPage'), true);
 				}
 			});
 
-			ul.appendChild(li);
+			ul.append(li);
 		});
 
 		let btnSel = document.createElement('button');
 		btnSel.setAttribute('class', 'R4 bgWhite grey');
 		btnSel.innerHTML = 'reg/pag';
+		btnSel.id = idDestiny +'BtnRegPerPage';
 
 		Pop.click(btnSel, { html: ul });
 
 		let rcpt = document.createElement('div');
 		rcpt.setAttribute('class', 'col-4 onLeft R4TableRegPerPage hiddenPrint');
-		rcpt.appendChild(btnSel);
+		rcpt.append(btnSel);
 
 		return rcpt;
 	},

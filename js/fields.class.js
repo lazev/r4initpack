@@ -208,13 +208,27 @@ var Fields = {
 					elem.addEventListener('focus', function(ev){
 						Pop.create({
 							destiny: elem,
-							html: FieldsDtPicker.create(elem)
+							html: FieldsDtPicker.create(elem),
+							classes: 'corner shadow'
 						})
 					});
 
 					elem.addEventListener('blur', function(ev){
 						elem.value = R4.completeDate(elem.value);
 						Pop.destroyByParent(elem);
+					});
+
+					elem.addEventListener('keydown', function(ev){
+						if(ev.keyCode == 9) Pop.destroyByParent(elem, true);
+						else if(ev.keyCode == 13) {
+							let today        = new Date();
+							let currentMonth = today.getMonth()+1;
+							let currentYear  = today.getFullYear();
+							let currentDay   = today.getDate();
+							if(currentDay   < 10) currentDay   = '0'+ currentDay;
+							if(currentMonth < 10) currentMonth = '0'+ currentMonth;
+							Fields.setVal(elem, currentYear +'-'+ currentMonth  +'-'+ currentDay);
+						}
 					});
 
 					break;
@@ -686,11 +700,11 @@ var Fields = {
 					}
 				break;
 				case 'autocomplete':
-					if((R4.trim(elem.val()) != '') && (!elem.hasClass('AllowZero'))) {
-						if(LazevAc.getVal(elem) == 0) {
-							valid = false;
-							arrErrors.push('Necessário selecionar uma opção');
-						}
+					if((elem.val().trim() != '') && (!elem.classList.contains('AllowZero'))) {
+						//~ if(LazevAc.getVal(elem) == 0) {
+							//~ valid = false;
+							//~ arrErrors.push('Necessário selecionar uma opção');
+						//~ }
 					}
 				break;
 				case 'cep':
@@ -789,7 +803,7 @@ var Fields = {
 	},
 
 
-	setVal: function(elem, value) {
+	setVal: function(elem, value, label) {
 		let type = elem.getAttribute('R4Type');
 		switch(type) {
 			case 'switch':
@@ -820,7 +834,7 @@ var Fields = {
 			case 'tags':
 			case 'mailtags':
 			case 'phonetags':
-				FieldsTags.setVal(elem, value);
+				FieldsTags.setVal(elem, value, label);
 				break;
 			default:
 				elem.value = value;
