@@ -823,87 +823,8 @@ function mcc(v){
 		return processed;
 	},
 
-/*
-	renderbak: (templateElem, payload) => {
 
-		let content;
-		let processed = '';
-		let elem = templateElem.content.cloneNode(true);
-
-		if((typeof payload == 'object') && (payload.length) && (elem.querySelector('[loop]'))) {
-			let htmlElem = elem.querySelector('[loop]');
-			htmlElem.removeAttribute('loop');
-			let crude = htmlElem.outerHTML;
-
-			payload.forEach(row => {
-				content = crude;
-
-				for(var key in row) {
-					content = content.split('{{'+ key +'}}').join(row[key]);
-				}
-
-				processed += content;
-			});
-
-			if(htmlElem.parentNode.nodeType == 11) { //11: Fragment-node
-				let retElem = document.createElement('div');
-				retElem.innerHTML = processed;
-				return retElem.childNodes;
-			} else {
-				htmlElem.parentNode.innerHTML = processed;
-				return elem;
-			}
-
-		} else {
-
-			content = elem.firstElementChild.outerHTML;
-
-			for(var key in payload) {
-				content = content.split('{{'+ key +'}}').join(payload[key]);
-			}
-
-			let retElem = document.createElement('div');
-			retElem.innerHTML = content;
-
-			return retElem.firstChild;
-		}
-	},
-
-
-	render2: (templateElem, payload) => {
-
-		let html = templateElem.content.cloneNode(true);
-
-		if((typeof payload == 'object') && (payload.length) && (html.querySelector('[loop]'))) {
-
-			htmlElem = html.querySelector('[loop]');
-			htmlElem.removeAttribute('loop');
-
-		}
-
-		let rendrow = '';
-		let final = '';
-
-		payload.forEach(row => {
-			rendrow = htmlElem;
-
-			for(var key in row) {
-				let val = row[key];
-
-				rendrow = rendrow.split('{{'+ key +'}}').join(val);
-			}
-
-			final += rendrow;
-		});
-
-		html = final;
-
-
-		return html;
-	},
-*/
-
-	newTab: url => {
+	newBrowserTab: url => {
  		let formelem = document.createElement('form');
 		formelem.setAttribute('action', url);
 		formelem.setAttribute('target', '_blank');

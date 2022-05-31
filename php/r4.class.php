@@ -28,6 +28,12 @@ class R4 {
 	}
 
 
+	public static function clearSession() {
+		$_SESSION[SYSTEMID] = [];
+		return true;
+	}
+
+
 	public static function intArray($val) {
 		if(is_array($val)) {
 			$arr = $val;

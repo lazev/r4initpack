@@ -34,6 +34,11 @@ var Tabs = {
 				item.classList.add('R4PrimaryTab');
 			}
 
+			if(!document.getElementById(targetId)) {
+				console.warn('There is no target elem to tab '+ targetId);
+				return false;
+			}
+
 			document.getElementById(targetId).classList.add('hidden');
 
 			item.classList.add('R4TabItem');
@@ -41,11 +46,14 @@ var Tabs = {
 			item.addEventListener('click', event => {
 				event.preventDefault();
 
-				let targetOn = document.querySelectorAll('.R4TabTargetOn');
-				if(targetOn.length) targetOn.forEach(trgt => {
-					trgt.classList.remove('R4TabTargetOn');
-					trgt.classList.add('hidden');
-				});
+				let allTargets = Tabs.getAllTargets(elem);
+				if(allTargets.length) {
+					allTargets.forEach(trgt => {
+						let trgtElem = $('#'+ trgt);
+						trgtElem.classList.remove('R4TabTargetOn');
+						trgtElem.classList.add('hidden');
+					});
+				}
 
 				let newTarget;
 				let newTargetId = item.getAttribute('target');
@@ -75,6 +83,16 @@ var Tabs = {
 		});
 
 		if(primary) Tabs.click(primary);
+	},
+
+
+	getAllTargets: tabElem => {
+		let ret = [];
+		tabElem.querySelectorAll('[target]').forEach(item => {
+			 ret.push(item.getAttribute('target'));
+		});
+
+		return ret;
 	},
 
 

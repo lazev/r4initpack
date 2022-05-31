@@ -369,8 +369,8 @@ var Table = {
 								endElem = shiftCheckFirstSel+1;
 							}
 							for(var ii=iniElem; ii<endElem; ii++) {
-								document.querySelectorAll('input[type=checkbox]')[ii].checked = ev.target.checked;
-								document.querySelectorAll('input[type=checkbox]')[ii].dispatchEvent(new Event('change'));
+								destiny.querySelectorAll('input[type=checkbox]')[ii].checked = ev.target.checked;
+								destiny.querySelectorAll('input[type=checkbox]')[ii].dispatchEvent(new Event('change'));
 							}
 						}
 						shiftCheckFirstSel = posSel;

@@ -6,16 +6,13 @@ FieldsTags = {
 
 	create: (elem, info) => {
 
-		if(info.maxSel) {
-			elem.setAttribute('maxSel', info.maxSel);
-		}
-
-		if(info.hideInputOnMaxSel) {
-			elem.setAttribute('hideInputOnMaxSel', true);
-		}
-
-		if(info.onSel)    elem.setAttribute('onSel',    info.onSel   );
-		if(info.onAddTag) elem.setAttribute('onAddTag', info.onAddTag);
+		if(info.maxSel)            elem.setAttribute('maxSel',            info.maxSel    );
+		if(info.onSel)             elem.setAttribute('onSel',             info.onSel     );
+		if(info.onAddTag)          elem.setAttribute('onAddTag',          info.onAddTag  );
+		if(info.typeahead)         elem.setAttribute('typeahead',         info.typeahead );
+		if(info.source)            elem.setAttribute('source',            info.source    );
+		if(info.allowFreeText)     elem.setAttribute('allowFreeText',     true           );
+		if(info.hideInputOnMaxSel) elem.setAttribute('hideInputOnMaxSel', true           );
 
 		elem.addEventListener('keydown', ev => {
 
@@ -30,9 +27,7 @@ FieldsTags = {
 
 			if(ev.keyCode == 108 || ev.keyCode == 188 || ev.keyCode == 13) {
 				ev.preventDefault();
-				if(info.typeahead) {
-					FieldsTags.typeAheadSelItem(elem);
-				} else {
+				if(!info.typeahead) {
 					FieldsTags.addTag(elem, elem.value);
 				}
 			}
@@ -45,22 +40,12 @@ FieldsTags = {
 					);
 				}
 			}
-
-			else if(ev.keyCode == 38) {
-				FieldsTags.typeAheadMarkItem(ev.target, -1);
-			}
-
-			else if(ev.keyCode == 40) {
-				FieldsTags.typeAheadMarkItem(ev.target, 1);
-			}
 		});
 
 		elem.addEventListener('blur', function(event){
-			setTimeout(() => {
-				//Small delay to run typeahead elem click before blur
+			if(!info.typeahead) {
 				FieldsTags.addTag(elem, elem.value);
-				FieldsTags.withContent(event.target);
-			}, 100);
+			}
 		});
 
 		elem.addEventListener('paste', function(event){
@@ -97,16 +82,21 @@ FieldsTags = {
 
 		let maxSel = elem.getAttribute('maxSel');
 
-		let hideInputOnMaxSel = elem.getAttribute('hideInputOnMaxSel');
-
-		let onAddTag = elem.getAttribute('onAddTag');
-
 		let vals = FieldsTags.getVal(elem, true);
 
 		if(maxSel && vals.length >= maxSel) {
-			elem.value = '';
-			return;
+			if(maxSel == 1) {
+				FieldsTags.clrTag(elem);
+				vals = FieldsTags.getVal(elem, true);
+			} else {
+				elem.value = '';
+				return;
+			}
 		}
+
+		let hideInputOnMaxSel = elem.getAttribute('hideInputOnMaxSel');
+
+		let onAddTag = elem.getAttribute('onAddTag');
 
 		for(let k in vals) {
 			if(vals[k] == val) {
@@ -150,6 +140,8 @@ FieldsTags = {
 				elem.classList.add('hidden');
 			}
 		}
+
+		FieldsTags.withContent(elem);
 	},
 
 
@@ -227,72 +219,107 @@ FieldsTags = {
 	//TYPEAHEAD ADDON
 
 	setDomTypeAheadEvent: (elem, info) => {
-		FieldsTags.dom[info.id] = ev => {
-			let list, listElem;
-
-			let destiny = ev.target.parentNode.querySelector('.typeAheadList');
-
-			let value = ev.target.value;
-
-			if(parseInt(info.minLength) > 0) {
-				if(value.length < info.minLength) {
-					ev.target.parentNode.querySelector('.typeAheadList').innerHTML = '';
-					return;
-				}
-			}
-
-			if(info.typeahead == 'json') {
-
-				if(typeof info.source == 'string') {
-					list = FieldsTags.typeAheadFilterList(eval(info.source), value);
-				}
-
-				else if(typeof info.source == 'object') {
-					list = FieldsTags.typeAheadFilterList(info.source, value);
-				}
-
-				listElem = FieldsTags.typeAheadFormatList(elem, list);
-
-				destiny.innerHTML = '';
-				destiny.appendChild(listElem);
-			}
-
-			else if(info.typeahead == 'function') {
-				if(typeof eval(info.source) === 'function') {
-
-					clearTimeout(FieldsTags.timeoutTimer);
-					FieldsTags.timeoutTimer = setTimeout(function(){
-
-						eval(info.source +'("'+ value +'")' )
-
-						.then(list => {
-							listElem = FieldsTags.typeAheadFormatList(elem, list);
-
-							destiny.innerHTML = '';
-							destiny.append(listElem);
-						});
-
-					}, 300);
-				}
-			}
-		};
-
-		elem.addEventListener('keyup', ev => {
-			if((ev.keyCode != 38) && (ev.keyCode != 40)) { //arrow up (38) and down (40)
-				FieldsTags.dom[ev.target.id](ev);
-			}
+		elem.addEventListener('click', function(ev) {
+			let listElem = document.getElementById(this.id +'_typeAheadList');
+			if(!listElem) FieldsTags.typeAheadShowList(this);
+			else FieldsTags.typeAheadDestroyList(this);
 		});
 
-		elem.addEventListener('blur', ev => {
-			setTimeout(() => {
-				ev.target.parentNode.querySelector('.typeAheadList').innerHTML = '';
-			}, 100);
+		elem.addEventListener('keyup', function(ev) {
+			let listElem = document.getElementById(this.id +'_typeAheadList');
+			if(listElem) {
+				if(ev.keyCode == 38)      FieldsTags.typeAheadMarkItem(this, -1);
+				else if(ev.keyCode == 40) FieldsTags.typeAheadMarkItem(this,  1);
+				else if(ev.keyCode == 13) {
+					FieldsTags.typeAheadSelItem(this);
+					FieldsTags.typeAheadValidValue(this);
+				}
+				else FieldsTags.typeAheadShowList(this);
+			} else FieldsTags.typeAheadShowList(this);
+		});
+
+		elem.addEventListener('blur', function(ev) {
+
+			FieldsTags.typeAheadValidValue(this);
+
+			let listElem = document.getElementById(this.id +'_typeAheadList');
+
+			if(!listElem || !listElem.classList.contains('R4MouseOver')) {
+				FieldsTags.typeAheadDestroyList(this);
+			}
 		});
 	},
 
 
+	typeAheadShowList: elem => {
+		let list, listItens;
+
+		let listElem = document.getElementById(elem.id +'_typeAheadList');
+		if(!listElem) listElem = FieldsTags.typeAheadCreateList(elem);
+
+		let value     = elem.value;
+		let typeahead = elem.getAttribute('typeahead');
+		let source    = elem.getAttribute('source');
+		let minLength = elem.getAttribute('minLength');
+
+		if(parseInt(minLength) > 0) {
+			if(value.length < minLength) {
+				FieldsTags.typeAheadDestroyList(elem);
+				return;
+			}
+		}
+
+		if(typeahead == 'json') {
+
+			if(typeof source == 'string')
+				list = FieldsTags.typeAheadFilterList(eval(source), value);
+
+			else if(typeof source == 'object')
+				list = FieldsTags.typeAheadFilterList(source, value);
+
+			listItens = FieldsTags.typeAheadFormatList(elem, list);
+
+			listElem.innerHTML = '';
+			listElem.appendChild(listItens);
+		}
+
+		else if(typeahead == 'function') {
+			if(typeof eval(source) === 'function') {
+
+				clearTimeout(FieldsTags.timeoutTimer);
+				FieldsTags.timeoutTimer = setTimeout(function(){
+
+					eval(source +'("'+ value +'")' )
+
+					.then(list => {
+						listItens = FieldsTags.typeAheadFormatList(elem, list);
+
+						listElem.innerHTML = '';
+						listElem.append(listItens);
+					});
+
+				}, 300);
+			}
+		}
+	},
+
+
+	typeAheadValidValue: elem => {
+		if(elem.value) {
+			let allowFreeText = elem.getAttribute('allowFreeText');
+			if(allowFreeText) {
+				FieldsTags.addTag(elem, elem.value);
+			} else {
+				elem.value = '';
+			}
+		}
+	},
+
+
 	typeAheadMarkItem: (elem, direction) => {
-		let listElem = elem.parentNode.querySelector('.typeAheadList');
+
+		let listElem = document.getElementById(elem.id +'_typeAheadList');
+
 		let marked = listElem.querySelector('.marked');
 
 		if(!marked) {
@@ -328,9 +355,10 @@ FieldsTags = {
 
 
 	typeAheadFormatList: (elem, list) => {
+
 		let ul = document.createElement('ul');
 
-		list.forEach(function(item){
+		list.forEach(function(item) {
 			ul.appendChild(FieldsTags.typeAheadFormatListItem(item));
 		});
 
@@ -355,6 +383,7 @@ FieldsTags = {
 
 	typeAheadFormatListItem: item => {
 		let extra;
+
 		let label = document.createElement('div');
 		label.classList.add('itemText');
 		label.innerHTML = item.label;
@@ -369,9 +398,7 @@ FieldsTags = {
 		li.setAttribute('value', item.key);
 
 		li.appendChild(label);
-		if(extra) {
-			li.appendChild(extra);
-		}
+		if(extra) li.appendChild(extra);
 
 		return li;
 	},
@@ -381,23 +408,62 @@ FieldsTags = {
 
 		let onSel = elem.getAttribute('onSel');
 
-		let listElem = elem.parentNode.querySelector('.typeAheadList');
+		let listElem = document.getElementById(elem.id +'_typeAheadList');
 
 		let marked = listElem.querySelector('.marked');
 
 		if(marked) {
 
 			let val = marked.getAttribute('value');
-			let label = marked.querySelector('div').innerHTML;
+			let lab = marked.querySelector('div').innerHTML;
 
 			if(typeof eval(onSel) === 'function') {
-				eval(onSel +'("'+ val +'", "'+ label +'")');
+				eval(onSel +'("'+ val +'", "'+ lab +'")');
 			}
 
-			FieldsTags.addTag(elem, val, label);
-
-			elem.parentNode.querySelector('.typeAheadList').innerHTML = '';
+			FieldsTags.addTag(elem, val, lab);
+			FieldsTags.typeAheadDestroyList(elem);
 		}
+		else return false;
+	},
+
+
+	typeAheadCreateList: elem => {
+
+		let typeAheadList = document.createElement('div');
+
+		typeAheadList.setAttribute('id', elem.id +'_typeAheadList');
+		typeAheadList.classList.add('R4TypeAheadList');
+
+		let destPos = elem.parentNode.getBoundingClientRect();
+
+		let topLeft = {
+			top:  destPos.top + window.pageYOffset,
+			left: destPos.left + window.pageXOffset
+		};
+
+		typeAheadList.style.top  = topLeft.top  + 'px';
+		typeAheadList.style.left = topLeft.left + 'px';
+
+		typeAheadList.addEventListener('mouseenter', function(ev) {
+			this.classList.add('R4MouseOver');
+		});
+
+		typeAheadList.addEventListener('mouseleave', function(ev) {
+			this.classList.remove('R4MouseOver');
+			if(document.activeElement != elem) FieldsTags.typeAheadDestroyList(elem);
+		});
+
+		document.querySelector('body').append(typeAheadList);
+
+		return typeAheadList;
+	},
+
+
+	typeAheadDestroyList: elem => {
+		let listElem = document.getElementById(elem.id +'_typeAheadList');
+
+		if(listElem) listElem.remove();
 	}
 
 };

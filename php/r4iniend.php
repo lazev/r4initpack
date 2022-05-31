@@ -13,9 +13,9 @@ if(!defined('R4ALREADYINIT')) {
 
 	$db = new DB();
 
-	if(defined('INDEXDB')) {
+	if(defined('DBSERVER')) {
 		$dbtable = (defined('DBTABLE')) ? DBTABLE : '';
-		$db->connect(INDEXDB, $dbtable);
+		$db->connect(DBSERVER, $dbtable);
 	}
 
 	spl_autoload_register(function($className) {

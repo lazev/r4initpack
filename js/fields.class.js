@@ -153,6 +153,7 @@ var Fields = {
 
 		else {
 			elem = document.createElement('input');
+			elem.setAttribute('type', 'text');
 
 			switch(item.type) {
 				case 'tags':
@@ -166,12 +167,7 @@ var Fields = {
 
 					elem = FieldsTags.create(elem, item);
 
-					if(item.type == 'tags') {
-						let typeAheadList = document.createElement('div');
-						typeAheadList.classList.add('typeAheadList');
-						wrap.append(typeAheadList);
-					}
-					else if(item.type == 'phonetags') {
+					if(item.type == 'phonetags') {
 						elem.addEventListener('input', function(ev){ this.value = R4.phoneMask(this.value); });
 					}
 
@@ -800,6 +796,15 @@ var Fields = {
 				default:          return elem.value;
 			}
 		}
+	},
+
+
+	getArrCheckbox: groupBox => {
+		let ret = [];
+		groupBox.querySelectorAll('input[type=checkbox]').forEach(item => {
+			if(item.checked) ret.push(item.value);
+		});
+		return ret;
 	},
 
 

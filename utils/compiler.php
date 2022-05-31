@@ -35,6 +35,8 @@ if((count($argv) > 1 && $argv[1] == 'monitor') || (isset($monitor) && $monitor))
 	while(true) {
 		$ls = getlshash();
 		if($past != $ls) {
+			escreve('Changes detected...');
+			sleep(0.5);
 			compile();
 			escreve('Monitoring...');
 			$past = getlshash();

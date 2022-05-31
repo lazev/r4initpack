@@ -31,6 +31,7 @@ SVG Icons - svgicons.sparkk.fr
 .bgWhite   { background-color: #ffffff !important; }
 .bgBlack   { background-color: #000000 !important; }
 .bgInherit { background-color: inherit !important; }
+.bgSmooth  { background-color: #fafafa !important; }
 
 .info    { color: #2196f3 !important; }
 .primary { color: #673ab7 !important; }
@@ -42,6 +43,8 @@ SVG Icons - svgicons.sparkk.fr
 .light   { color: #999999 !important; }
 .white   { color: #ffffff !important; }
 .black   { color: #000000 !important; }
+.smooth  { color: #fafafa !important; }
+
 
 .center   { text-align: center; }
 .right    { text-align: right;  }
