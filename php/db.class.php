@@ -164,6 +164,11 @@ class DB {
 
 
 	public function pureSQL($com, $errorAlert=true) {
+
+		if($this->debug) {
+			echo '<p>'. PHP_EOL . $com . PHP_EOL .'</p>';
+		}
+
 		if(!$result = $this->DBCon->query($com)) {
 			if($errorAlert) {
 				$this->errorMonitor(

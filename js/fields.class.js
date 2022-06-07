@@ -254,7 +254,7 @@ var Fields = {
 					inputmode = 'decimal';
 
 					elem = Fields.setCalcEvents(elem);
-					elem.addEventListener('input', function(ev){ this.value = R4.decimalMask(this.value); });
+					elem.addEventListener('input', function(ev){ this.value = R4.decimalInputMask(this.value); });
 
 					break;
 
@@ -300,7 +300,7 @@ var Fields = {
 
 		for(let k in attrib) elem.setAttribute(k, attrib[k]);
 
-		if(item.type != 'tags') {
+		if(item.type != 'tags' && item.type != 'mailtags' && item.type != 'phonetags') {
 			elem.addEventListener('blur', function(event){
 				if(event.target.value) {
 					wrap.classList.add('withContent');
@@ -795,6 +795,20 @@ var Fields = {
 				case 'phone':     return R4.onlyNumbers(elem.value);
 				default:          return elem.value;
 			}
+		}
+	},
+
+
+	getText: function(elem) {
+		if(elem.tagName.toLowerCase() == 'select')
+			return elem.options[elem.selectedIndex].text;
+
+		let type = elem.getAttribute('R4Type');
+		switch(type) {
+			case 'tags':
+			case 'mailtags':
+			case 'phonetags': return FieldsTags.getText(elem);
+			default: return elem.value;
 		}
 	},
 

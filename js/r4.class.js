@@ -97,7 +97,7 @@ var R4 = {
 					}
 				}
 
-				if(ultAberto.classList.contains('R4PopOverlay')) {
+				if(ultAberto && ultAberto.classList.contains('R4PopOverlay')) {
 					let elemId = ultAberto.id.replace('R4PopOverlay-', '');
 					Pop.destroyElem($('#'+ elemId), true);
 				} else {
@@ -495,11 +495,6 @@ var R4 = {
 	},
 
 
-	decimalMask: function(v) {
-		return v.replace(/([^0-9-.,=+*\/\(\)])/g, '');
-	},
-
-
 	cepMask: function(v) {
 		return v
 			.replace(/\D/g, '')
@@ -542,6 +537,11 @@ var R4 = {
 	},
 
 
+	decimalInputMask: function(v) {
+		return v.replace(/([^0-9-.,=+*\/\(\)])/g, '');
+	},
+
+
 	arrayVal: function(arr, key) {
 		if(!arr.length) return undefined;
 
@@ -553,16 +553,6 @@ var R4 = {
 
 		return ret;
 	},
-
-/*
-function mcc(v){
-    v=v.replace(/\D/g,"");
-    v=v.replace(/^(\d{4})(\d)/g,"$1 $2");
-    v=v.replace(/^(\d{4})\s(\d{4})(\d)/g,"$1 $2 $3");
-    v=v.replace(/^(\d{4})\s(\d{4})\s(\d{4})(\d)/g,"$1 $2 $3 $4");
-    return v;
-}
-*/
 
 
 	getJSON: function(url, params, opts) {
@@ -700,13 +690,14 @@ function mcc(v){
 	},
 
 
-	setRemoteHTML: function(destiny, source) {
+	setRemoteHTML: function(destiny, source, callback) {
 		return new Promise((resolve, reject) => {
 
 			R4.getHTML(source)
 
 			.then(html => {
 				destiny.innerHTML = html;
+				if(typeof callback == 'function') callback();
 				resolve();
 			});
 		});
@@ -832,4 +823,5 @@ function mcc(v){
 		formelem.submit();
 		formelem.remove();
 	}
+
 };

@@ -294,4 +294,5 @@ fieldset.R4Fields > legend {
 	padding: 0 5px;
 	border-radius: 3px;
 	font-weight: bold;
+	margin-bottom: 0;
 }

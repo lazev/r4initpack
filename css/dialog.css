@@ -8,8 +8,12 @@
 	overflow: auto;
 }
 
-.R4Overlay .R4Dialog.small {
+.R4Overlay .R4Dialog.narrow {
 	max-width: 450px;
+}
+
+.R4Overlay .R4Dialog.wide {
+	max-width: 1000px;
 }
 
 .R4Overlay .R4Dialog.full {

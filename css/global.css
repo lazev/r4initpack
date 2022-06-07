@@ -275,4 +275,8 @@ small {
 	.hiddenPrint, .hiddenPrint * {
 		display: none !important;
 	}
+
+	.R4PopHint {
+		display: none !important;
+	}
 }
