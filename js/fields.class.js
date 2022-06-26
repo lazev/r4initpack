@@ -956,5 +956,15 @@ var Fields = {
 		}
 
 		return r;
+	},
+
+
+	getAllChecked: function(elem) {
+		let list = elem.querySelectorAll('input:checked');
+		if(!list) return [];
+		let ret = [];
+		list.forEach(elem => ret.push(elem.value));
+		return ret;
 	}
+
 };

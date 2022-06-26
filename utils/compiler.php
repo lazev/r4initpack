@@ -36,7 +36,7 @@ if((count($argv) > 1 && $argv[1] == 'monitor') || (isset($monitor) && $monitor))
 		$ls = getlshash();
 		if($past != $ls) {
 			escreve('Changes detected...');
-			sleep(0.5);
+			sleep(1);
 			compile();
 			escreve('Monitoring...');
 			$past = getlshash();
@@ -77,6 +77,12 @@ function compile() {
 	global $sep, $r4path, $jsPacker;
 
 	escreve('Updating codes...');
+
+	if(!file_exists('./public')) {
+		escreve('ERRO: pasta public não encontrada. Crie na raíz do projeto, ao lado da pasta src'. PHP_EOL);
+		die();
+	}
+
 
 	if(PHP_OS_FAMILY == 'Windows') {
 		shell_exec('rmdir /s /q ".\public"');

@@ -113,6 +113,11 @@ class R4 {
 	}
 
 
+	public static function friendChars($string) {
+		return preg_replace('/[^A-Z0-9-_]/i', '', $string);
+	}
+
+
 	public static function changeDate($date, $year=0, $month=0, $day=0, $hour=0, $min=0, $sec=0) {
 		if(strlen($date) > 12) { //Date time (Y-m-d H:i:s)
 			$temp = explode(' ', $date);
@@ -322,6 +327,7 @@ class R4 {
 		$x = strtolower($x);
 		$x = R4::stripAccent($x);
 
+		$resp = '';
 		for($ii=0; $ii<strlen($x); $ii++) {
 			if(stripos($allowed, $x[$ii]) !== false) {
 				$resp .= $x[$ii];

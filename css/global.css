@@ -196,6 +196,11 @@ small {
 	font-size: 0.7rem;
 }
 
+ul.R4 {
+	margin-left: 0;
+	list-style: none;
+}
+
 .R4Sbar {
 	overflow: auto;
 }
@@ -277,6 +282,10 @@ small {
 	}
 
 	.R4PopHint {
+		display: none !important;
+	}
+
+	.R4WarningMsg {
 		display: none !important;
 	}
 }

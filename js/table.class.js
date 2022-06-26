@@ -256,51 +256,54 @@ var Table = {
 				}
 			}
 
-			let type = Table.dom[idDestiny].head[position].type;
+			if(Table.dom[idDestiny].head[position]) {
 
-			if(value == null || value == undefined) value = '';
+				let type = Table.dom[idDestiny].head[position].type;
 
-			else if(type == 'integer') {
-				td.classList.add('center');
-			}
-			else if(type == 'decimal') {
-				let precision = Table.dom[idDestiny].head[position].precision ?? 2;
-				value = R4.numberMask(value, precision);
-				td.classList.add('right');
-			}
-			else if(type == 'date') {
-				value = R4.dateMask(value);
-				td.classList.add('center');
-			}
-			else if(type == 'tags') {
-				value = value.replaceAll(',', ', ');
-			}
+				if(value == null || value == undefined) value = '';
 
-			if((!footLine) && (position == 0) && (Table.dom[idDestiny].withCheck)) {
-				let chkelem = document.createElement('input');
-				chkelem.setAttribute('type', 'checkbox');
-				chkelem.value = value;
-				chkelem.addEventListener('change', function(ev) {
-					if(typeof Table.dom[idDestiny].onLineSel === 'function') {
-						setTimeout(Table.dom[idDestiny].onLineSel, 10);
-					}
-					if(this.checked) this.closest('tr').classList.add('R4SelRow');
-					else this.closest('tr').classList.remove('R4SelRow');
-				});
+				else if(type == 'integer') {
+					td.classList.add('center');
+				}
+				else if(type == 'decimal') {
+					let precision = Table.dom[idDestiny].head[position].precision ?? 2;
+					value = R4.numberMask(value, precision);
+					td.classList.add('right');
+				}
+				else if(type == 'date') {
+					value = R4.dateMask(value);
+					td.classList.add('center');
+				}
+				else if(type == 'tags') {
+					value = value.replaceAll(',', ', ');
+				}
 
-				let labelem = document.createElement('label');
-				labelem.setAttribute('class', 'block nowrap');
-				labelem.innerHTML = ' '+ value;
-				labelem.prepend(chkelem);
-				td.appendChild(labelem);
+				if((!footLine) && (position == 0) && (Table.dom[idDestiny].withCheck)) {
+					let chkelem = document.createElement('input');
+					chkelem.setAttribute('type', 'checkbox');
+					chkelem.value = value;
+					chkelem.addEventListener('change', function(ev) {
+						if(typeof Table.dom[idDestiny].onLineSel === 'function') {
+							setTimeout(Table.dom[idDestiny].onLineSel, 10);
+						}
+						if(this.checked) this.closest('tr').classList.add('R4SelRow');
+						else this.closest('tr').classList.remove('R4SelRow');
+					});
+
+					let labelem = document.createElement('label');
+					labelem.setAttribute('class', 'block nowrap');
+					labelem.innerHTML = ' '+ value;
+					labelem.prepend(chkelem);
+					td.appendChild(labelem);
+				}
+				else {
+					td.innerHTML = ' '+ value;
+				}
+
+				td.setAttribute('col-title', Table.dom[idDestiny].head[position].label +': ');
+
+				tr.appendChild(td);
 			}
-			else {
-				td.innerHTML = ' '+ value;
-			}
-
-			td.setAttribute('col-title', Table.dom[idDestiny].head[position].label +': ');
-
-			tr.appendChild(td);
 		});
 
 		return tr;
@@ -349,35 +352,7 @@ var Table = {
 
 		Effects.highlight(tbody);
 
-		Table.enableShiftCheck(idDestiny);
-	},
-
-
-	enableShiftCheck: function(idDestiny) {
-		var shiftCheckFirstSel;
-		let destiny = document.getElementById(idDestiny);
-		destiny.querySelectorAll('input[type=checkbox]').forEach(function(elem){
-			elem.addEventListener('click', function(ev) {
-				destiny.querySelectorAll('input[type=checkbox]').forEach(function(item, posSel) {
-					if(item == ev.target) {
-						if(ev.shiftKey) {
-							if(shiftCheckFirstSel == posSel) return;
-							var iniElem = shiftCheckFirstSel;
-							var endElem = posSel;
-							if(posSel <= shiftCheckFirstSel) {
-								iniElem = posSel;
-								endElem = shiftCheckFirstSel+1;
-							}
-							for(var ii=iniElem; ii<endElem; ii++) {
-								destiny.querySelectorAll('input[type=checkbox]')[ii].checked = ev.target.checked;
-								destiny.querySelectorAll('input[type=checkbox]')[ii].dispatchEvent(new Event('change'));
-							}
-						}
-						shiftCheckFirstSel = posSel;
-					}
-				});
-			});
-		});
+		R4.enableShiftCheck(idDestiny);
 	},
 
 
@@ -648,10 +623,6 @@ var Table = {
 
 
 	getAllSel: function(idElem) {
-		let ret = [];
-		document.querySelectorAll('#'+ idElem +' tbody input:checked').forEach(elem => {
-			ret.push(elem.value);
-		});
-		return ret;
+		return R4.getAllChecked(document.querySelector('#'+ idElem +' tbody'));
 	}
 };

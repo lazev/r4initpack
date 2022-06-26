@@ -3,9 +3,9 @@
 class DB {
 
 	private $DBCon   = '';
-	private $hostNow = '';
-	private $baseNow = '';
 	private $debug   = false;
+	private $currentHost = '';
+	private $currentBase = '';
 
 	public $errCod = 0;
 	public $errMsg = '';
@@ -17,19 +17,19 @@ class DB {
 		if(!$pass) $pass = DBPASS;
 
 		if(!empty($host)) {
-			if($this->hostNow != $host) {
-				$this->DBCon = new mysqli($host, $user, $pass);
+			if($this->currentHost != $host) {
 
-				if($this->DBCon->connect_errno) {
-					if($errorAlert) {
-						$this->errorMonitor(
-							'Server '. $host .' connection error: '
-							. $this->DBCon->connect_errno . ' - '
-							. $this->DBCon->connect_error
-						);
-					}
-					$this->errCod = $this->DBCon->connect_errno;
-					$this->errMsg = $this->DBCon->connect_errno .' - '. $this->DBCon->connect_error;
+				try {
+
+					$this->DBCon = new mysqli($host, $user, $pass);
+
+				} catch (Exception $e) {
+
+					$this->errCod = $e->getCode();
+               $this->errMsg = $this->errCod .' - '. $e->getMessage();
+
+					if($errAlert) $this->errorMonitor('Server '. $host .' connection error: '. $this->errMsg);
+
 					return false;
 				}
 
@@ -42,27 +42,35 @@ class DB {
 					}
 				}
 				$this->DBCon->query("SET time_zone='". date('P') ."'");
-				$this->hostNow = $host;
-				$this->baseNow = '';
+				$this->currentHost = $host;
+				$this->currentBase = '';
 			}
 		}
 
 		if(!empty($dbname)) {
-			if($this->baseNow != $dbname) {
-				if(!$this->DBCon->select_db($dbname)) {
+			if($this->currentBase != $dbname) {
+
+				try {
+
+					$this->DBCon->select_db($dbname);
+
+				} catch (Exception $e) {
+
+					$this->errCod = $e->getCode();
+               $this->errMsg = $this->errCod .' - '. $e->getMessage();
+					//$this->errCom = $e->getTrace();
+
 					if($errAlert) {
 						$this->errorMonitor(
-							'Database '. $dbname .' selection error on '
-							. $this->hostNow .': '
-							. $this->DBCon->errno .' - '
-							. $this->DBCon->error
+							'Base '. $dbname .' selection error on '.
+							$this->currentHost .': '. $this->errMsg
 						);
 					}
-					$this->errCod = $this->DBCon->errno;
-					$this->errMsg = $this->DBCon->errno .' - '. $this->DBCon->error;
+
 					return false;
 				}
-				$this->baseNow = $dbname;
+
+				$this->currentBase = $dbname;
 			}
 		}
 
@@ -124,19 +132,19 @@ class DB {
 			$result = $this->DBCon->query($com);
 
 		} catch (Exception $e) {
+
+			$this->errCod = $e->getCode();
+			$this->errMsg = $this->errCod .' - '. $e->getMessage();
+			$this->errCom = $com;
+
 			if($errorAlert) {
 				$this->errorMonitor(
 					'MySQL error on '
-					. $this->baseNow .'@'
-					. $this->hostNow .': '
-					. $this->DBCon->errno .' - '
-					. $this->DBCon->error .'. '
-					. 'Command: '. $com
+					. $this->currentBase .'@'. $this->currentHost .': '.
+					$this->errMsg . ': ['. $this->errCom .']'
 				);
 			}
-			$this->errCod = $this->DBCon->errno;
-			$this->errMsg = $this->DBCon->errno .' - '. $this->DBCon->error;
-			$this->errCom = $com;
+
 			return false;
 		}
 
@@ -169,20 +177,24 @@ class DB {
 			echo '<p>'. PHP_EOL . $com . PHP_EOL .'</p>';
 		}
 
-		if(!$result = $this->DBCon->query($com)) {
+		try {
+
+			$result = $this->DBCon->query($com);
+
+		} catch (Exception $e) {
+
+			$this->errCod = $e->getCode();
+			$this->errMsg = $this->errCod .' - '. $e->getMessage();
+			$this->errCom = $com;
+
 			if($errorAlert) {
 				$this->errorMonitor(
 					'MySQL error on '
-					. $this->baseNow .'@'
-					. $this->hostNow .': '
-					. $this->DBCon->errno .' - '
-					. $this->DBCon->error .'. '
-					. 'Command: '. $com
+					. $this->currentBase .'@'. $this->currentHost .': '.
+					$this->errMsg . ': ['. $this->errCom .']'
 				);
 			}
-			$this->errCod = $this->DBCon->errno;
-			$this->errMsg = $this->DBCon->errno .' - '. $this->DBCon->error;
-			$this->errCom = $com;
+
 			return false;
 		}
 
@@ -229,7 +241,7 @@ class DB {
 
 
 	public function getBaseNow() {
-		return $this->baseNow;
+		return $this->currentBase;
 	}
 
 
@@ -253,23 +265,28 @@ class DB {
 
 
 	private function errorMonitor($msg, $subject='...') {
-		if(defined(DEVMODE) && DEVMODE == true) {
-			echo PHP_EOL. $msg .PHP_EOL;
-		}
-		error_log(PHP_EOL. '******* DB ERROR *******' .PHP_EOL);
-		error_log(PHP_EOL. $msg .PHP_EOL);
+		error_log(PHP_EOL. '******* DB ERROR *******' .PHP_EOL.$msg);
 	}
 
 
 	public function getCurrentConfig() {
 		return [
-			'host'   => $this->hostNow,
-			'dbname' => $this->baseNow
+			'host'   => $this->currentHost,
+			'dbname' => $this->currentBase
 		];
 	}
 
 
 	public function setDebug($bol) {
 		$this->debug = (($bol) ? true : false);
+	}
+
+
+	public function dieAPI($safePublicMsg) {
+		if(defined('DEVMODE') && DEVMODE == true) {
+			R4::dieAPI($this->errCod, $this->errMsg, $this->errCom);
+		} else {
+			R4::dieAPI(0, $safePublicMsg);
+		}
 	}
 }

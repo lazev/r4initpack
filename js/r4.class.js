@@ -759,6 +759,34 @@ var R4 = {
 	},
 
 
+	enableShiftCheck: function(idDestiny) {
+		var shiftCheckFirstSel;
+		let destiny = document.getElementById(idDestiny);
+		destiny.querySelectorAll('input[type=checkbox]').forEach(function(elem){
+			elem.addEventListener('click', function(ev) {
+				destiny.querySelectorAll('input[type=checkbox]').forEach(function(item, posSel) {
+					if(item == ev.target) {
+						if(ev.shiftKey) {
+							if(shiftCheckFirstSel == posSel) return;
+							var iniElem = shiftCheckFirstSel;
+							var endElem = posSel;
+							if(posSel <= shiftCheckFirstSel) {
+								iniElem = posSel;
+								endElem = shiftCheckFirstSel+1;
+							}
+							for(var ii=iniElem; ii<endElem; ii++) {
+								destiny.querySelectorAll('input[type=checkbox]')[ii].checked = ev.target.checked;
+								destiny.querySelectorAll('input[type=checkbox]')[ii].dispatchEvent(new Event('change'));
+							}
+						}
+						shiftCheckFirstSel = posSel;
+					}
+				});
+			});
+		});
+	},
+
+
 	render: (templateElem, payload) => {
 
 		let loopStr = '';
@@ -822,6 +850,30 @@ var R4 = {
 		document.body.append(formelem);
 		formelem.submit();
 		formelem.remove();
+	},
+
+
+	iframeAjax: (url, params) => {
+		let elem = document.createElement('iframe');
+		elem.style.display = 'none';
+
+		let arr = [];
+
+		if(typeof params !== 'object') strParams = params;
+		else {
+			for(var key in params) {
+				if(typeof params[key] === 'object') {
+					for(let key2 in params[key]) {
+						arr.push(key +'['+ key2 +']='+ encodeURIComponent(params[key][key2]));
+					}
+				} else arr.push(key +'='+ encodeURIComponent(params[key]));
+			}
+			strParams = arr.join('&').replace( /%20/g, '+' );
+		}
+
+		elem.src = url +'?'+ strParams;
+
+		document.body.append(elem);
 	}
 
 };
