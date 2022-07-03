@@ -45,7 +45,6 @@ SVG Icons - svgicons.sparkk.fr
 .black   { color: #000000 !important; }
 .smooth  { color: #fafafa !important; }
 
-
 .center   { text-align: center; }
 .right    { text-align: right;  }
 .left     { text-align: left;   }
@@ -197,7 +196,7 @@ small {
 }
 
 ul.R4 {
-	margin-left: 0;
+	padding-left: 0;
 	list-style: none;
 }
 

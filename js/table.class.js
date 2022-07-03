@@ -266,9 +266,11 @@ var Table = {
 					td.classList.add('center');
 				}
 				else if(type == 'decimal') {
-					let precision = Table.dom[idDestiny].head[position].precision ?? 2;
-					value = R4.numberMask(value, precision);
-					td.classList.add('right');
+					if(value !== '') {
+						let precision = Table.dom[idDestiny].head[position].precision ?? 2;
+						value = R4.numberMask(value, precision);
+						td.classList.add('right');
+					}
 				}
 				else if(type == 'date') {
 					value = R4.dateMask(value);
@@ -303,6 +305,8 @@ var Table = {
 				td.setAttribute('col-title', Table.dom[idDestiny].head[position].label +': ');
 
 				tr.appendChild(td);
+			} else {
+				console.warn('');
 			}
 		});
 

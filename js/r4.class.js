@@ -760,23 +760,27 @@ var R4 = {
 
 
 	enableShiftCheck: function(idDestiny) {
-		var shiftCheckFirstSel;
+		let shiftCheckFirstSel;
 		let destiny = document.getElementById(idDestiny);
-		destiny.querySelectorAll('input[type=checkbox]').forEach(function(elem){
+		let completeList = destiny.querySelectorAll('input[type=checkbox]');
+		completeList.forEach(function(elem){
 			elem.addEventListener('click', function(ev) {
-				destiny.querySelectorAll('input[type=checkbox]').forEach(function(item, posSel) {
+				completeList.forEach(function(item, posSel) {
 					if(item == ev.target) {
 						if(ev.shiftKey) {
 							if(shiftCheckFirstSel == posSel) return;
-							var iniElem = shiftCheckFirstSel;
-							var endElem = posSel;
+							let iniElem = shiftCheckFirstSel;
+							let endElem = posSel;
 							if(posSel <= shiftCheckFirstSel) {
 								iniElem = posSel;
 								endElem = shiftCheckFirstSel+1;
 							}
-							for(var ii=iniElem; ii<endElem; ii++) {
-								destiny.querySelectorAll('input[type=checkbox]')[ii].checked = ev.target.checked;
-								destiny.querySelectorAll('input[type=checkbox]')[ii].dispatchEvent(new Event('change'));
+							for(let ii=iniElem; ii<endElem; ii++) {
+								let loopItem = completeList[ii];
+								if(loopItem.visible()) {
+									completeList[ii].checked = ev.target.checked;
+									completeList[ii].dispatchEvent(new Event('change'));
+								}
 							}
 						}
 						shiftCheckFirstSel = posSel;
@@ -787,7 +791,9 @@ var R4 = {
 	},
 
 
-	render: (templateElem, payload) => {
+	render: (templateElem, payload, outputFormat) => {
+
+		if(!outputFormat) outputFormat = 'elem'; //elem|html
 
 		let loopStr = '';
 
@@ -807,27 +813,45 @@ var R4 = {
 			}
 		}
 
-		let content = elem.firstElementChild.outerHTML;
+		let strCont = '';
+
+		let arrContent = elem.childNodes;
+		let numRetElems = 0;
+		if(arrContent.length > 1) {
+			arrContent.forEach(item => {
+				if(item.nodeName != '#text') {
+					numRetElems++;
+					strCont += item.outerHTML.trim();
+				}
+			});
+		} else {
+			numRetElems = 1;
+			strCont = arrContent[0].outerHTML;
+		}
 
 		for(var key in payload) {
 			if((typeof payload[key] != 'object') || (!payload[key].length)) {
-				content = content.split('{{'+ key +'}}').join(payload[key]);
+				strCont = strCont.split('{{'+ key +'}}').join(payload[key]);
 			}
 		}
 
-		let retElem = document.createElement('div');
-		retElem.innerHTML = content;
+		if(outputFormat == 'html') return strCont;
 
-		return retElem.firstChild;
+		let retElem = document.createElement('div');
+		retElem.innerHTML = strCont;
+
+		if(numRetElems > 1) return retElem;
+		else return retElem.firstChild;
 	},
 
 
 	renderLoop: (loopElem, payload) => {
 
 		loopElem.removeAttribute('loop');
-		let crude = loopElem.outerHTML;
 
-		let processed = '';
+		let crude = loopElem.outerHTML,
+		    processed = ''
+		    content = '';
 
 		payload.forEach(row => {
 			content = crude;
