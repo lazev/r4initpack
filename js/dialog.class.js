@@ -198,6 +198,8 @@ var Dialog = {
 			setTimeout(() => Dialog.setChangeMonitor(elem), 500);
 		}
 
+		return idElem;
+
 		/*
 		let modl = document.getElementById('R4Dialog-'+ idElem);
 		if(modl.offsetHeight+100 < window.innerHeight) {

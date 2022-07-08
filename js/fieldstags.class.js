@@ -271,6 +271,8 @@ FieldsTags = {
 
 		if(typeahead == 'json') {
 
+			console.log(typeof source);
+
 			if(typeof source == 'string')
 				list = FieldsTags.typeAheadFilterList(eval(source), value);
 
