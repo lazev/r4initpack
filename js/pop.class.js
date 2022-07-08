@@ -35,7 +35,7 @@ var Pop = {
 		el.addEventListener('click', function(ev){
 			if(opts.preventDefault) ev.preventDefault();
 			opts.destiny = el;
-			opts.withOver = true;
+			opts.overlay = true;
 			return Pop.create(opts);
 		});
 	},
@@ -54,9 +54,9 @@ var Pop = {
 		let classes  = [];
 		let onOpen   = opts.onOpen   || function(){};
 		let id       = opts.id       || destiny.id +'R4Pop';
-		let withOver = opts.withOver || false;
+		let overlay = opts.overlay  || false;
 
-		if(!withOver && destiny.getAttribute('R4PopTarget')) return false;
+		if(!overlay && destiny.getAttribute('R4PopTarget')) return false;
 
 		if((!id) || (id == 'R4Pop')) {
 			id = 'R4Pop'+ Math.random().toString().substr(-9);
@@ -82,7 +82,7 @@ var Pop = {
 		});
 
 
-		if(withOver) {
+		if(overlay) {
 			let over = document.createElement('div');
 			over.classList.add('R4Overlay');
 			over.classList.add('R4PopOverlay');
@@ -134,26 +134,6 @@ var Pop = {
 		return pop;
 	},
 
-/*
-	destroyAll: function(force) {
-		for(let idElem in Pop.openPops) {
-			if(Pop.openPops[idElem]) {
-				Pop.destroyById('R4PopOverlay-'+ idElem, force);
-			}
-		};
-	},
-
-
-	destroyAllExcept: function(idExcept) {
-		for(let idElem in Pop.openPops) {
-			if(idExcept != idElem) {
-				if(Pop.openPops[idElem]) {
-					Pop.destroyById('R4PopOverlay-'+ idElem);
-				}
-			}
-		};
-	},
-*/
 
 	destroyById: function(idElem, force) {
 		let elem = document.getElementById(idElem);

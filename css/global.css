@@ -5,19 +5,19 @@ SVG Icons - svgicons.sparkk.fr
 ----- */
 
 .svg-icon {
-  width: 1em;
-  height: 1em;
+	width: 1em;
+	height: 1em;
 }
 
 .svg-icon path,
 .svg-icon polygon,
 .svg-icon rect {
-  fill: #4691f6;
+	fill: #4691f6;
 }
 
 .svg-icon circle {
-  stroke: #4691f6;
-  stroke-width: 1;
+	stroke: #4691f6;
+	stroke-width: 1;
 }
 
 .bgPrimary { background-color: #673ab7 !important; }
