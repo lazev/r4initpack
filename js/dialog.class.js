@@ -40,7 +40,7 @@ var Dialog = {
 			} else {
 				cont = document.createElement('div');
 				cont.innerHTML = html;
-				idElem = id || Math.random().toString().substr(-9);
+				idElem = opts.id || Math.random().toString().substr(-9);
 				cont.id = idElem;
 			}
 
@@ -57,11 +57,11 @@ var Dialog = {
 			over.classList.add('hidden');
 			over.classList.add('R4Overlay');
 
-			modl.appendChild(head);
-			modl.appendChild(body);
-			modl.appendChild(foot);
-			body.appendChild(cont);
-			over.appendChild(modl);
+			modl.append(head);
+			modl.append(body);
+			modl.append(foot);
+			body.append(cont);
+			over.append(modl);
 
 			cont.classList.remove('hidden');
 
@@ -118,7 +118,7 @@ var Dialog = {
 					if(strClasses.indexOf('R4DialogSaver') > -1) {
 						modl.addEventListener('keydown', function(ev) {
 							if(ev.keyCode == 13 && ev.ctrlKey) {
-								if(!btn.disabled) {
+								if(!btn.disabled && btn.offsetParent !== null) {
 									btn.trigger('click');
 								}
 							}
@@ -175,14 +175,14 @@ var Dialog = {
 	open: async function(idElemOrOpts, opts) {
 		let idElem;
 
-		if(typeof idElemOrOpts === 'object') {
-			idElem = await Dialog.create(idElemOrOpts, opts);
+		if(typeof idElemOrOpts === 'object') { //idElemOrOpts instanceof HTMLElement;
+			idElem = await Dialog.create(idElemOrOpts);
 		} else {
 			idElem = idElemOrOpts;
 		}
 
 		let over = document.getElementById('R4Overlay-'+ idElem);
-		document.body.appendChild(over);
+		document.body.append(over);
 
 		over.classList.remove('hidden');
 

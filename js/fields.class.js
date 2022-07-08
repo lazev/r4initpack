@@ -679,7 +679,7 @@ var Fields = {
 			switch(elem.attr('R4Type')) {
 				case 'email':
 					if(val) {
-						if(!R4.isMail(val)) {
+						if(!R4.checkMail(val)) {
 							valid = false;
 							arrErrors.push('Email inválido');
 						}

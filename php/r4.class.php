@@ -113,8 +113,8 @@ class R4 {
 	}
 
 
-	public static function friendChars($string) {
-		return preg_replace('/[^A-Z0-9-_]/i', '', $string);
+	public static function friendChars($string, $allowStr='') {
+		return preg_replace('/[^A-Z0-9-_'. $allowStr .']/i', '', $string);
 	}
 
 
