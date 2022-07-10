@@ -124,10 +124,10 @@ FieldsTags = {
 			FieldsTags.remTag(elem, ev.target.parentNode);
 		});
 
-		el.appendChild(rem);
-		el.appendChild(document.createTextNode(txt));
+		el.append(rem);
+		el.append(document.createTextNode(txt));
 
-		elem.parentNode.querySelector('.tagList').appendChild(el);
+		elem.parentNode.querySelector('.tagList').append(el);
 		elem.value = '';
 
 		if(typeof eval(onAddTag) === 'function') {
@@ -282,7 +282,7 @@ FieldsTags = {
 			listItens = FieldsTags.typeAheadFormatList(elem, list);
 
 			listElem.innerHTML = '';
-			listElem.appendChild(listItens);
+			listElem.append(listItens);
 		}
 
 		else if(typeahead == 'function') {
@@ -361,7 +361,7 @@ FieldsTags = {
 		let ul = document.createElement('ul');
 
 		list.forEach(function(item) {
-			ul.appendChild(FieldsTags.typeAheadFormatListItem(item));
+			ul.append(FieldsTags.typeAheadFormatListItem(item));
 		});
 
 		ul.querySelectorAll('li').forEach(li => {
@@ -399,8 +399,8 @@ FieldsTags = {
 		let li = document.createElement('li');
 		li.setAttribute('value', item.key);
 
-		li.appendChild(label);
-		if(extra) li.appendChild(extra);
+		li.append(label);
+		if(extra) li.append(extra);
 
 		return li;
 	},
@@ -440,8 +440,8 @@ FieldsTags = {
 		let destPos = elem.parentNode.getBoundingClientRect();
 
 		let topLeft = {
-			top:  destPos.top + window.pageYOffset,
-			left: destPos.left + window.pageXOffset
+			top:  destPos.top,// + window.pageYOffset,
+			left: destPos.left// + window.pageXOffset
 		};
 
 		typeAheadList.style.top  = topLeft.top  + 'px';
