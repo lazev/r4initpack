@@ -4,19 +4,20 @@
 SVG Icons - svgicons.sparkk.fr
 ----- */
 
-.svg-icon {
-	width: 1em;
-	height: 1em;
+svg.icon {
+	width: 22px;
+	height: 22px;
+	vertical-align: middle;
 }
 
-.svg-icon path,
-.svg-icon polygon,
-.svg-icon rect {
-	fill: #4691f6;
+svg.icon path,
+svg.icon polygon,
+svg.icon rect {
+	fill: inherit;
 }
 
-.svg-icon circle {
-	stroke: #4691f6;
+svg.icon circle {
+	stroke: inherit;
 	stroke-width: 1;
 }
 
