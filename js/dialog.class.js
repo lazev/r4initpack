@@ -182,11 +182,11 @@ var Dialog = {
 		}
 
 		let over = document.getElementById('R4Overlay-'+ idElem);
-		document.body.appendChild(over);
+		document.body.append(over);
 
 		over.classList.remove('hidden');
 
-		document.getElementsByTagName('body')[0].classList.add('dialogOpen');
+		document.body.classList.add('noscroll');
 
 		if(typeof Dialog.onOpenFuncs[idElem] === 'function') {
 			Dialog.onOpenFuncs[idElem]();
@@ -292,7 +292,7 @@ var Dialog = {
 		}
 
 		if(Dialog.getIdOpenOverlays().length === 0) {
-			document.getElementsByTagName('body')[0].classList.remove('dialogOpen');
+			document.body.classList.remove('noscroll');
 		}
 
 		if(typeof Dialog.onCloseFuncs[idElem] === 'function') {

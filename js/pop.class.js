@@ -70,7 +70,7 @@ var Pop = {
 		pop.setAttribute('id', id);
 		pop.setAttribute('class', classes.join(' '));
 
-		if(typeof html == 'string')      pop.innerHTML = html;
+		if     (typeof html == 'string') pop.innerHTML = html;
 		else if(typeof html == 'object') pop.append(html);
 
 		pop.addEventListener('mouseenter', function(event) {
@@ -81,8 +81,13 @@ var Pop = {
 			event.target.classList.remove('R4MouseOver');
 		});
 
+		let screenPosFitY = 0;
+		let screenPosFitX = 0;
 
 		if(overlay) {
+
+			document.body.classList.add('noscroll');
+
 			let over = document.createElement('div');
 			over.classList.add('R4Overlay');
 			over.classList.add('R4PopOverlay');
@@ -93,21 +98,26 @@ var Pop = {
 				Pop.destroyById(id);
 			});
 
-			document.body.appendChild(over);
+			document.body.append(over);
 
 			setTimeout(function(){
 				over.scrollTo(0, document.body.scrollHeight);
 			}, 50);
 
 		} else {
-			document.body.appendChild(pop);
+
+			screenPosFitY = window.pageYOffset;
+			screenPosFitX = window.pageXOffset;
+
+			document.body.append(pop);
 		}
+
 
 		let destPos = destiny.getBoundingClientRect();
 
 		let topLeft = {
-			top:  destPos.bottom + window.pageYOffset,
-			left: destPos.left   + window.pageXOffset
+			top:  destPos.bottom + screenPosFitY,
+			left: destPos.left   + screenPosFitX
 		};
 
 		pop.style.top  = topLeft.top  + 'px';
@@ -120,7 +130,7 @@ var Pop = {
 		}
 
 		if(popPos.bottom >= document.body.clientHeight) {
-			pop.style.top = document.body.clientHeight+window.pageYOffset-popPos.height +'px';
+			pop.style.top = document.body.clientHeight + screenPosFitY - popPos.height +'px';
 		}
 
 		destiny.setAttribute('R4PopTarget', id);
@@ -156,6 +166,8 @@ var Pop = {
 
 				if(over) over.remove();
 				else elem.remove();
+
+				document.body.classList.remove('noscroll');
 
 				let origin = document.querySelector('[R4PopTarget='+ idElem +']');
 				if(origin) origin.removeAttribute('R4PopTarget');

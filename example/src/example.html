@@ -7,6 +7,13 @@
 	<!--R4TEMPLATE-head-->
 
 	<script>
+
+	var lista = [
+		{key: 2, label: 'Primeira'},
+		{key: 1, label: 'Segunda'},
+		{key: 3, label: 'Terceira'}
+	];
+
 	const R4Init = () => {
 		console.log('Essa linha foi escrita pela função R4Init');
 
@@ -16,7 +23,7 @@
 			{ id: 'fieldDate',      type:'date'   },
 			{ id: 'fieldPass',      type:'password' },
 			{ id: 'fieldMoney',     type:'money-' },
-			{ id: 'fieldTags',      type:'tags' },
+			{ id: 'fieldTags',      type:'tags', typeahead:'json', source:'lista' },
 			{ id: 'fieldMailTags',  type:'mailtags' },
 			{ id: 'fieldPhoneTags', type:'phonetags' },
 			{ id: 'fieldSwitch',    type:'switch' },
@@ -482,6 +489,52 @@ Effects.highlight($(<span class="hljs-string" style="color: rgb(143, 193, 62);">
 Effects.blink($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#quadroExemploOutro'</span>));</pre>
 
 
+<h2>Icones em linha</h2>
+
+<p>
+	Os ícones são em SVG e podem ser buscados em lugares como:
+	<ul>
+		<li><a href="http://svgicons.sparkk.fr/">http://svgicons.sparkk.fr/</a></li>
+		<li><a href="https://www.svgviewer.dev/s/25374/home-house-building-property">https://www.svgviewer.dev/s/25374/home-house-building-property</a></li>
+		<li><a href="https://www.iconfinder.com/icons">https://www.iconfinder.com/icons</a></li>
+	</ul>
+</p>
+
+
+<p>
+	<b>Icone puro</b>
+	<?xml version="1.0" ?><svg class="svg-icon" viewBox="0 0 512 512"><path d="M336.1 240c17.68 0 31.95-14.25 31.95-32s-14.27-32-31.95-32c-17.8 0-32.07 14.25-32.07 32S318.3 240 336.1 240zM335.1 272H176c-26.48 0-47.95 21.47-47.95 47.95L128 336c0 26.51 21.51 48 48.02 48h159.9c26.51 0 48.02-21.49 48.02-48L383.1 320C383.1 293.5 362.5 272 335.1 272zM184 352H176c-8.822 0-15.98-7.178-15.98-16L160 319.1C160 311.2 167.2 304 176 304h8V352zM240 352H216l.026-48H240V352zM296 352H272V304h23.97L296 352zM351.1 336c0 8.822-7.154 16-15.98 16H328V304h7.953c8.822 0 16.02 7.178 16.02 16L351.1 336zM175.9 240c17.8 0 32.07-14.25 32.07-32s-14.27-32-32.07-32c-17.68 0-31.95 14.25-31.95 32S158.3 240 175.9 240zM256 0C114.6 0 0 114.6 0 256s114.6 256 256 256s256-114.6 256-256S397.4 0 256 0zM256 464c-114.7 0-208-93.31-208-208S141.3 48 256 48s208 93.31 208 208S370.7 464 256 464z"/></svg>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">svg</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"svg-icon"</span> <span class="hljs-attr">viewBox</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"0 0 20 20"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">path</span> <span class="hljs-attr">d</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"M18.121,9....</span></span></pre>
+</p>
+
+<p>
+	<b>Tamanhos e cores variadas com style</b>
+	<svg class="svg-icon" viewBox="0 0 20 20" style="width: 50px; height: 50px; fill: blue;">
+		<path d="M8.749,9.934c0,0.247-0.202,0.449-0.449,0.449H4.257c-0.247,0-0.449-0.202-0.449-0.449S4.01,9.484,4.257,9.484H8.3C8.547,9.484,8.749,9.687,8.749,9.934 M7.402,12.627H4.257c-0.247,0-0.449,0.202-0.449,0.449s0.202,0.449,0.449,0.449h3.145c0.247,0,0.449-0.202,0.449-0.449S7.648,12.627,7.402,12.627 M8.3,6.339H4.257c-0.247,0-0.449,0.202-0.449,0.449c0,0.247,0.202,0.449,0.449,0.449H8.3c0.247,0,0.449-0.202,0.449-0.449C8.749,6.541,8.547,6.339,8.3,6.339 M18.631,4.543v10.78c0,0.248-0.202,0.45-0.449,0.45H2.011c-0.247,0-0.449-0.202-0.449-0.45V4.543c0-0.247,0.202-0.449,0.449-0.449h16.17C18.429,4.094,18.631,4.296,18.631,4.543 M17.732,4.993H2.46v9.882h15.272V4.993z M16.371,13.078c0,0.247-0.202,0.449-0.449,0.449H9.646c-0.247,0-0.449-0.202-0.449-0.449c0-1.479,0.883-2.747,2.162-3.299c-0.434-0.418-0.714-1.008-0.714-1.642c0-1.197,0.997-2.246,2.133-2.246s2.134,1.049,2.134,2.246c0,0.634-0.28,1.224-0.714,1.642C15.475,10.331,16.371,11.6,16.371,13.078M11.542,8.137c0,0.622,0.539,1.348,1.235,1.348s1.235-0.726,1.235-1.348c0-0.622-0.539-1.348-1.235-1.348S11.542,7.515,11.542,8.137 M15.435,12.629c-0.214-1.273-1.323-2.246-2.657-2.246s-2.431,0.973-2.644,2.246H15.435z"></path>
+	</svg>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">svg</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"svg-icon"</span> <span class="hljs-attr">viewBox</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"0 0 20 20"</span> <span class="hljs-attr">style</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"width: 50px; height: 50px; fill: blue;"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">path</span> <span class="hljs-attr">d</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"M8.749,9.934c0,0.....</span></span></pre>
+</p>
+
+<p>
+	<b>Com efeito de mouse e uso de classes</b>
+	<svg class="svg-icon transition efeitoMouseOverIcon" viewBox="0 0 20 20">
+		<path fill="none" d="M4.68,13.716v-0.169H4.554C4.592,13.605,4.639,13.658,4.68,13.716z M11.931,6.465
+		c-0.307-0.087-0.623,0.106-0.706,0.432l-1.389,5.484c-0.901,0.084-1.609,0.833-1.609,1.757c0,0.979,0.793,1.773,1.773,1.773
+		c0.979,0,1.773-0.794,1.773-1.773c0-0.624-0.324-1.171-0.812-1.486l1.377-5.439C12.422,6.887,12.239,6.552,11.931,6.465z
+		M10.591,14.729H9.408v-1.182h1.183V14.729z M15.32,13.716c0.04-0.058,0.087-0.11,0.126-0.169H15.32V13.716z M10,3.497
+		c-3.592,0-6.503,2.911-6.503,6.503H4.68c0-2.938,2.382-5.32,5.32-5.32s5.32,2.382,5.32,5.32h1.182
+		C16.502,6.408,13.591,3.497,10,3.497z M10,0.542c-5.224,0-9.458,4.234-9.458,9.458c0,5.224,4.234,9.458,9.458,9.458
+		c5.224,0,9.458-4.234,9.458-9.458C19.458,4.776,15.224,0.542,10,0.542z M15.32,16.335v0.167h-0.212
+		c-1.407,1.107-3.179,1.773-5.108,1.773c-1.93,0-3.701-0.666-5.108-1.773H4.68v-0.167C2.874,14.816,1.724,12.543,1.724,10
+		c0-4.571,3.706-8.276,8.276-8.276c4.57,0,8.275,3.706,8.275,8.276C18.275,12.543,17.126,14.816,15.32,16.335z"></path>
+	</svg>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">svg</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"svg-icon transition efeitoMouseOverIcon"</span> <span class="hljs-attr">viewBox</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"0 0 20 20"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">path</span> <span class="hljs-attr">fill</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"none"</span> <span class="hljs-attr">d</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"M4.68,13....</span></span></pre>
+</p>
+
 </div>
 </main>
 <footer>
@@ -504,13 +557,18 @@ Effects.blink($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#qu
 	h3 {
 		margin-top: 50px !important;
 	}
+
+	.efeitoMouseOverIcon:hover {
+		width: 100px;
+		height: 100px;
+		fill: red;
+	}
 </style>
 <!--R4TEMPLATE-endBody-->
 </body>
 </html>
 
 <!-- BUGS A RESOLVER:
-- Overlay e position do Pop.click
 - Field tags com opções em json
 - Click em link para abrir Warning
 - changeMonitor no Dialog não verifica se fechar sem sair do input alterado

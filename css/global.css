@@ -12,11 +12,11 @@ SVG Icons - svgicons.sparkk.fr
 .svg-icon path,
 .svg-icon polygon,
 .svg-icon rect {
-	fill: #4691f6;
+	fill: inherit;
 }
 
 .svg-icon circle {
-	stroke: #4691f6;
+	stroke: inherit;
 	stroke-width: 1;
 }
 
@@ -57,12 +57,13 @@ SVG Icons - svgicons.sparkk.fr
 	margin: auto;
 }
 
-.corner    { border-radius: 3px;  }
-.paspatur  { padding: 20px;       }
-.shadow    { box-shadow: 0 2px 2px 0 rgba(0,0,0,.16), 0 0 2px 0 rgba(0,0,0,.12); }
-.clickable { cursor: pointer;     }
-.nowrap    { white-space: nowrap; }
-.btnAlignFix { padding-top: 10px; }
+.corner      { border-radius: 3px;  }
+.paspatur    { padding: 20px;       }
+.shadow      { box-shadow: 0 2px 2px 0 rgba(0,0,0,.16), 0 0 2px 0 rgba(0,0,0,.12); }
+.clickable   { cursor: pointer;     }
+.nowrap      { white-space: nowrap; }
+.noscroll    { overflow: hidden;    }
+.btnAlignFix { padding-top: 10px;   }
 
 .small {
 	color: gray;
