@@ -56,6 +56,10 @@
 						classes: 'R4DialogCloser' //Essa classe indica que o botão é de fechar
 					}
 				]
+			})
+
+			.then(ret => {
+				Fields.create({ id:'formInputText', type:'tags', typeahead:'json', source:'lista' })
 			});
 		});
 
@@ -356,7 +360,7 @@ compact
 
 <div id="formDialog" class="hidden" title="Exemplo de dialog HTML">
 	Conteúdo do dialog<br>
-	<input type="text">
+	<div id="formInputText">Exemplo de input</div>
 </div>
 
 
@@ -569,6 +573,5 @@ Effects.blink($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#qu
 </html>
 
 <!-- BUGS A RESOLVER:
-- Field tags com opções em json
 - Click em link para abrir Warning
 - changeMonitor no Dialog não verifica se fechar sem sair do input alterado

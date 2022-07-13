@@ -33,18 +33,25 @@ var Fields = {
 
 		return new Promise((resolve, reject) => {
 
-			var item, elem, rcpt, label;
+			var item, elem, rcpt, label, arrFields = [];
 
 			if(!prefix) prefix = '';
 
-			for(let k in jsonFields) {
+			if(jsonFields.length) arrFields = jsonFields;
+			else arrFields.push(jsonFields);
+
+			for(let k in arrFields) {
 
 				elem = null;
-				item = jsonFields[k];
+				item = arrFields[k];
 
 				rcpt = document.getElementById(
 					(prefix) ? prefix +'_'+ item.id : item.id
 				);
+
+				console.log(item.id);
+
+				console.log((prefix) ? prefix +'_'+ item.id : item.id);
 				if(!rcpt) continue;
 
 				label = rcpt.innerHTML;
