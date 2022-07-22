@@ -49,9 +49,6 @@ var Fields = {
 					(prefix) ? prefix +'_'+ item.id : item.id
 				);
 
-				console.log(item.id);
-
-				console.log((prefix) ? prefix +'_'+ item.id : item.id);
 				if(!rcpt) continue;
 
 				label = rcpt.innerHTML;
@@ -164,12 +161,13 @@ var Fields = {
 
 			switch(item.type) {
 				case 'tags':
-				case 'mailtags':
+				case 'emailtags':
 				case 'phonetags':
 					tagList = document.createElement('span');
 					tagList.classList.add('tagList');
 
 					wrap.classList.add('tags');
+					wrap.classList.add(item.type);
 					wrap.append(tagList);
 
 					elem = FieldsTags.create(elem, item);
@@ -307,7 +305,7 @@ var Fields = {
 
 		for(let k in attrib) elem.setAttribute(k, attrib[k]);
 
-		if(item.type != 'tags' && item.type != 'mailtags' && item.type != 'phonetags') {
+		if(item.type != 'tags' && item.type != 'emailtags' && item.type != 'phonetags') {
 			elem.addEventListener('blur', function(event){
 				if(event.target.value) {
 					wrap.classList.add('withContent');
@@ -793,7 +791,7 @@ var Fields = {
 				case 'money-':    return R4.toUSNumber(elem.value);
 				case 'date':      return R4.dateUnmask(elem.value, '0000-00-00');
 				case 'tags':
-				case 'mailtags':
+				case 'emailtags':
 				case 'phonetags': return FieldsTags.getVal(elem);
 				case 'cpfcnpj':
 				case 'cpf':
@@ -813,7 +811,7 @@ var Fields = {
 		let type = elem.getAttribute('R4Type');
 		switch(type) {
 			case 'tags':
-			case 'mailtags':
+			case 'emailtags':
 			case 'phonetags': return FieldsTags.getText(elem);
 			default: return elem.value;
 		}
@@ -858,7 +856,7 @@ var Fields = {
 				elem.value = R4.cepMask(value);
 				break;
 			case 'tags':
-			case 'mailtags':
+			case 'emailtags':
 			case 'phonetags':
 				FieldsTags.setVal(elem, value, label);
 				break;
@@ -927,7 +925,7 @@ var Fields = {
 		);
 		form.querySelectorAll('input[R4Type=tags]').forEach(     el => FieldsTags.clrTag(el));
 		form.querySelectorAll('input[R4Type=phonetags]').forEach(el => FieldsTags.clrTag(el));
-		form.querySelectorAll('input[R4Type=mailtags]').forEach( el => FieldsTags.clrTag(el));
+		form.querySelectorAll('input[R4Type=emailtags]').forEach(el => FieldsTags.clrTag(el));
 
 		setTimeout(() => Fields.remAllErrFields(form), 50);
 	},

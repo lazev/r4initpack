@@ -126,7 +126,8 @@
 	padding: 3px 3px;
 	margin-left: 5px;
 	display: inline-block;
-
+	border-radius: 3px;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,.16), 0 0 2px 0 rgba(0,0,0,.12);
 }
 
 .R4Fields > .tagList > .tagItem > .closer {
@@ -136,7 +137,7 @@
 	top: -8px;
 	font-size: 13px;
 	font-weight: bold;
-	color: yellow;
+	color: #dd1d51;
 }
 
 .R4Fields.tags > input {

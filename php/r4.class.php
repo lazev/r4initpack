@@ -16,6 +16,14 @@ class R4 {
 	}
 
 
+	public static function log($msg, $module=null, $idModule=null, $type=null) {
+		require_once dirname(__FILE__) . '/logger.class.php';
+
+		$log = new Logger;
+		$log->log($msg, $module, $idModule, $type);
+	}
+
+
 	public static function setSession($index, $val) {
 		$_SESSION[SYSTEMID][$index] = $val;
 		return true;

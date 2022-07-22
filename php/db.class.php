@@ -265,7 +265,7 @@ class DB {
 
 
 	private function errorMonitor($msg, $subject='...') {
-		error_log(PHP_EOL. '******* DB ERROR *******' .PHP_EOL.$msg);
+		R4::log($msg, 'DB', $this->currentBase, 'ERRO');
 	}
 
 

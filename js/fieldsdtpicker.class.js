@@ -112,7 +112,11 @@ var FieldsDtPicker = {
 		btnToday.setAttribute('class', 'col-4 col-xs-4 onRight');
 		btnToday.innerHTML = 'Hoje';
 		btnToday.addEventListener('click', function(ev) {
-			FieldsDtPicker.setVal(elem, currentDay+'');
+			let zeroday = (currentDay < 10) ? '0'+ currentDay : currentDay;
+			let zeromon = parseInt(currentMonth)+1;
+			zeromon = (zeromon < 10) ?  '0'+ zeromon : zeromon;
+
+			FieldsDtPicker.setVal(elem, currentYear +'-'+ zeromon +'-'+ zeroday);
 		});
 
 		FieldsDtPicker.createCalendar(

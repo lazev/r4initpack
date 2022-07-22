@@ -109,10 +109,13 @@ FieldsTags = {
 
 		let el = document.createElement('div');
 		el.classList.add('tagItem');
-		el.classList.add('bgPrimary');
-		el.classList.add('white');
-		el.classList.add('corner');
 		el.setAttribute('value', val);
+
+		if(elem.getAttribute('R4Type') == 'emailtags') {
+			if(!R4.checkMail(val)) {
+				el.classList.add('danger');
+			}
+		}
 
 		let txt = (label) ? label : val;
 		el.setAttribute('text', txt);
@@ -178,11 +181,11 @@ FieldsTags = {
 			arr.forEach(item => {
 				if(elem.getAttribute('R4Type') == 'phonetags') {
 					FieldsTags.addTag(elem, R4.phoneMask(item));
-				} else {
+				}
+				else {
 					FieldsTags.addTag(elem, item, label);
 				}
 			});
-
 		}
 	},
 
@@ -270,8 +273,6 @@ FieldsTags = {
 		}
 
 		if(typeahead == 'json') {
-
-			console.log(typeof source);
 
 			if(typeof source == 'string')
 				list = FieldsTags.typeAheadFilterList(eval(source), value);
