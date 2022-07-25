@@ -156,9 +156,9 @@ var R4 = {
 		if(x.indexOf('-') == -1) return false;
 		else if (x.indexOf('-') == x.lastIndexOf('-')) return false;
 		else {
-			year  = x.substring(0, x.indexOf('-'));
-			month = x.substring(x.indexOf('-')+1,     x.lastIndexOf('-'));
-			day   = x.substring(x.lastIndexOf('-')+1, x.length);
+			let year  = x.substring(0, x.indexOf('-'));
+			let month = x.substring(x.indexOf('-')+1,     x.lastIndexOf('-'));
+			let day   = x.substring(x.lastIndexOf('-')+1, x.length);
 
 			if(
 				(month>12) || (month < 1) || (year.length == 3)
@@ -194,13 +194,13 @@ var R4 = {
 				CPF == '88888888888' || CPF == '99999999999' || CPF == '00000000000') {
 				invalid = true;
 			}
-			sum = 0;
-			for(i=0; i<9; i++) sum += parseInt(CPF.charAt(i)) * (10-i);
-			rest = 11 - (sum % 11);
+			let sum = 0;
+			for(let i=0; i<9; i++) sum += parseInt(CPF.charAt(i)) * (10-i);
+			let rest = 11 - (sum % 11);
 			if (rest == 10 || rest == 11) rest = 0;
 			if (rest != parseInt(CPF.charAt(9))) invalid = true;
 			sum = 0;
-			for(i=0; i<10; i++) sum += parseInt(CPF.charAt(i)) * (11-i);
+			for(let i=0; i<10; i++) sum += parseInt(CPF.charAt(i)) * (11-i);
 			rest = 11-(sum % 11);
 			if (rest == 10 || rest == 11) rest = 0;
 			if (rest != parseInt(CPF.charAt(10))) invalid = true;
@@ -219,13 +219,13 @@ var R4 = {
 			var c = CNPJ.substr(0,12);
 			var dv = CNPJ.substr(12,2);
 			var d1 = 0;
-			for (i = 0; i < 12; i++) d1 += c.charAt(11-i)*(2+(i % 8));
+			for (let i = 0; i < 12; i++) d1 += c.charAt(11-i)*(2+(i % 8));
 			if (d1 == 0) invalid = true;
 			d1 = 11 - (d1 % 11);
 			if (d1 > 9) d1 = 0;
 			if(dv.charAt(0) != d1) invalid = true;
 			d1 *= 2;
-			for (i = 0; i < 12; i++) d1 += c.charAt(11-i)*(2+((i+1) % 8));
+			for (let i = 0; i < 12; i++) d1 += c.charAt(11-i)*(2+((i+1) % 8));
 			d1 = 11 - (d1 % 11);
 			if (d1 > 9) d1 = 0;
 			if (dv.charAt(1) != d1) invalid = true;
@@ -291,12 +291,12 @@ var R4 = {
 				yea = str.substr(4, str.length);
 				if(yea.length == 2)      yea = '20' + yea;
 				else if(yea.length == 3) yea = '2' + yea;
-				else if(yea.length > 4)  yea = today.getFullYear()
+				else if(yea.length > 4)  yea = today.getFullYear();
 
 				ret =  day + '/' + mon + '/' + yea;
 			}
 		}
-		return ret
+		return ret;
 	},
 
 
@@ -479,7 +479,7 @@ var R4 = {
 	friendlyName: function(v) {
 		v = R4.stripAccents(v);
 
-		let allowedchars = 'abcdefghijklmnopqrstuvwxyz.0123456789-_@'
+		let allowedchars = 'abcdefghijklmnopqrstuvwxyz.0123456789-_@';
 
 		let ret = '';
 		for(var i = 0; i < v.length; i++)
@@ -800,8 +800,6 @@ var R4 = {
 
 		if(!outputFormat) outputFormat = 'elem'; //elem|html
 
-		let loopStr = '';
-
 		let elem = templateElem.content.cloneNode(true);
 
 		if(!payload) return elem;
@@ -809,8 +807,8 @@ var R4 = {
 		if(elem.querySelector('[loop]')) {
 			for(var key in payload) {
 				if((typeof payload[key] == 'object') && (payload[key].length)) {
-					loopElem = elem.querySelector('[loop]');
-					loopResult = R4.renderLoop(loopElem, payload[key]);
+					let loopElem = elem.querySelector('[loop]');
+					let loopResult = R4.renderLoop(loopElem, payload[key]);
 					loopElem.parentNode.innerHTML = loopResult;
 					//loopElem.remove();
 					delete payload[key];
@@ -855,7 +853,7 @@ var R4 = {
 		loopElem.removeAttribute('loop');
 
 		let crude = loopElem.outerHTML,
-		    processed = ''
+		    processed = '',
 		    content = '';
 
 		payload.forEach(row => {
@@ -886,7 +884,7 @@ var R4 = {
 		let elem = document.createElement('iframe');
 		elem.style.display = 'none';
 
-		let arr = [];
+		let arr = [], strParams = '';
 
 		if(typeof params !== 'object') strParams = params;
 		else {

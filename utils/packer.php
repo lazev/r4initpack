@@ -38,58 +38,58 @@ foreach($content as $cont) {
 file_put_contents('./public/_assets/r4/r4.min.js', $result);
 
 
+//JS PUBLIC
+$content = [];
+$content = getFilesContent('./public', ['js']);
+
+foreach($content as $file => $cont) {
+	if(substr($file, -7) == '.min.js') continue;
+	$packer = new JavaScriptPacker($cont, 'Normal', true, false);
+	file_put_contents($file, $packer->pack());
+}
+
+//CSS PUBLIC
+$content = [];
+$content = getFilesContent('./public', ['css']);
+
+foreach($content as $file => $cont) {
+	if(substr($file, -8) == '.min.css') continue;
+	file_put_contents($file, minimizeCSS($cont));
+}
+
+
 //HTML PUBLIC
 $content = [];
-$content = getFilesContent('./public', ['htm', 'html']);
+$content = getFilesContent('./public', ['htm', 'html', 'json']);
 
-foreach($content as $file => $html) {
-	echo $file;
-	file_put_contents($file, minimizeHTML($html));
+foreach($content as $file => $cont) {
+	file_put_contents($file, minimizeHTML($cont));
 }
-
-
-/*
-function searchAll($rootFolder, $ext) {
-	global $headerFile;
-
-	$allContent = [];
-
-	$arrFiles = scandir($rootFolder);
-
-	foreach($arrFiles as $file) {
-		if(substr($file, 0, 1) == '.')   continue;
-		if(is_link($rootFolder . $file)) continue;
-
-		if(is_dir($rootFolder . $file))  {
-
-			$allContent = array_merge($allContent, searchAll($rootFolder . $file .'/', $ext));
-
-		} else {
-
-			if(in_array(pathinfo($rootFolder . $file, PATHINFO_EXTENSION), $ext)) {
-				$allContent[$rootFolder . $file] = file_get_contents($rootFolder . $file);
-			}
-		}
-	}
-
-	return $allContent;
-}
-//*/
 
 
 function getFilesContent($dir, $ext) {
 	$allContent = [];
-	if($handle = opendir($dir)) {
-		while(false !== ($file = readdir($handle))) {
-			if(($file != '.') && ($file != '..') && (!is_link($dir .'/'. $file))) {
-				if(!is_dir($dir .'/'. $file)) {
-					if(in_array(pathinfo($dir .'/'. $file, PATHINFO_EXTENSION), $ext)) {
-						$allContent[$dir .'/'. $file] = file_get_contents($dir .'/'. $file);
-					}
-				}
+
+	$arrFiles = scandir($dir);
+	foreach($arrFiles as $filename) {
+
+		$file = $dir .'/'. $filename;
+
+		if(substr($filename, 0, 1) == '.') continue;
+
+		if(is_link($file)) continue;
+
+		if(is_dir($file)) {
+			$subret = getFilesContent($file, $ext);
+			$allContent = array_merge($allContent, $subret);
+		}
+		else {
+			if(in_array(pathinfo($file, PATHINFO_EXTENSION), $ext)) {
+				$allContent[$file] = file_get_contents($file);
 			}
 		}
 	}
+
 	return $allContent;
 }
 

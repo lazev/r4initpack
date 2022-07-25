@@ -591,7 +591,7 @@ var Table = {
 
 		for(var k in listExtraCols) {
 			checked = selExtraCols.includes(k);
-			html += '<div id="listColItem_'+ k +'">'+ listExtraCols[k].label +'</div>'
+			html += '<div id="listColItem_'+ k +'">'+ listExtraCols[k].label +'</div>';
 			fldsObj.push({ id: 'listColItem_'+ k, type: 'switch', checked: checked, value: k });
 		}
 
@@ -602,7 +602,7 @@ var Table = {
 			html: html,
 			preventDefault: true,
 			onOpen: () => {
-				Fields.create(fldsObj)
+				Fields.create(fldsObj);
 				document.getElementById(idDestiny +'ColSelBtnSave').addEventListener('click', function(ev){
 					let ret = [];
 					document.getElementById(idDestiny +'ColSelOptBox').querySelectorAll('input').forEach(item => {

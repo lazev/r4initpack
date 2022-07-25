@@ -7,7 +7,7 @@ var Pop = {
 	hint: function(el, txt) {
 		let popel;
 
-		fn = function(ev){
+		let fn = function(ev){
 			popel = Pop.create({
 				html: txt,
 				destiny: el,

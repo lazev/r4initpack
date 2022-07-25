@@ -19,7 +19,7 @@ var FieldsDtPicker = {
 		box.setAttribute('class', 'row R4FieldsDtPicker');
 		tbl.setAttribute('class', 'clickable center');
 
-		elValue = Fields.getVal(elem);
+		let elValue = Fields.getVal(elem);
 
 		if(elValue && R4.checkDate(elValue)) {
 			let arr = elValue.split('-');
@@ -68,7 +68,7 @@ var FieldsDtPicker = {
 			cell.innerHTML = ii;
 			if(ii == year) cell.setAttribute('selected', true);
 			elYear.append(cell);
-		};
+		}
 
 		let btnNext = document.createElement('button');
 		btnNext.setAttribute('class', 'col-2 col-xs-2');

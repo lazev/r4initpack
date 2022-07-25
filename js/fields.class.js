@@ -203,7 +203,7 @@ var Fields = {
 						Pop.create({
 							destiny: elem,
 							html: FieldsDtPicker.create(elem)
-						})
+						});
 					});
 
 					elem.addEventListener('focus', function(ev){
@@ -211,7 +211,7 @@ var Fields = {
 							destiny: elem,
 							html: FieldsDtPicker.create(elem),
 							classes: 'corner shadow'
-						})
+						});
 					});
 
 					elem.addEventListener('blur', function(ev){
@@ -639,7 +639,7 @@ var Fields = {
 				if(val.length != 0) {
 					sizes = elem.attr('exactSize').split(',');
 					valid = false;
-					for(k in sizes) {
+					for(let k in sizes) {
 						if(val.length == sizes[k]) {
 							valid = true;
 							break;
@@ -653,14 +653,15 @@ var Fields = {
 
 
 			if((elem.attr('decimal')) && (val.length != 0)) {
-				var splits = elem.attr('decimal').split(',');
-				var decVal = parseInt(splits[1]);
-				var intVal = parseInt(splits[0])-decVal;
+				let splits = elem.attr('decimal').split(',');
+				let decVal = parseInt(splits[1]);
+				let intVal = parseInt(splits[0])-decVal;
+        let regExp = null;
 
 				if(decVal > 0) {
-					var regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
+					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
 				} else {
-					var regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
+					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
 				}
 
 				valid = regExp.test(val);

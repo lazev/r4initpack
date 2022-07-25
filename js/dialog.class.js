@@ -10,14 +10,14 @@ var Dialog = {
 			if(!opts) opts = {};
 
 			let elem          = opts.elem;
-			    id            = opts.id            || '',
-			    title         = opts.title         || '',
-			    html          = opts.html          || '',
-			    style         = opts.style         || {},
-			    open          = opts.open          || false,
-			    ephemeral     = opts.ephemeral     || false,
-			    changeMonitor = opts.changeMonitor || false,
-			    buttons       = opts.buttons       || [],
+			    id            = opts.id            ?? '',
+			    title         = opts.title         ?? '',
+			    html          = opts.html          ?? '',
+			    style         = opts.style         ?? {},
+			    openOnCreate  = opts.open          ?? false,
+			    ephemeral     = opts.ephemeral     ?? false,
+			    changeMonitor = opts.changeMonitor ?? false,
+			    buttons       = opts.buttons       ?? [],
 			    classes       = [];
 
 			let onOpen    = opts.onOpen      || function(){},
@@ -157,7 +157,7 @@ var Dialog = {
 				Dialog.beforeCloseFuncs[idElem] = befClose;
 			}
 
-			if(open) {
+			if(openOnCreate) {
 				Dialog.open(idElem);
 			}
 
@@ -286,7 +286,7 @@ var Dialog = {
 				btn.innerHTML = 'Recuperar';
 				btn.addEventListener('click', () => over.classList.remove('hidden'));
 				setTimeout(() => {
-					Warning.show('Fechou sem salvar as alterações', btn)
+					Warning.show('Fechou sem salvar as alterações', btn);
 				}, 200);
 			}
 		}
