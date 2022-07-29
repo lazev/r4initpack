@@ -61,22 +61,16 @@ foreach($r4log as $val) {
 	echo '</table></div>';
 }
 
-
-
-
 echo '<pre><div style="background: black; color: white; padding: 5px; width: 95%; overflow: auto">';
 
 $host = $_SERVER['HTTP_HOST'];
 $subdom = substr($host, 0, strpos($host, '.'));
 
-if ($subdom  == 'gilberto'){
-	$log = htmlentities(`tail -n20 /var/log/nginx/gilberto.error.log`);
-}else if ($subdom  == 'vini'){
-	$log = htmlentities(`tail -n20 /var/log/nginx/vini.error.log`);
-}else if ($subdom  == 'mario'){
-	$log = htmlentities(`tail -n20 /var/log/nginx/mario.error.log`);
+if(file_exists('')) {
+	$log = htmlentities(`tail -n20 /var/log/nginx/$subdom.error.log`);
+} else {
+	$log = htmlentities(`tail -n20 /var/log/nginx/error.log`);
 }
-
 
 $sai   = [
 	'PHP message:',
