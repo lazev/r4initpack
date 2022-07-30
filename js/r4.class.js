@@ -646,7 +646,7 @@ var R4 = {
 							reject(xhr.status);
 						}
 					} else {
-						Warning.show(xhr.status);
+						Warning.show('Conexão com internet?');
 						reject(xhr.status);
 					}
 				}
