@@ -107,7 +107,7 @@ var R4 = {
 
 		.then(function(isAvailable) {
 			if (isAvailable) {
-				if(confirm('New version found. Update?')) {
+				if(confirm('Nova versão encontrada. Atualizar?')) {
 					window.location.reload();
 				}
 			}
