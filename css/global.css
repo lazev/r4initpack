@@ -4,6 +4,7 @@
 SVG Icons - svgicons.sparkk.fr
 ----- */
 
+
 svg.icon {
 	width: 22px;
 	height: 22px;
@@ -16,10 +17,12 @@ svg.icon rect {
 	fill: inherit;
 }
 
+/*
 svg.icon circle {
 	stroke: inherit;
 	stroke-width: 1;
 }
+*/
 
 .bgPrimary { background-color: #673ab7 !important; }
 .bgInfo    { background-color: #2196f3 !important; }

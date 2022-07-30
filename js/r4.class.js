@@ -64,7 +64,7 @@ var $each = function(el, func) {
 
 
 //Criador de elementos
-var $new = function(html, fn) {
+var $new = function(html) {
 	let parent = document.createElement('div');
 	parent.innerHTML = html;
 	let el = $(parent.firstChild);
@@ -74,6 +74,46 @@ var $new = function(html, fn) {
 
 //Conjunto de funções gerais
 var R4 = {
+
+	sWorker: swFilePath => {
+
+		window.isUpdateAvailable = new Promise(function(resolve, reject) {
+			console.log('Worker init');
+
+			if('serviceWorker' in navigator) {
+				navigator.serviceWorker.register(swFilePath)
+
+				.then(function(reg) {
+
+					reg.onupdatefound = function() {
+
+						console.log('Update found');
+
+						newWorker = reg.installing;
+
+						newWorker.onstatechange = function(){
+							if(newWorker.state == 'installed') {
+								resolve(navigator.serviceWorker.controller);
+							}
+						};
+					};
+				})
+
+				.catch(err => console.error('[SW ERROR]', err));
+			}
+		});
+
+		window.isUpdateAvailable
+
+		.then(function(isAvailable) {
+			if (isAvailable) {
+				if(confirm('New version found. Update?')) {
+					window.location.reload();
+				}
+			}
+		});
+	},
+
 
 	init: function() {
 		R4.listeners();
@@ -805,7 +845,7 @@ var R4 = {
 		if(!payload) return elem;
 
 		if(elem.querySelector('[loop]')) {
-			for(var key in payload) {
+			for(let key in payload) {
 				if((typeof payload[key] == 'object') && (payload[key].length)) {
 					let loopElem = elem.querySelector('[loop]');
 					let loopResult = R4.renderLoop(loopElem, payload[key]);
@@ -832,7 +872,7 @@ var R4 = {
 			strCont = arrContent[0].outerHTML;
 		}
 
-		for(var key in payload) {
+		for(let key in payload) {
 			if((typeof payload[key] != 'object') || (!payload[key].length)) {
 				strCont = strCont.split('{{'+ key +'}}').join(payload[key]);
 			}
