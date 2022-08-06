@@ -627,6 +627,6 @@ var Table = {
 
 
 	getAllSel: function(idElem) {
-		return R4.getAllChecked(document.querySelector('#'+ idElem +' tbody'));
+		return Fields.getAllChecked(document.querySelector('#'+ idElem +' tbody'));
 	}
 };

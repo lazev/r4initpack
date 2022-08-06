@@ -32,14 +32,18 @@ if($naoVazio) {
 
 echoc('Inicializando conteúdo básico para '. $sysname);
 
-if(!file_exists($r4path .'utils'. $sep .'initPack'. $sep .'content.zip')) {
+if(!is_dir($r4path .'utils'. $sep .'initPack')) {
 	die('Pacote de conteúdo básico não encontrado no instalador. Instalação abortada.');
 }
 
-copy($r4path .'utils'. $sep .'initPack'. $sep .'content.zip', $syspath .'content.zip');
-chdir($syspath);
-shell_exec('unzip content.zip');
-unlink('content.zip');
+if(PHP_OS_FAMILY == 'Windows') {
+	shell_exec('Xcopy /r /s /e /c /q /y "'. $r4path .'utils\initPack\*" "'. $syspath .'"');
+	echoc('copiado');
+} else {
+	shell_exec('cp -r '. $r4path .'utils/initPack/* '. $syspath);
+}
+
+unlink($r4path .'utils/initPack/indexDB.sql');
 
 echoc('Informe o nome (apelido) do sistema. Uma só palavra ['. $sysname .']:');
 $systemid = str_replace(' ', '', trim(stream_get_line(STDIN, 1024, PHP_EOL)));
@@ -58,6 +62,7 @@ echoc('Informe a senha de acesso deste usuário ao banco de dados:');
 echo 'DB password: ';
 $dbpass = stream_get_line(STDIN, 1024, PHP_EOL);
 
+$simnao = '';
 do {
 	echoc();
 
@@ -73,6 +78,32 @@ if(strtolower($simnao) == 's') {
 }
 
 echoc();
+$simnao = '';
+do {
+	echoc();
+
+	echoc('Instalar o Composer?');
+	echo '( S ou N ): ';
+	$simnao = strtolower(stream_get_line(STDIN, 1024, PHP_EOL));
+}
+while($simnao != 's' && $simnao != 'n');
+
+if(strtolower($simnao) == 's') {
+	copy('https://getcomposer.org/installer', 'composer-setup.php');
+	if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') {
+		echo 'Composer Installer verified';
+	} else {
+		echo 'Composer Installer corrupt';
+		unlink('composer-setup.php');
+	}
+	echoc();
+
+	shell_exec('php composer-setup.php');
+
+	unlink('composer-setup.php');
+}
+
+echoc();
 
 $cfgfile = file_get_contents($syspath .'src'. $sep .'config.inc.php');
 
@@ -84,22 +115,27 @@ $cfgfile = str_replace($key, $val, $cfgfile);
 file_put_contents($syspath .'src'. $sep .'config.inc.php', $cfgfile);
 
 $privfile = '#Arquivo deve estar em uma pasta segura, fora da public e src'. PHP_EOL
-			 . '#Necessario que o src'. $sep .'config.inc.php aponte para este arquivo'. PHP_EOL
-			 . 'dbpass="'. $dbpass .'"'. PHP_EOL .'secretkey="'. base64_encode(random_bytes(64)) .'"';
+          . '#Necessario que o src'. $sep .'config.inc.php aponte para este arquivo'. PHP_EOL
+          . 'dbpass="'. $dbpass .'"'. PHP_EOL .'secretkey="'. base64_encode(random_bytes(64)) .'"';
+
 file_put_contents($syspath .'.r4priv_'. $systemid, $privfile);
 
 chdir($syspath .'vendor');
 
-shell_exec('composer install');
+shell_exec('php ../composer.phar install');
 
 chdir($syspath);
 
 echoc();
 
-echoc('Informe a senha do sudo da máquina ou mova manualmente privado depois.');
-echoc('No caso de Windows, coloque o arquivo em uma pasta segura e mude o caminho em src'. $sep .'config.inc.php');
-echoc('sudo mv '. $syspath .'.r4priv_'. $systemid .' '. $sep .'etc'. $sep .'.r4priv_'. $systemid);
-shell_exec('sudo mv '. $syspath .'.r4priv_'. $systemid .' '. $sep .'etc'. $sep .'.r4priv_'. $systemid);
+if(PHP_OS_FAMILY == 'Windows') {
+	echoc('Coloque o arquivo .r4priv_'. $systemid .' em uma pasta segura e mude o caminho em src'. $sep .'config.inc.php');
+}
+else {
+	echoc('Informe a senha do sudo da máquina ou mova manualmente privado depois.');
+	echoc('sudo mv '. $syspath .'.r4priv_'. $systemid .' '. $sep .'etc'. $sep .'.r4priv_'. $systemid);
+	shell_exec('sudo mv '. $syspath .'.r4priv_'. $systemid .' '. $sep .'etc'. $sep .'.r4priv_'. $systemid);
+}
 
 echoc();
 

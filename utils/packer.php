@@ -4,7 +4,16 @@ $r4path = dirname(__FILE__);
 
 require $r4path .'/vendor/JSPacker.class.php';
 
-$usePacker = $argv[1] ?? '';
+$cfgfile = $argv[1] ?? '';
+
+$cfg = (!empty($cfgfile)) ? json_decode(file_get_contents($cfgfile), 1) : [];
+
+$R4JSPacker  = $cfg['R4JSPacker']  ?? false;
+$R4CSSPacker = $cfg['R4CSSPacker'] ?? false;
+$JSPacker    = $cfg['JSPacker']    ?? false;
+$HTMLPacker  = $cfg['HTMLPacker']  ?? false;
+$CSSPacker   = $cfg['CSSPacker']   ?? false;
+$concatFiles = $cfg['concatFiles'] ?? [];
 
 //R4 CSS
 $content = implode(PHP_EOL, getFilesContent($r4path .'/../css', ['css']));
@@ -12,7 +21,8 @@ $content = implode(PHP_EOL, getFilesContent($r4path .'/../css', ['css']));
 //Project CSS
 $content .= PHP_EOL . implode(PHP_EOL, getFilesContent('./src/_assets/css/global', ['css']));
 
-$content = minimizeCSS($content);
+
+if($R4CSSPacker) $content = minimizeCSS($content);
 
 file_put_contents('./public/_assets/r4/r4.min.css', $content);
 
@@ -25,9 +35,10 @@ $content2 = getFilesContent('./src/_assets/js/global', ['js']);
 
 $content = array_merge($content, $content2);
 
+
 $result = '';
 foreach($content as $cont) {
-	if($usePacker) {
+	if($R4JSPacker) {
 		$packer = new JavaScriptPacker($cont, 'Normal', true, false);
 		$result .= $packer->pack();
 	} else {
@@ -39,33 +50,59 @@ file_put_contents('./public/_assets/r4/r4.min.js', $result);
 
 
 //JS PUBLIC
-$content = [];
-$content = getFilesContent('./public', ['js']);
+if($JSPacker) {
+	$content = [];
+	$content = getFilesContent('./public', ['js']);
 
-foreach($content as $file => $cont) {
-	if(substr($file, -7) == '.min.js') continue;
-	$packer = new JavaScriptPacker($cont, 'Normal', true, false);
-	file_put_contents($file, $packer->pack());
+	foreach($content as $file => $cont) {
+		if(substr($file, -7) == '.min.js') continue;
+		$packer = new JavaScriptPacker($cont, 'Normal', true, false);
+		file_put_contents($file, $packer->pack());
+	}
 }
 
-//CSS PUBLIC
-$content = [];
-$content = getFilesContent('./public', ['css']);
 
-foreach($content as $file => $cont) {
-	if(substr($file, -8) == '.min.css') continue;
-	file_put_contents($file, minimizeCSS($cont));
+//CSS PUBLIC
+if($CSSPacker) {
+	$content = [];
+	$content = getFilesContent('./public', ['css']);
+
+	foreach($content as $file => $cont) {
+		if(substr($file, -8) == '.min.css') continue;
+		file_put_contents($file, minimizeCSS($cont));
+	}
 }
 
 
 //HTML PUBLIC
-$content = [];
-$content = getFilesContent('./public', ['htm', 'html', 'json']);
+if($HTMLPacker) {
+	$content = [];
+	$content = getFilesContent('./public', ['htm', 'html', 'json']);
 
-foreach($content as $file => $cont) {
-	file_put_contents($file, minimizeHTML($cont));
+	foreach($content as $file => $cont) {
+		file_put_contents($file, minimizeHTML($cont));
+	}
 }
 
+
+//CONCAT FILES
+if(is_array($concatFiles)) {
+	foreach($concatFiles as $destino => $origem) {
+		$strOrigem = implode(' ', $origem);
+
+		if(PHP_OS_FAMILY == 'Windows') {
+			$command = 'type '. $strOrigem .' > '. $destino;
+		} else {
+			$command = 'cat '. $strOrigem .' > '. $destino;
+		}
+
+		$command = str_replace('/', DIRECTORY_SEPARATOR, $command);
+		shell_exec($command);
+	}
+}
+
+
+//FUNCTIONS
 
 function getFilesContent($dir, $ext) {
 	$allContent = [];

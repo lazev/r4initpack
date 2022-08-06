@@ -75,46 +75,6 @@ var $new = function(html) {
 //Conjunto de funções gerais
 var R4 = {
 
-	sWorker: swFilePath => {
-
-		window.isUpdateAvailable = new Promise(function(resolve, reject) {
-			console.log('Worker init');
-
-			if('serviceWorker' in navigator) {
-				navigator.serviceWorker.register(swFilePath)
-
-				.then(function(reg) {
-
-					reg.onupdatefound = function() {
-
-						console.log('Update found');
-
-						newWorker = reg.installing;
-
-						newWorker.onstatechange = function(){
-							if(newWorker.state == 'installed') {
-								resolve(navigator.serviceWorker.controller);
-							}
-						};
-					};
-				})
-
-				.catch(err => console.error('[SW ERROR]', err));
-			}
-		});
-
-		window.isUpdateAvailable
-
-		.then(function(isAvailable) {
-			if (isAvailable) {
-				if(confirm('Nova versão encontrada. Atualizar?')) {
-					window.location.reload();
-				}
-			}
-		});
-	},
-
-
 	init: function() {
 		R4.listeners();
 		if(typeof R4Init === 'function') R4Init();
@@ -941,6 +901,45 @@ var R4 = {
 		elem.src = url +'?'+ strParams;
 
 		document.body.append(elem);
-	}
+	},
 
+
+	sWorker: swFilePath => {
+
+		window.isUpdateAvailable = new Promise(function(resolve, reject) {
+			console.log('Worker init');
+
+			if('serviceWorker' in navigator) {
+				navigator.serviceWorker.register(swFilePath)
+
+				.then(function(reg) {
+
+					reg.onupdatefound = function() {
+
+						console.log('Update found');
+
+						newWorker = reg.installing;
+
+						newWorker.onstatechange = function(){
+							if(newWorker.state == 'installed') {
+								resolve(navigator.serviceWorker.controller);
+							}
+						};
+					};
+				})
+
+				.catch(err => console.error('[SW ERROR]', err));
+			}
+		});
+
+		window.isUpdateAvailable
+
+		.then(isAvailable => {
+			if(isAvailable) {
+				if(confirm('Nova versão encontrada. Atualizar?')) {
+					window.location.reload();
+				}
+			}
+		});
+	}
 };

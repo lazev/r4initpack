@@ -1,5 +1,4 @@
 <?php
-
 class R4 {
 
 	public static function retOkAPI($params=[]) {
@@ -39,6 +38,29 @@ class R4 {
 	public static function clearSession() {
 		$_SESSION[SYSTEMID] = [];
 		return true;
+	}
+
+
+	public static function getRequest($cont='') {
+
+		if($cont==='') $cont = $_REQUEST;
+
+		if(!is_array($cont)) return [];
+
+		$ret = [];
+
+		$ent = ['<',    '>'   ];
+		$sai = ['&lt;', '&gt;'];
+
+		foreach($cont as $key => $val) {
+
+			$key = str_replace($ent, $sai, $key);
+
+			if(is_array($val)) $ret[$key] = R4::getRequest($val);
+			$ret[$key] = str_replace($ent, $sai, $val);
+		}
+
+		return $ret;
 	}
 
 
