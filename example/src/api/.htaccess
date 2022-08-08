@@ -1,3 +1,0 @@
-RewriteEngine on
-
-RewriteRule ^api/(\w+)($|/)(\w*)($|/)(\w*) /api/$1/?id=$3&detail=$5

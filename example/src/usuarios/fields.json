@@ -1,8 +1,0 @@
-{
-	"usu": [
-		{ "id": "nome",    "type": "text"   },
-		{ "id": "fones",   "type": "tags"   },
-		{ "id": "emails",  "type": "tags"   },
-		{ "id": "tags",    "type": "tags"   }
-	]
-}

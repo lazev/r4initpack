@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$cfgfile = '.compiler.json';
+$cfgfile = 'r4.json';
 
 $sep    = DIRECTORY_SEPARATOR;
 $r4path = dirname(__FILE__) . $sep .'..'. $sep;

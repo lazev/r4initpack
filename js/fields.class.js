@@ -398,7 +398,7 @@ var Fields = {
 				elem.append(opt);
 			}
 			else if(typeof options[k] == 'object') {
-				if(typeof options[k].key == 'string') {
+				if(typeof options[k].key == 'string' || typeof options[k].key == 'number') {
 
 					opt = document.createElement('option');
 

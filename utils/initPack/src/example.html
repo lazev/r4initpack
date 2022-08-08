@@ -1,267 +1,568 @@
 <!DOCTYPE HTML>
 <html lang="pt-BR">
-	<head>
-		<base href=".">
-		<title>R4 - Exemplos</title>
-		<script src="freeway.js.php"></script>
-		<!--R4TEMPLATE-head-->
+<head>
+	<meta charSet="utf-8" />
+	<base href=".">
+	<title>R4 - Guia de acesso rápido</title>
 
-		<script>
-		const R4Init = () => {
-			console.log('Essa linha foi escrita pela função R4Init')
+	<!--R4TEMPLATE-head-->
 
-			Fields.create([
-				{ id: 'fieldText',   type:'text'   },
-				{ id: 'fieldSelect', type:'select', options: ['', 'Um', 'Dois', 'Três'] },
-				{ id: 'fieldSwitch', type:'switch' },
-				{ id: 'fieldPass',   type:'password' },
-				{ id: 'fieldButton', type:'button' }
-			], 'prefix')
+	<script>
 
-			$('#dialogSimples').on('click', event => {
-				event.preventDefault();
-				Dialog.open($('#formDialog'), {
-					title: 'teste',
-					buttons: [
-						{
-							label: 'Salvar',
-							classes: 'bgSuccess white',
-							onClick: function(ev) {
-								Produtos.save();
-							}
-						},
-						//O evento do botão fechar é definido
-						//automático pela classe R4DialogCloser
-						{
-							label: 'Fechar',
-							classes: 'R4DialogCloser'
+	var lista = [
+		{key: 2, label: 'Primeira'},
+		{key: 1, label: 'Segunda'},
+		{key: 3, label: 'Terceira'}
+	];
+
+	const R4Init = () => {
+		console.log('Essa linha foi escrita pela função R4Init');
+
+		Fields.create([
+			{ id: 'fieldText',      type:'text'   },
+			{ id: 'fieldSelect',    type:'select', options: ['', 'Um', 'Dois', 'Três'] },
+			{ id: 'fieldDate',      type:'date'   },
+			{ id: 'fieldPass',      type:'password' },
+			{ id: 'fieldMoney',     type:'money-' },
+			{ id: 'fieldTags',      type:'tags', typeahead:'json', source:'lista' },
+			{ id: 'fieldMailTags',  type:'emailtags' },
+			{ id: 'fieldPhoneTags', type:'phonetags' },
+			{ id: 'fieldSwitch',    type:'switch' },
+			{ id: 'fieldButton',    type:'button' }
+		], 'prefix');
+
+		Fields.create([{ id:'inputExemploOutro', type:'text', value:'Exemplo de input'}]);
+
+		$('#dialogComHTML').on('click', event => {
+			event.preventDefault();
+			Dialog.open({
+				id: '', //Se não informado, é criado um aleatório
+				elem: $('#formDialog'), //Elemento HTML que será o corpo do dialog
+				style: {}, //Objeto de itens para o parâmetro style
+				open: true, //Se true, abre o form assim que cria
+				ephemeral: false, //Se true, destrói o elemento html ao fechar
+				changeMonitor: true, //Monitor de alteração de inputs dentro do dialog
+				classes: '', //String ou array com classes para o dialog
+				title: 'Exemplo de dialog',
+				buttons: [
+					{
+						label: 'Salvar',
+						classes: 'bgSuccess R4DialogSaver', //A classe R4DialogSaver faz ctrl+enter ser atalho pro botão
+						onClick: function(ev) {
+							Warning.show('Botão Salvar pressionado');
 						}
-					]
-				});
-			});
+					},
+					{
+						label: 'Fechar',
+						classes: 'R4DialogCloser' //Essa classe indica que o botão é de fechar
+					}
+				]
+			})
 
-			$('#warningOn').on('click', event => {
-				event.preventDefault();
-				Warning.show('Exemplo de warning', 'Linha debaixo');
+			.then(ret => {
+				Fields.create({ id:'formInputText', type:'tags', typeahead:'json', source:'lista' })
 			});
+		});
+
+		$('#dialogComJS').on('click', function(ev){
+			ev.preventDefault();
+			Dialog.open({
+				html: '<p>Com a classe <b>narrow</b> o dialog fica estreito</p>',
+				classes: 'narrow',
+				title: 'Título do dialog',
+				buttons: [
+					{
+						label: 'Fechar',
+						classes: 'R4DialogCloser'
+					}
+				]
+			});
+		});
+
+		$('#warningOn').on('click', function(ev) {
+			ev.preventDefault();
+			Warning.show('Exemplo de warning', 'Segunda linha');
+		});
+
+		Pop.hint($('#quadroExemploPop'), 'Hint mostra dicas ao colocar o mouse em cima');
+
+		Pop.click(
+			$('#popClick'), //Elemento que ao clicar, mostra o Pop
+			{
+				html: '<p>Caixa qualquer com possibilidade de HTML</p>',
+				classes: '', //Uma ou mais classes em array ou string
+				onOpen: function(){}, //Função que roda ao abrir
+				overlay: true, //Overlay: a tela que escurece o resto
+				id: '' //Se não informar id é gerado um id aleatório
+			}
+		);
+	}
+	</script>
+</head>
+
+<body>
+
+<main>
+
+<!--R4TEMPLATE-loading-->
+<div class="container">
+
+<h1>R4 - Framework</h1>
+<p>Guia de acesso rápido</p>
+
+
+
+<h2>R4Init</h2>
+<p>Coloque uma função com esse nome no HTML e ela será chamada assim que a tela carregar.</p>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;">&lt;style&gt;
+<span class="hljs-keyword" style="color: rgb(200, 94, 124);">var</span> R4Init = <span class="hljs-keyword" style="color: rgb(200, 94, 124);">function</span>() {
+	<span class="hljs-built_in" style="color: rgb(253, 139, 25);">console</span>.log(<span class="hljs-string" style="color: rgb(143, 193, 62);">'Essa linha foi escrita pela função R4Init'</span>);
+}
+&lt;/style&gt;</pre>
+
+<hr class="space">
+
+
+
+<h2>Cores</h2>
+
+<div class="row">
+	<div class="col-6">
+		<div class="row">
+			<div class="col-6 paspatur bgPrimary">bgPrimary</div>
+			<div class="col-6 paspatur bgSuccess">bgSuccess</div>
+		</div>
+		<div class="row">
+			<div class="col-6 paspatur bgDanger">bgDanger</div>
+			<div class="col-6 paspatur bgWarning">bgWarning</div>
+		</div>
+		<div class="row">
+			<div class="col-6 paspatur bgInfo">bgInfo</div>
+			<div class="col-6 paspatur bgFancy">bgFancy</div>
+		</div>
+		<div class="row">
+			<div class="col-6 paspatur bgGrey">bgGrey</div>
+			<div class="col-6 paspatur bgLight">bgLight</div>
+		</div>
+		<div class="row">
+			<div class="col-6 paspatur bgWhite">bgWhite</div>
+			<div class="col-6 paspatur bgBlack white">bgBlack</div>
+		</div>
+	</div>
+	<div class="col-6">
+		<div class="row">
+			<div class="col-6 paspatur primary">primary</div>
+			<div class="col-6 paspatur success">success</div>
+		</div>
+		<div class="row">
+			<div class="col-6 paspatur danger">danger</div>
+			<div class="col-6 paspatur warning">warning</div>
+		</div>
+		<div class="row">
+			<div class="col-6 paspatur info">info</div>
+			<div class="col-6 paspatur fancy">fancy</div>
+		</div>
+		<div class="row">
+			<div class="col-6 paspatur grey">grey</div>
+			<div class="col-6 paspatur light">light</div>
+		</div>
+		<div class="row">
+			<div class="col-6 paspatur white bgLight">white</div>
+			<div class="col-6 paspatur black">black</div>
+		</div>
+	</div>
+</div>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"bgPrimary white"</span>&gt;</span>Exemplo<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span></pre>
+
+<hr class="space">
+
+<h2>Classes CSS</h2>
+
+<h3>Alinhamento de texto</h3>
+<br><div class="center" style="border: 1px solid #e3e3e3;">center</div>
+<br><div class="right" style="border: 1px solid #e3e3e3;">right</div>
+<br><div class="left" style="border: 1px solid #e3e3e3;">left</div>
+
+<h3>Alinhamento de elemento</h3>
+<br><div class="onCenter" style="border: 1px solid #e3e3e3; width: 75px;">onCenter</div>
+<br><div class="onRight" style="border: 1px solid #e3e3e3;">onRight</div>
+<br><div class="onLeft" style="border: 1px solid #e3e3e3;">onLeft</div>
+
+<h3 class="clearer">Boxes</h3>
+<br><div class="corner" style="border: 1px solid #e3e3e3;">corner</div>
+<br><div class="panel">panel</div>
+<br><div class="panel corner bgWarning white center">Exemplo</div>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"panel corner bgWarning white center"</span>&gt;</span>Exemplo<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span></pre>
+
+
+<h3>Outras classes (helpers)</h3>
+<p><b>paspatur</b>: cria paddings no elemento</p>
+<p><b>clearfix</b>: o elemento com esta classe leva em consideração onde elementos floats terminam</p>
+<p><b>clearer</b>: o elemento com esta classe puxa o final do elemento pra baixo, mesmo que nele haja floats</p>
+<p><b>transition</b>: adiciona efeito de transição em uma alteração no estilo do elemento</p>
+<p><b>space</b>: usado no elemento <b>&lt;hr&gt;</b> não cria a linha, apenas dá o espaço</p>
+
+
+<h2>HTML: Grids</h2>
+
+<h3>Cols</h3>
+
+<p>As cols precisam estar dentro de uma <b>row</b></p>
+
+<div class="row" style="border: 1px solid #e3e3e3">
+	<div class="col-12" style="border: 1px solid #e3e3e3">class="col-12"</div>
+	<div class="col-2" style="border: 1px solid #e3e3e3">col-2</div>
+	<div class="col-4" style="border: 1px solid #e3e3e3">col-4</div>
+	<div class="col-3" style="border: 1px solid #e3e3e3">col-3</div>
+	<div class="col-1" style="border: 1px solid #e3e3e3">1</div>
+	<div class="col-2" style="border: 1px solid #e3e3e3">col-2</div>
+</div>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"row"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"col-12"</span>&gt;</span>col-12<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"col-2"</span>&gt;</span>col-2<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"col-4"</span>&gt;</span>col-4<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"col-3"</span>&gt;</span>col-3<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"col-1"</span>&gt;</span>1<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"col-2"</span>&gt;</span>col-2<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span></pre>
+
+<h3>HTML: Flexbox</h3>
+
+<p>A classe pai é a <b>flex</b></p>
+<p>A classe <b>wrap</b> indica que os itens podem cair pra segunda linha se faltar espaço</p>
+
+<div class="flex wrap" style="border: 1px solid #e3e3e3">
+	<div class="flex-1" style="border: 1px solid #e3e3e3">flex1</div>
+	<div class="flex-12" style="border: 1px solid #e3e3e3">flex12</div>
+	<div class="flex-5" style="border: 1px solid #e3e3e3">flex5</div>
+</div>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"flex wrap"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"flex-1"</span>&gt;</span>flex1<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"flex-12"</span>&gt;</span>flex12<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"flex-5"</span>&gt;</span>flex5<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span></pre>
+
+
+
+<h2>HTML: Table</h2>
+<p>
+Classes disponíveis:<br>
+striped<br>
+compact
+</p>
+
+<table class="R4 striped compact">
+	<thead>
+		<tr>
+			<th>Company</th>
+			<th>Contact</th>
+			<th>Country</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Alfreds Futterkiste</td>
+			<td>Maria Anders</td>
+			<td>Germany</td>
+		</tr>
+		<tr>
+			<td>Centro comercial Moctezuma</td>
+			<td>Francisco Chang</td>
+			<td>Mexico</td>
+		</tr>
+		<tr>
+			<td>Ernst Handel</td>
+			<td>Roland Mendel</td>
+			<td>Austria</td>
+		</tr>
+		<tr>
+			<td>Island Trading</td>
+			<td>Helen Bennett</td>
+			<td>UK</td>
+		</tr>
+		<tr>
+			<td>Laughing Bacchus Winecellars</td>
+			<td>Yoshi Tannamuri</td>
+			<td>Canada</td>
+		</tr>
+		<tr>
+			<td>Magazzini Alimentari Riuniti</td>
+			<td>Giovanni Rovelli</td>
+			<td>Italy</td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="3">Total 6 registros</td>
+		</tr>
+	</tfoot>
+</table>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">table</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"R4 striped compact"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">thead</span>&gt;</span>
+		<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">tr</span>&gt;</span>
+			<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">th</span>&gt;</span>Company<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">th</span>&gt;</span>
+			<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">th</span>&gt;</span>Contact<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">th</span>&gt;</span>
+			<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">th</span>&gt;</span>Country<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">th</span>&gt;</span>
+		<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">tr</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">thead</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">tbody</span>&gt;</span>
+		<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">tr</span>&gt;</span>
+			<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">td</span>&gt;</span>Alfreds Futterkiste<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">td</span>&gt;</span>
+			<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">td</span>&gt;</span>Maria Anders<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">td</span>&gt;</span>
+			<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">td</span>&gt;</span>Germany<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">td</span>&gt;</span>
+		<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">tr</span>&gt;</span>...</pre>
+
+
+<h2>HTML: Buttons</h2>
+<button class="R4">Botão padrão</button>
+<button class="R4 fancy">Class fancy</button>
+<button class="R4 bgPrimary">Class bgPrimary</button>
+<button class="R4 flat">Class flat</button>
+<button class="R4" disabled=true>disabled</button>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"R4 bgPrimary"</span>&gt;</span>Botão com class bgPrimary<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">button</span>&gt;</span></pre>
+
+
+<h2>Componente: Dialog</h2>
+
+<h3>Dialog com HTML</h3>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"formDialog"</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"hidden"</span> <span class="hljs-attr">title</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"Exemplo Dialog Simples"</span>&gt;</span>
+	Conteúdo do dialog
+<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span></pre>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;">Dialog.open({
+	id: <span class="hljs-string" style="color: rgb(143, 193, 62);">''</span>, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Se não informado, é criado um aleatório</span>
+	elem: $(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#formDialog'</span>), <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Elemento HTML que será o corpo do dialog</span>
+	style: {}, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Objeto de itens para o parâmetro style</span>
+	open: <span class="hljs-literal" style="color: rgb(253, 139, 25);">true</span>, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Se true, abre o form assim que cria</span>
+	ephemeral: <span class="hljs-literal" style="color: rgb(253, 139, 25);">false</span>, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Se true, destrói o elemento html ao fechar</span>
+	changeMonitor: <span class="hljs-literal" style="color: rgb(253, 139, 25);">true</span>, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Monitor de alteração de inputs dentro do dialog</span>
+	classes: <span class="hljs-string" style="color: rgb(143, 193, 62);">''</span>, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//String ou array com classes para o dialog</span>
+	title: <span class="hljs-string" style="color: rgb(143, 193, 62);">'Exemplo de dialog'</span>,
+	buttons: [
+		{
+			label: <span class="hljs-string" style="color: rgb(143, 193, 62);">'Salvar'</span>,
+			classes: <span class="hljs-string" style="color: rgb(143, 193, 62);">'bgSuccess R4DialogSaver'</span>, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//A classe R4DialogSaver faz ctrl+enter ser atalho pro botão</span>
+			onClick: <span class="hljs-function" style="color: rgb(18, 144, 191);"><span class="hljs-keyword" style="color: rgb(200, 94, 124);">function</span>(<span class="hljs-params" style="color: rgb(253, 139, 25);">ev</span>) </span>{
+				Warning.show(<span class="hljs-string" style="color: rgb(143, 193, 62);">'Botão Salvar pressionado'</span>);
+			}
+		},
+		{
+			label: <span class="hljs-string" style="color: rgb(143, 193, 62);">'Fechar'</span>,
+			classes: <span class="hljs-string" style="color: rgb(143, 193, 62);">'R4DialogCloser'</span> <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Essa classe indica que o botão é de fechar</span>
 		}
-		</script>
+	]
+});</pre>
 
-	</head>
-	<body>
-		<main>
-			<!--R4TEMPLATE-loading-->
-			<div class="container">
+<a href="#" id="dialogComHTML">Abrir dialog com HTML</a>
 
-			<h1>R4 - Framework</h1>
-
-			<p>
-			<b>R4Init</b><br>
-			Coloque uma função com esse nome no seu HTML e ela será chamada assim que a tela carregar.<br>
-			<pre>
-			const R4Init = () => {
-				console.log('Essa linha foi escrita pela função R4Init')
-			}
-			</pre>
-			</p>
+<div id="formDialog" class="hidden" title="Exemplo de dialog HTML">
+	Conteúdo do dialog<br>
+	<div id="formInputText">Exemplo de input</div>
+</div>
 
 
+<h3>Dialog apenas com Javascript</h3>
 
-			<p><b>Cores</b>
-			<pre>
-			primary  <span class="primary">class="primary"</span>  <span class="bgPrimary">class="bgPrimary"</span>
-			info     <span class="info">class="info"</span>     <span class="bgInfo">class="bgInfo"</span>
-			danger   <span class="danger">class="danger"</span>   <span class="bgDanger">class="bgDanger"</span>
-			success  <span class="success">class="success"</span>  <span class="bgSuccess">class="bgSuccess"</span>
-			warning  <span class="warning">class="warning"</span> <span class="bgWarning">class="bgWarning"</span>
-			fancy    <span class="fancy">class="fancy"</span>   <span class="bgFancy">class="bgFancy"</span>
-			grey     <span class="grey">class="grey"</span>    <span class="bgGrey">class="bgGrey"</span>
-			light    <span class="light">class="light"</span>    <span class="bgLight">class="bgLight"</span>
-			white    <span class="white">class="white"</span>   <span class="bgWhite">class="bgWhite"</span>
-			black    <span class="black">class="black"</span>   <span class="bgBlack">class="bgBlack"</span>
-			</pre>
-			</p>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;">Dialog.open({
+	html: <span class="hljs-string" style="color: rgb(143, 193, 62);">'&lt;p&gt;Com a classe &lt;b&gt;narrow&lt;/b&gt; o dialog fica estreito&lt;/p&gt;'</span>,
+	classes: <span class="hljs-string" style="color: rgb(143, 193, 62);">'narrow'</span>,
+	title: <span class="hljs-string" style="color: rgb(143, 193, 62);">'Título do dialog'</span>,
+	buttons: [
+		{
+			label: <span class="hljs-string" style="color: rgb(143, 193, 62);">'Fechar'</span>,
+			classes: <span class="hljs-string" style="color: rgb(143, 193, 62);">'R4DialogCloser'</span>
+		}
+	]
+});</pre>
 
-			<hr>
-
-			<p><b>Classes CSS</b><br>
-			<br><div class="center" style="border: 1px dashed #24248D;">class="center"</div>
-			<br><div class="right" style="border: 1px dashed #24248D;">class="right"</div>
-			<br><div class="left" style="border: 1px dashed #24248D;">class="left"</div>
-			<br><div class="corner" style="border: 1px dashed #24248D;">class="corner"</div>
-			<br><div class="onCenter" style="border: 1px dashed #24248D;">class="onCenter" (margin auto)</div>
-			<br><div class="onRight" style="border: 1px dashed #24248D;">class="onRight"</div>
-			<br><div class="onLeft" style="border: 1px dashed #24248D;">class="onLeft"</div>
-			<br><div class="clearer" style="border: 1px dashed #24248D;">class="clearer"</div>
-			<br><div class="clearfix" style="border: 1px dashed #24248D;">class="clearfix"</div>
-			<br><div class="paspatur" style="border: 1px dashed #24248D;">class="paspatur"</div>
-			<br><div class="transition" style="border: 1px dashed #24248D;">class="transition"</div>
-			<br><div class="panel">class="panel"</div>
-			<br><div class="panel corner bgWarning white center">class="panel corner bgWarning white center"</div>
-			</p>
-
-			<hr>
-
-			<p><b>Buttons</b>
-			<pre>
-			&lt;button class="R4"&gt;Botão padrão&lt;/button&gt;
-			</pre>
-			<button class="R4">Botão padrão</button>
-			<button class="R4 fancy">Botão com class fancy</button>
-			<button class="R4 bgPrimary">Botão com class bgPrimary</button>
-			</p>
-
-			<hr>
-
-			<p><b>Inputs</b>
-			<pre>
-			&lt;div id="prefix_fieldText"&gt;Campo input&lt;/div&gt;
-			&lt;div id="prefix_fieldSelect"&gt;Campo select&lt;/div&gt;
-
-			Fields.create([
-				{ id: 'fieldText',   type:'text'   },
-				{ id: 'fieldSelect', type:'select', options: ['', 'Um', 'Dois', 'Três'] }
-			], 'prefix')
-
-			</pre>
-			<div class="flexBox row">
-				<div class="flex1">
-					<div id="prefix_fieldText">Campo Input</div>
-					<div id="prefix_fieldSelect">Campo Select</div>
-				</div>
-				<div class="flex1">
-					<div id="prefix_fieldSwitch">Switch que permite marcar e desmarcar</div>
-					<div id="prefix_fieldPass">Password</div>
-					<div id="prefix_fieldButton">Button</div>
-				</div>
-			</div>
-			</p>
-
-			<hr>
-
-			<p><b>Grids</b> class="row"
-			<div class="row" style="border: 1px dashed #24248D">
-				<div class="col-12" style="border: 1px dashed #24248D">class="col-12"</div>
-				<div class="col-2" style="border: 1px dashed #24248D">col-2</div>
-				<div class="col-4" style="border: 1px dashed #24248D">col-4</div>
-				<div class="col-3" style="border: 1px dashed #24248D">col-3</div>
-				<div class="col-1" style="border: 1px dashed #24248D">col-1</div>
-				<div class="col-2" style="border: 1px dashed #24248D">col-2</div>
-			</div>
-			</p>
-
-			<hr>
-
-			<p><b>Flexbox</b> class="flexBox wrap"
-			<div class="flexBox wrap">
-				<div class="flex1" style="border: 1px dashed #24248D">flex1</div>
-				<div class="flex12" style="border: 1px dashed #24248D">flex12</div>
-				<div class="flex5" style="border: 1px dashed #24248D">flex5</div>
-			</div>
-			</p>
+<a href="#" id="dialogComJS">Abrir dialog com JavaScript</a>
 
 
-			<hr>
+<h2>Componente: Inputs</h2>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldText"</span>&gt;</span>Campo Input<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldSelect"</span>&gt;</span>Campo Select<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldDate"</span>&gt;</span>Campo Date<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldMoney"</span>&gt;</span>Campo money-, decimal, decimal-<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldSwitch"</span>&gt;</span>Switch que permite marcar e desmarcar<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldPass"</span>&gt;</span>Password<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldTags"</span>&gt;</span>Tags<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldMailTags"</span>&gt;</span>Email Tags<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldPhoneTags"</span>&gt;</span>Phone Tags<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"prefix_fieldButton"</span>&gt;</span>Button<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span>
+<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;/<span class="hljs-name" style="color: rgb(221, 70, 76);">div</span>&gt;</span></pre>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;">Fields.create([
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldText'</span>,      type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'text'</span>   },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldSelect'</span>,    type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'select'</span>, options: [<span class="hljs-string" style="color: rgb(143, 193, 62);">''</span>, <span class="hljs-string" style="color: rgb(143, 193, 62);">'Um'</span>, <span class="hljs-string" style="color: rgb(143, 193, 62);">'Dois'</span>, <span class="hljs-string" style="color: rgb(143, 193, 62);">'Três'</span>] },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldDate'</span>,      type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'date'</span>   },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldPass'</span>,      type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'password'</span> },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldMoney'</span>,     type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'money-'</span> },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldTags'</span>,      type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'tags'</span> },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldMailTags'</span>,  type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'emailtags'</span> },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldPhoneTags'</span>, type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'phonetags'</span> },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldSwitch'</span>,    type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'switch'</span> },
+	{ id: <span class="hljs-string" style="color: rgb(143, 193, 62);">'fieldButton'</span>,    type:<span class="hljs-string" style="color: rgb(143, 193, 62);">'button'</span> }
+], <span class="hljs-string" style="color: rgb(143, 193, 62);">'prefix'</span>);</pre>
+
+<div class="flex row">
+	<div class="flex-1">
+		<div id="prefix_fieldText">Campo Input</div>
+		<div id="prefix_fieldSelect">Campo Select</div>
+		<div id="prefix_fieldDate">Campo Date</div>
+		<div id="prefix_fieldMoney">Campo money-, decimal, decimal-</div>
+		<div id="prefix_fieldSwitch">Switch que permite marcar e desmarcar</div>
+	</div>
+	<div class="flex-1">
+		<div id="prefix_fieldPass">Password</div>
+		<div id="prefix_fieldTags">Tags</div>
+		<div id="prefix_fieldMailTags">Email Tags</div>
+		<div id="prefix_fieldPhoneTags">Phone Tags</div>
+		<div id="prefix_fieldButton">Button</div>
+	</div>
+</div>
+
+<p>Campos money, money-, decimal, decimal- permitem cálculo ao apertar a tecla =</p>
+<p>Outras opção são: integer, integer-, cep, cpf, cnpj, cpfcnpj, phone, username e hidden</p>
 
 
-			<p><b>Dialog</b>
-			<pre>
-			&lt;div id="formDialog" class="hidden" title="Exemplo Dialog Simples"&gt;
-				Conteúdo do dialog
-			&lt;/div&gt;
+<h2>Componente: Warning</h2>
 
-			Dialog.open($('#formDialog'));
-			</pre>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;">Warning.show(<span class="hljs-string" style="color: rgb(143, 193, 62);">'Exemplo de warning'</span>, <span class="hljs-string" style="color: rgb(143, 193, 62);">'Segunda linha'</span>);</pre>
 
-			<a href="#" id="dialogSimples">Dialog Simples</a>
+<button type="button" class="R4" id="warningOn">Warning.show</button>
 
-			<div id="formDialog" class="hidden" title="Exemplo Dialog Simples">
-				Conteúdo do dialog
-			</div>
+<h2>Componente: Pop</h2>
 
-			</p>
+<h3>Pop.hint()</h3>
 
-			<hr>
+<div id="quadroExemploPop" class="panel">Coloque o mouse em cima</div>
 
-			<p><b>Warning</b>
-			<pre>
-			Warning.show('Exemplo de warning', 'Linha debaixo');
-			</pre>
+<hr class="space">
 
-			<a href="#" id="warningOn">Warning.show</a>
-			</p>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;">Pop.hint($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#quadroExemploPop'</span>), <span class="hljs-string" style="color: rgb(143, 193, 62);">'Hint mostra dicas ao colocar o mouse em cima'</span>);</pre>
+
+<h3>Pop.click();</h3>
+<button type="button" class="R4" id="popClick">Pop.click</button>
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;">Pop.click(
+	$(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#popClick'</span>), <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Elemento que ao clicar, mostra o Pop</span>
+	{
+		html: <span class="hljs-string" style="color: rgb(143, 193, 62);">'&lt;p&gt;Caixa qualquer com possibilidade de HTML&lt;/p&gt;'</span>,
+		classes: <span class="hljs-string" style="color: rgb(143, 193, 62);">''</span>, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Uma ou mais classes em array ou string</span>
+		onOpen: <span class="hljs-function" style="color: rgb(18, 144, 191);"><span class="hljs-keyword" style="color: rgb(200, 94, 124);">function</span>(<span class="hljs-params" style="color: rgb(253, 139, 25);"></span>)</span>{}, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Função que roda ao abrir</span>
+		overlay: <span class="hljs-literal" style="color: rgb(253, 139, 25);">true</span>, <span class="hljs-comment" style="color: rgb(152, 148, 152);">//A tela que escurece o resto</span>
+		id: <span class="hljs-string" style="color: rgb(143, 193, 62);">''</span> <span class="hljs-comment" style="color: rgb(152, 148, 152);">//Se não informar id é gerado um id aleatório</span>
+	}
+);</pre>
 
 
-			<p><b>Table</b> class="R4"
-			<p>
-				Classes disponíveis:<br>
-				striped<br>
-				compact
-			</p>
+<h2>Efeitos</h2>
+SlideDown e SlideUp:
 
-			<table class="R4">
-				<thead>
-					<tr>
-						<th>Company</th>
-						<th>Contact</th>
-						<th>Country</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Alfreds Futterkiste</td>
-						<td>Maria Anders</td>
-						<td>Germany</td>
-					</tr>
-					<tr>
-						<td>Centro comercial Moctezuma</td>
-						<td>Francisco Chang</td>
-						<td>Mexico</td>
-					</tr>
-					<tr>
-						<td>Ernst Handel</td>
-						<td>Roland Mendel</td>
-						<td>Austria</td>
-					</tr>
-					<tr>
-						<td>Island Trading</td>
-						<td>Helen Bennett</td>
-						<td>UK</td>
-					</tr>
-					<tr>
-						<td>Laughing Bacchus Winecellars</td>
-						<td>Yoshi Tannamuri</td>
-						<td>Canada</td>
-					</tr>
-					<tr>
-						<td>Magazzini Alimentari Riuniti</td>
-						<td>Giovanni Rovelli</td>
-						<td>Italy</td>
-					</tr>
-				</tbody>
-				<tfoot>
-					<tr>
-						<td colspan="3">Total 6 registros</td>
-					</tr>
-				</tfoot>
-			</table>
-			</p>
-			</div>
-		</main>
-		<footer>
-			R4 Framework
-		</footer>
-		<style>
-			/*Demonstration layout*/
-			pre {
-				overflow: auto;
-				background: #888;
-				color: white;
-				border-radius: 5px;
-				padding: 10px 5px;
-				font-size: 0.8rem;
-			}
-		</style>
-		<!--R4TEMPLATE-endBody-->
-	</body>
+<div style="height: 80px;" class="row">
+	<div id="quadroExemploSlide" class="panel bgInfo white shadow col-4">Quadro de slides</div>
+</div>
+<div style="height: 80px;" class="row">
+	<div id="quadroExemploFade" class="panel bgFancy white shadow col-4">Quadro de fades</div>
+</div>
+<div style="" class="row clearfix">
+	<div id="quadroExemploOutro" class="panel bgWhite shadow col-4 R4Fields">
+		<div id="inputExemploOutro"></div>
+	</div>
+</div>
+
+<button type="button" class="R4" onclick="javascript:Effects.slideUp($('#quadroExemploSlide'))">slideUp</button>
+<button type="button" class="R4" onclick="javascript:Effects.slideDown($('#quadroExemploSlide'))">slideDown</button>
+
+<button type="button" class="R4" onclick="javascript:Effects.fadeOut($('#quadroExemploFade'))">fadeOut</button>
+<button type="button" class="R4" onclick="javascript:Effects.fadeIn($('#quadroExemploFade'))">fadeIn</button>
+
+<button type="button" class="R4" onclick="javascript:Effects.highlight($('#inputExemploOutro'))">highlight</button>
+<button type="button" class="R4" onclick="javascript:Effects.blink($('#quadroExemploOutro'))">blink</button>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;">Effects.slideUp($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#quadroExemploSlide'</span>));
+Effects.slideDown($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#quadroExemploSlide'</span>));
+
+Effects.fadeOut($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#quadroExemploFade'</span>));
+Effects.fadeIn($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#quadroExemploFade'</span>));
+
+Effects.highlight($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#inputExemploOutro'</span>));
+Effects.blink($(<span class="hljs-string" style="color: rgb(143, 193, 62);">'#quadroExemploOutro'</span>));</pre>
+
+
+<h2>Icones em linha</h2>
+
+<p>
+	Os ícones são em SVG e podem ser buscados em lugares como:
+	<ul>
+		<li><a href="http://svgicons.sparkk.fr/">http://svgicons.sparkk.fr/</a></li>
+		<li><a href="https://www.svgviewer.dev/s/25374/home-house-building-property">https://www.svgviewer.dev/s/25374/home-house-building-property</a></li>
+		<li><a href="https://www.iconfinder.com/icons">https://www.iconfinder.com/icons</a></li>
+	</ul>
+</p>
+
+
+<p>
+	<b>Icone puro</b>
+	<svg class="icon" width="25" height="25" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M4.166 0h16.668A4.166 4.166 0 0 1 25 4.166v16.668A4.166 4.166 0 0 1 20.834 25H4.166A4.166 4.166 0 0 1 0 20.834V4.166A4.166 4.166 0 0 1 4.166 0z"/><path d="M21.666 12.291a.625.625 0 0 1-.443-.182l-7.742-7.744a1.396 1.396 0 0 0-.981-.406 1.378 1.378 0 0 0-.981.406l-7.744 7.744a.625.625 0 0 1-.884-.884l7.744-7.744a2.636 2.636 0 0 1 3.729 0l7.745 7.744a.625.625 0 0 1-.443 1.066Z" fill="#7bcdd1"/><path d="M12.5 5.834 5.834 12.5v9.166H10V17.5a2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5v4.166h4.166V12.5Z" fill="#bec6f4"/><path d="M19.166 22.291H15a.625.625 0 0 1-.625-.625V17.5a1.875 1.875 0 0 0-3.75 0v4.166a.625.625 0 0 1-.625.625H5.834a.625.625 0 0 1-.625-.625V12.5a.625.625 0 0 1 .182-.443l6.666-6.666a.625.625 0 0 1 .884 0l6.666 6.666a.625.625 0 0 1 .184.443v9.166a.625.625 0 0 1-.625.625Zm-3.541-1.25h2.916v-8.282L12.5 6.717l-6.041 6.041v8.283h2.916V17.5a3.125 3.125 0 0 1 6.25 0Z" fill="#8d9cf4"/><path d="M15 22.291a.625.625 0 0 1-.625-.625V17.5a1.875 1.875 0 0 0-3.75 0v4.166a.625.625 0 0 1-1.25 0V17.5a3.125 3.125 0 0 1 6.25 0v4.166a.625.625 0 0 1-.625.625Z" fill="#7bcdd1"/></svg>
+
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">svg</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"icon"</span> <span class="hljs-attr">viewBox</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"0 0 25 25"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">path</span> <span class="hljs-attr">d</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"M18.121,9....</span></span></pre>
+</p>
+
+<p>
+	<b>Tamanhos e cores variadas com style</b>
+	<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" style="enable-background:new 0 0 512.001 512.001; fill: blue" xml:space="preserve" width="25" height="25"><path d="M12.5 0 6.261 5.872V2.98H4.059v4.965L.047 11.72l1.509 1.604 1.402-1.319V25h19.084V12.005l1.402 1.319 1.509-1.604L12.5 0zm4.273 15.589L12.5 19.862l-4.273-4.273a2.228 2.228 0 0 1 3.149-3.149l1.125 1.125 1.125-1.125a2.228 2.228 0 0 1 3.149 0c.868.87.868 2.279-.002 3.149z"/></svg>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">svg</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"icon"</span> <span class="hljs-attr">viewBox</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"0 0 25 25"</span> <span class="hljs-attr">style</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"width: 50px; height: 50px; fill: blue;"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">path</span> <span class="hljs-attr">d</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"M8.749,9.934c0,0.....</span></span></pre>
+</p>
+
+<p>
+	<b>Com efeito de mouse e uso de classes</b>
+	<svg class="icon efeitoMouseOverIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="enable-background:new 0 0 512 512" xml:space="preserve" width="100" height="100"><path style="fill:#2d527c" d="M63.294 100H15.226a2.817 2.817 0 0 1-2.817-2.817V44.369c0-.851.385-1.657 1.048-2.192l34.773-28.07a2.818 2.818 0 0 1 3.539 0l34.773 28.07a2.82 2.82 0 0 1 1.048 2.192v52.666a2.817 2.817 0 1 1-5.634 0v-51.32L50 19.919 18.043 45.715v48.651h45.25a2.817 2.817 0 0 1 .001 5.634z"/><path style="fill:#2d527c" d="M94.036 40.985a2.808 2.808 0 0 1-1.762-.62L50 6.429 7.726 40.364a2.817 2.817 0 0 1-3.527-4.394L48.237.62a2.817 2.817 0 0 1 3.527 0l44.038 35.351a2.817 2.817 0 0 1-1.766 5.014z"/><path style="fill:#cee8fa" d="M58.388 40.564A8.388 8.388 0 0 1 50 48.952a8.388 8.388 0 0 1-8.388-8.388 8.388 8.388 0 0 1 16.776 0z"/><path style="fill:#2d527c" d="M50 51.77c-6.179 0-11.205-5.027-11.205-11.205S43.822 29.36 50 29.36s11.205 5.027 11.205 11.205S56.178 51.77 50 51.77zm0-16.777c-3.072 0-5.571 2.499-5.571 5.571s2.499 5.571 5.571 5.571 5.571-2.499 5.571-5.571-2.499-5.571-5.571-5.571z"/><path style="fill:#cee8fa" d="M36.707 63.606h26.589v33.578H36.707V63.606z"/><path style="fill:#2d527c" d="M63.294 100H36.706a2.817 2.817 0 0 1-2.817-2.817V63.605a2.817 2.817 0 0 1 2.817-2.817h26.587a2.817 2.817 0 0 1 2.817 2.817v33.578A2.816 2.816 0 0 1 63.294 100zm-23.771-5.634h20.954V66.422H39.523v27.944zm45.725-62.071a2.817 2.817 0 0 1-2.817-2.817V14.319H76.86a2.817 2.817 0 0 1 0-5.634h8.388a2.817 2.817 0 0 1 2.817 2.817v17.976a2.817 2.817 0 0 1-2.817 2.817z"/></svg>
+
+<pre class="hljs" style="display: block; background: rgb(50, 41, 49); color: rgb(185, 181, 184); padding: 0.5em;"><span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">svg</span> <span class="hljs-attr">class</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"svg-icon transition efeitoMouseOverIcon"</span> <span class="hljs-attr">viewBox</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"0 0 20 20"</span>&gt;</span>
+	<span class="hljs-tag" style="color: rgb(221, 70, 76);">&lt;<span class="hljs-name" style="color: rgb(221, 70, 76);">path</span> <span class="hljs-attr">fill</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"none"</span> <span class="hljs-attr">d</span>=<span class="hljs-string" style="color: rgb(143, 193, 62);">"M4.68,13....</span></span></pre>
+</p>
+
+</div>
+</main>
+<footer>
+	R4 Framework
+</footer>
+<style>
+	/*Demonstration layout*/
+	pre {
+		overflow: auto;
+		background: #F8F9FA;
+		color: white;
+		border-radius: 5px;
+		padding: 10px 5px;
+		font-size: 0.8rem;
+	}
+	h2 {
+		margin-top: 120px !important;
+	}
+
+	h3 {
+		margin-top: 50px !important;
+	}
+
+	.efeitoMouseOverIcon:hover {
+		width: 200px;
+		height: 200px;
+	}
+</style>
+<!--R4TEMPLATE-endBody-->
+</body>
 </html>
+
+<!-- BUGS A RESOLVER:
+- Click em link para abrir Warning
+- changeMonitor no Dialog não verifica se fechar sem sair do input alterado

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="pt-BR">
+	<head>
+		<base href="../">
+		<title>Usuários</title>
+		<!--
+			Em tela que precisa estar logado, é usado o gatekeeper.js.php
+			que faz a verificação da sessão que garante o acesso.
+		-->
+		<!-- <script type="text/javascript" src="gatekeeper.js.php"></script> -->
+		<script type="text/javascript" src="freeway.js.php"></script>
+		<!--
+			Comentários que começam com R4TEMPLATE são trocados pelo respectivo
+			conteúdo encontrado em _assets/templates/templates.html
+		-->
+		<!--R4TEMPLATE-head-->
+	</head>
+	<body>
+		<!--R4TEMPLATE-loading-->
+
+		<!--R4TEMPLATE-innerHead-->
+		<main>
+
+			<h5 class="showPrint">Lista de usuários</h5>
+
+			<nav class="panel bgWhite corner clearfix hiddenPrint">
+				<h2>Usuários</h2>
+
+				<div class="col-4">
+					<button id="usersBtnAdd" class="R4 bgSuccess white bold"> NOVO </button>
+					<button id="usersBtnDel" class="R4 bgDanger white bold"> ✘ </button>
+				</div>
+
+				<form id="formFiltro" class="right col-8">
+					<div id="filtro_busca" class="col-10 col-xs-10">Busca</div>
+					<div id="filtro_btn"   class="col-2 col-xs-2 btnAlignFix">🔍</div>
+				</form>
+			</nav>
+
+			<div id="listaUsers" class="panel bgWhite corner"></div>
+
+		</main>
+
+		<footer>
+			<!--R4TEMPLATE-footerSignature-->
+		</footer>
+
+		<script defer src="users/users.class.js"></script>
+		<!--
+			Funções colocadas dentro de R4Init serão
+			chamadas assim que terminar de carregar
+		-->
+		<script>
+			var R4Init = function(){
+				Users.init(Users.filter);
+			};
+		</script>
+
+		<!--R4TEMPLATE-endBody-->
+	</body>
+</html>

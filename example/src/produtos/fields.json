@@ -1,9 +1,0 @@
-{
-	"prod": [
-		{ "id": "nome",       "type": "text"    },
-		{ "id": "categoria",  "type": "tags",   "maxSel": 1 },
-		{ "id": "preco",      "type": "money"   },
-		{ "id": "tags",       "type": "tags"    },
-		{ "id": "comEstoque", "type": "switch", "checked": true }
-	]
-}

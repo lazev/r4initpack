@@ -1,0 +1,16 @@
+{
+	"users": [
+		{ "id": "nome",    "type": "text",    "require":"true" },
+		{ "id": "cpfcnpj", "type": "cpfcnpj"  },
+		{ "id": "fones",   "type": "tags"     },
+		{ "id": "emails",  "type": "tags"     },
+		{ "id": "salario", "type": "decimal", "precision":"2"   },
+		{ "id": "idTipo",  "type": "select",  "options":"Users.listaTipos" },
+		{ "id": "tags",    "type": "tags"     },
+		{ "id": "cep",     "type": "cep"      },
+		{ "id": "dtNasc",  "type": "date"     },
+		{ "id": "user",    "type": "text"     },
+		{ "id": "pass",    "type": "password" },
+		{ "id": "ativo",   "type": "switch"   }
+	]
+}

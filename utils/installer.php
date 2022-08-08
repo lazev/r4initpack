@@ -43,7 +43,7 @@ if(PHP_OS_FAMILY == 'Windows') {
 	shell_exec('cp -r '. $r4path .'utils/initPack/* '. $syspath);
 }
 
-unlink($r4path .'utils/initPack/indexDB.sql');
+unlink($syspath .'indexDB.sql');
 
 echoc('Informe o nome (apelido) do sistema. Uma só palavra ['. $sysname .']:');
 $systemid = str_replace(' ', '', trim(stream_get_line(STDIN, 1024, PHP_EOL)));
@@ -73,8 +73,8 @@ do {
 while($simnao != 's' && $simnao != 'n');
 
 if(strtolower($simnao) == 's') {
-	shell_exec('mysql -u '. $dbuser .' -p'. $dbpass .' -e "create database _'. $systemid .' collate \'utf8mb4_general_ci\';";');
-	shell_exec('mysql -u '. $dbuser .' -p'. $dbpass .' _'. $systemid .' < '. $r4path .'utils'. $sep .'initPack'. $sep .'indexDB.sql');
+	shell_exec('mysql -u '. $dbuser .' -p'. $dbpass .' -e "create database '. $systemid .' collate \'utf8mb4_general_ci\';";');
+	shell_exec('mysql -u '. $dbuser .' -p'. $dbpass .' '. $systemid .' < '. $r4path .'utils'. $sep .'initPack'. $sep .'indexDB.sql');
 }
 
 echoc();
@@ -135,6 +135,10 @@ else {
 	echoc('Informe a senha do sudo da máquina ou mova manualmente privado depois.');
 	echoc('sudo mv '. $syspath .'.r4priv_'. $systemid .' '. $sep .'etc'. $sep .'.r4priv_'. $systemid);
 	shell_exec('sudo mv '. $syspath .'.r4priv_'. $systemid .' '. $sep .'etc'. $sep .'.r4priv_'. $systemid);
+
+
+	echoc('Criando pasta de logs /var/log/r4...');
+	shell_exec('sudo mkdir /var/log/r4');
 }
 
 echoc();
@@ -144,3 +148,4 @@ require $r4path .'utils'. $sep .'compiler.php';
 echoc();
 
 echoc('Instalação concluída', 'green');
+echoc('https://localhost/'. $systemid .'/public/', 'yellow');

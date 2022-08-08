@@ -255,9 +255,12 @@ var R4 = {
 			while(str.indexOf('/') > -1) {
 				str = str.replace('/', '');
 			}
+
 			ret = this.completeDate(str);
 
 		} else {
+
+			str = str.substr(0, 8);
 
 			if((str.length == 1) || (str.length == 2)) {
 

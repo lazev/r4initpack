@@ -1,8 +1,0 @@
-{
-	"signUp": [
-		{ "id":"user",    "type":"email"    },
-		{ "id":"pass",    "type":"password" },
-		{ "id":"pass2",   "type":"password" },
-		{ "id":"btnSave", "type":"submit", "classes":"bgPrimary" }
-	]
-}
