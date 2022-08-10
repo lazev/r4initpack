@@ -138,6 +138,7 @@
 	font-size: 13px;
 	font-weight: bold;
 	color: #dd1d51;
+	user-select: none;
 }
 
 .R4Fields.tags > input {
