@@ -118,6 +118,20 @@ Dentro de **src/_assets/templates/templates.html** pode conter diversos template
 
 Já nos arquivos .html basta adicionar o seguinte comentário: `<!--R4TEMPLATE-head-->`. No momento que rodar o compilador, este comentário será transformado no bloco de código que está dentro dos templates.html.
 
+## Concat Files
+
+Dentro do arquivo de leitura do _compilador_ há um parâmetro chamado concatFiles. Ele tem a função de unir 2 ou mais arquivos dentro de um único ao _compilar_. Serve pra qualquer tipo de arquivo e segue o exemplo:
+
+```json
+"concatFiles": {
+	"./caminho/arquivo/destino.js": [
+		"./caminho/arquivos/origem/*.js",
+		"./caminho/diferente/origem.js"
+	]
+}
+```
+
+
 ## Exemplos
 
 Há um guia de consulta rápida chamado **example.html** dentro da pasta **src/** com algumas das principais ferramentas do framework.
