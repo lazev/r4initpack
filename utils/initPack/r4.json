@@ -1,12 +1,14 @@
 {
-	"R4JSPacker":  1,
+	"R4JSPacker": 1,
 	"R4CSSPacker": 1,
-	"JSPacker":    0,
-	"HTMLPacker":  0,
-	"CSSPacker":   0,
+	"JSPacker": 0,
+	"HTMLPacker": 0,
+	"CSSPacker": 0,
 
 	"foldersToMonitor": [
 		"./src",
 		"./vendor"
-	]
+	],
+
+	"concatFiles": {}
 }

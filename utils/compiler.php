@@ -22,7 +22,6 @@ $cfg = json_decode($cfgstr, 1);
 
 print_r($cfg);
 
-$jsPacker       = $cfg['jsPacker'] ?? '';
 $monitorFolders = $cfg['foldersToMonitor'];
 
 escreve('Running on ' . PHP_OS_FAMILY);
@@ -74,7 +73,7 @@ function getlshash() {
 
 
 function compile() {
-	global $sep, $r4path, $jsPacker;
+	global $sep, $r4path, $cfgfile;
 
 	escreve('Updating codes...');
 
@@ -102,7 +101,8 @@ function compile() {
 	}
 
 	shell_exec('php '. $r4path .'utils'. $sep .'templater.php');
-	shell_exec('php '. $r4path .'utils'. $sep .'packer.php '. $jsPacker);
+
+	shell_exec('php '. $r4path .'utils'. $sep .'packer.php '. $cfgfile);
 
 	escreve('Ok'. PHP_EOL);
 }
