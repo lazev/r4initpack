@@ -67,6 +67,7 @@ svg.icon circle {
 .clickable   { cursor: pointer;     }
 .nowrap      { white-space: nowrap; }
 .noscroll    { overflow: hidden;    }
+.nosel       { user-select: none;   }
 .btnAlignFix { padding-top: 10px;   }
 
 .small {

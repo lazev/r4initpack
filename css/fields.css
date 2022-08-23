@@ -244,6 +244,7 @@
 	display: block;
 	padding: 9px 0 0 44px;
 	cursor: pointer;
+	user-select: none;
 }
 .R4Fields.switch > label:before {
 	content: '';
