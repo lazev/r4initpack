@@ -11,13 +11,20 @@ $r4path  = dirname(__FILE__) . $sep;
 switch($com){
 	case 'init':
 
-		require $r4path .'utils'. $sep .'installer.php';
+		require $r4path .'utils/installer.php';
 
 	break;
 	case 'up':
 
 		if($param == 'monitor') $monitor = true;
-		require $r4path .'utils'. $sep .'compiler.php';
+		require $r4path .'utils/compiler.php';
+
+	break;
+
+	case 'initmodule':
+
+		$moduleName = $param;
+		require $r4path .'utils/initmodule.php';
 
 	break;
 	default:

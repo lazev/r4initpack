@@ -1,7 +1,7 @@
 var Users = {
 
 	pathAjax:   _CONFIG.rootURL +'users/ajax.php',
-   pathFields: _CONFIG.rootURL +'users/fields.json',
+	pathFields: _CONFIG.rootURL +'users/fields.json',
 
 	idUser: 0,
 
@@ -151,19 +151,19 @@ var Users = {
 		.then(ret => {
 			R4.blockScreen(false);
 
-			Users.idUser = ret.user.id;
+			Users.idUser = ret.item.id;
 
-			$('#users_nome').val(    ret.user.nome    );
-			$('#users_cpfcnpj').val( ret.user.cpfcnpj );
-			$('#users_fones').val(   ret.user.fones   );
-			$('#users_emails').val(  ret.user.emails  );
-			$('#users_salario').val( ret.user.salario );
-			$('#users_idTipo').val(  ret.user.idTipo  );
-			$('#users_tags').val(    ret.user.tags    );
-			$('#users_cep').val(     ret.user.cep     );
-			$('#users_dtNasc').val(  ret.user.dtNasc  );
-			$('#users_user').val(    ret.user.user    );
-			$('#users_ativo').val(   ret.user.ativo   );
+			$('#users_nome').val(    ret.item.nome    );
+			$('#users_cpfcnpj').val( ret.item.cpfcnpj );
+			$('#users_fones').val(   ret.item.fones   );
+			$('#users_emails').val(  ret.item.emails  );
+			$('#users_salario').val( ret.item.salario );
+			$('#users_idTipo').val(  ret.item.idTipo  );
+			$('#users_tags').val(    ret.item.tags    );
+			$('#users_cep').val(     ret.item.cep     );
+			$('#users_dtNasc').val(  ret.item.dtNasc  );
+			$('#users_user').val(    ret.item.user    );
+			$('#users_ativo').val(   ret.item.ativo   );
 
 			Dialog.open($('#formUsers'));
 		})
@@ -197,10 +197,10 @@ var Users = {
 			let btn = $new('<button type="button" class="R4">Detalhar</button>');
 			btn.on('click', function(ev) {
 				ev.preventDefault();
-				Users.edit(ret.user.id);
+				Users.edit(ret.item.id);
 			});
 
-			Warning.show('Usuário '+ ret.user.id +' salvo com sucesso', btn);
+			Warning.show('Usuário '+ ret.item.id +' salvo com sucesso', btn);
 
 			Users.onSave();
 

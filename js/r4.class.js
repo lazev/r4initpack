@@ -563,9 +563,47 @@ var R4 = {
 	},
 
 
+	sendBlob: function(url, params) {
+		return new Promise(function(resolve, reject) {
+			let fd = new FormData();
+			for(let k in params) fd.append(k, params[k]);
+
+			let xhr = new XMLHttpRequest();
+			xhr.open('POST', url, true);
+			xhr.onreadystatechange = function() {
+				if(xhr.readyState === 4) {
+					if(xhr.status === 200) {
+						var resp = xhr.responseText;
+						try {
+							var jResp = JSON.parse(resp);
+
+							if(jResp.error === 1) {
+								Warning.show(jResp.errMsg, jResp.errObs);
+								if(jResp.status == 401) {
+									window.location = _CONFIG.rootURL +'login/';
+								}
+								reject(jResp);
+							} else {
+								resolve(jResp);
+							}
+						} catch(err) {
+							Warning.show(xhr.status);
+							reject(xhr.status);
+						}
+					} else {
+						Warning.show('Conexão com internet?');
+						reject(xhr.status);
+					}
+				}
+			};
+			xhr.send(fd);
+		});
+	},
+
+
 	getJSON: function(url, params, opts) {
-		if (!opts)   opts   = {};
-		if (!params) params = {};
+		if(!opts)   opts   = {};
+		if(!params) params = {};
 
 		return new Promise(function(resolve, reject) {
 
@@ -589,8 +627,8 @@ var R4 = {
 			xhr.open(method, url, true);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.onreadystatechange = function() {
-				if (xhr.readyState === 4) {
-					if (xhr.status === 200) {
+				if(xhr.readyState === 4) {
+					if(xhr.status === 200) {
 						var resp = xhr.responseText;
 						try {
 							var jResp = JSON.parse(resp);

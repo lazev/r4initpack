@@ -26,7 +26,7 @@ switch($_REQUEST['com']) {
 		}
 
 		R4::retOkAPI([
-			'user' => $dados
+			'item' => $dados
 		]);
 
 		break;
@@ -43,7 +43,7 @@ switch($_REQUEST['com']) {
 		}
 
 		R4::retOkAPI([
-			'user' => $dados
+			'item' => $dados
 		]);
 
 		break;

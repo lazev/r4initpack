@@ -98,10 +98,12 @@ var Effects = {
 	},
 
 
-	blink: function(elem) {
+	blink: function(elem, repeat) {
+		if(!repeat) repeat = 1;
+		let time = 500*repeat;
 		elem.classList.add('blink');
 		setTimeout(function(){
 			elem.classList.remove('blink');
-		}, 500);
+		}, time);
 	}
 };

@@ -32,13 +32,12 @@ if($naoVazio) {
 
 echoc('Inicializando conteúdo básico para '. $sysname);
 
-if(!is_dir($r4path .'utils'. $sep .'initPack')) {
+if(!is_dir($r4path .'utils/initPack')) {
 	die('Pacote de conteúdo básico não encontrado no instalador. Instalação abortada.');
 }
 
 if(PHP_OS_FAMILY == 'Windows') {
-	shell_exec('Xcopy /r /s /e /c /q /y "'. $r4path .'utils\initPack\*" "'. $syspath .'"');
-	echoc('copiado');
+	shell_exec('Xcopy /r /s /e /c /q /y "'. $r4path .'utils\\initPack\\*" "'. $syspath .'"');
 } else {
 	shell_exec('cp -r '. $r4path .'utils/initPack/* '. $syspath);
 }
@@ -105,14 +104,14 @@ if(strtolower($simnao) == 's') {
 
 echoc();
 
-$cfgfile = file_get_contents($syspath .'src'. $sep .'config.inc.php');
+$cfgfile = file_get_contents($syspath .'src/config.inc.php');
 
 $key = [ '{systemid}', '{dbuser}' ];
 $val = [  $systemid,    $dbuser   ];
 
 $cfgfile = str_replace($key, $val, $cfgfile);
 
-file_put_contents($syspath .'src'. $sep .'config.inc.php', $cfgfile);
+file_put_contents($syspath .'src/config.inc.php', $cfgfile);
 
 $privfile = '#Arquivo deve estar em uma pasta segura, fora da public e src'. PHP_EOL
           . '#Necessario que o src'. $sep .'config.inc.php aponte para este arquivo'. PHP_EOL
@@ -133,8 +132,8 @@ if(PHP_OS_FAMILY == 'Windows') {
 }
 else {
 	echoc('Informe a senha do sudo da máquina ou mova manualmente privado depois.');
-	echoc('sudo mv '. $syspath .'.r4priv_'. $systemid .' '. $sep .'etc'. $sep .'.r4priv_'. $systemid);
-	shell_exec('sudo mv '. $syspath .'.r4priv_'. $systemid .' '. $sep .'etc'. $sep .'.r4priv_'. $systemid);
+	echoc('sudo mv '. $syspath .'.r4priv_'. $systemid .' /etc/.r4priv_'. $systemid);
+	shell_exec('sudo mv '. $syspath .'.r4priv_'. $systemid .' /etc/.r4priv_'. $systemid);
 
 
 	echoc('Criando pasta de logs /var/log/r4...');
@@ -143,7 +142,7 @@ else {
 
 echoc();
 
-require $r4path .'utils'. $sep .'compiler.php';
+require $r4path .'utils/compiler.php';
 
 echoc();
 
