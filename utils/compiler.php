@@ -32,13 +32,13 @@ if((count($argv) > 1 && $argv[1] == 'monitor') || (isset($monitor) && $monitor))
 	escreve('Monitoring...');
 
 	while(true) {
-		$ls = getlshash();
+		$ls = getLsHash();
 		if($past != $ls) {
 			escreve('Changes detected...');
 			sleep(1);
 			compile();
 			escreve('Monitoring...');
-			$past = getlshash();
+			$past = getLsHash();
 		} else {
 			$past = $ls;
 		}
@@ -51,7 +51,7 @@ if((count($argv) > 1 && $argv[1] == 'monitor') || (isset($monitor) && $monitor))
 }
 
 
-function getlshash() {
+function getLsHash() {
 	global $monitorFolders;
 
 	if(PHP_OS_FAMILY == 'Windows') {
@@ -100,9 +100,19 @@ function compile() {
 		shell_exec('cp -r ./vendor/vendor/* ./public/_assets/vendor/');
 	}
 
-	shell_exec('php '. $r4path .'utils'. $sep .'templater.php');
+	$output = [];
+	exec('php '. $r4path .'utils'. $sep .'templater.php', $output);
 
-	shell_exec('php '. $r4path .'utils'. $sep .'packer.php '. $cfgfile);
+	foreach($output as $line) {
+		if($line) escreve('Templater: '. $line);
+	}
+
+	$output = [];
+	exec('php '. $r4path .'utils'. $sep .'packer.php '. $cfgfile, $output);
+
+	foreach($output as $line) {
+		if($line) escreve('Packer: '. $line);
+	}
 
 	escreve('Ok'. PHP_EOL);
 }

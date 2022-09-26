@@ -50,13 +50,47 @@ function searchAll($rootFolder, $version, $head) {
 
 
 function replacer($filename, $version, $head) {
-	if($version) {
-		$filecont = file_get_contents($filename);
-		$filecont = str_replace($version, $head, $filecont);
 
-		file_put_contents($filename, $filecont);
+	$filecont = file_get_contents($filename);
+
+	if($version) {
+		$filecont = str_replace($version, $head, $filecont);
 	}
+
+	$filecont = replaceCaches($filecont, $filename);
+
+	file_put_contents($filename, $filecont);
 }
+
+
+
+function replaceCaches($content, $filename) {
+	preg_match_all('|R4Cache::(\S*)\"|m', $content, $outArr);
+
+	foreach($outArr[1] as $item) {
+		$sep = '?';
+		$tritem = $item;
+
+		if(strpos($item, '?') !== false) {
+			$sep = '&';
+			$tritem = explode('?', $item)[0];
+		}
+
+		if(!file_exists('src/'. $tritem)) {
+			echo PHP_EOL . PHP_EOL . 'File not found: '. $tritem .' in '. $filename;
+		} else {
+			$content = str_replace(
+				'R4Cache::'. $item,
+				$item . $sep . filemtime('src/'.$tritem),
+				$content
+			);
+		}
+
+	}
+
+	return str_replace('R4Cache::', '', $content);
+}
+
 
 
 function moduleSearchAll($rootFolder) {
