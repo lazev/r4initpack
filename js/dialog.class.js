@@ -39,7 +39,10 @@ var Dialog = {
 				idElem = cont.id;
 			} else {
 				cont = document.createElement('div');
-				cont.innerHTML = html;
+
+				if     (typeof html == 'string') cont.innerHTML = html;
+				else if(typeof html == 'object') cont.append(html);
+
 				idElem = opts.id || Math.random().toString().substr(-9);
 				cont.id = idElem;
 			}

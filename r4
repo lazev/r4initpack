@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-$com   = $argv[1] ?? '';
+$com   = strtolower($argv[1] ?? '');
 $param = $argv[2] ?? '';
 $sep   = DIRECTORY_SEPARATOR;
 

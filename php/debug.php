@@ -6,23 +6,25 @@ if(!defined('DEVMODE') || !DEVMODE) {
 }
 
 $busca = $_REQUEST['busca'] ?? '';
+?>
 
-echo '
 <style>
 body {
-	background: #333;
-	color: #EFEFEF;
+	background: #121212 !important;
+	color: #EFEFEF !important;
+}
+.hide {
+	display: none;
+}
+
+table tr td {
+	white-space: nowrap;
 }
 </style>
-<script>
-function nl2br(elem) {
-	elem.innerHTML = elem.innerHTML.replaceAll("\\\n", "<br>").replaceAll("\\\t", " ");
-}
-</script>
 
-<p>'. USER_IP .'</p>
-';
+<?php
 
+echo '<p>'. USER_IP .'</p>';
 
 $r4log = scandir('/var/log/r4/');
 
@@ -39,7 +41,10 @@ foreach($r4log as $val) {
 
 	$lines = explode(PHP_EOL, $log);
 
-	echo $val .': <div style="width: 95%; overflow: auto"><table>';
+	echo '
+		<div target="'. $val .'" style="cursor: pointer;"><b>'. $val .'</b>:</div>
+		<div id="'. $val .'" style="width: 95%; overflow: auto"><table>
+	';
 
 	foreach($lines as $line) {
 		if(empty($line)) continue;
@@ -61,18 +66,18 @@ foreach($r4log as $val) {
 	echo '</table></div>';
 }
 
-echo '<pre><div style="background: black; color: white; padding: 5px; width: 95%; overflow: auto">';
-
 $host = $_SERVER['HTTP_HOST'];
 $subdom = substr($host, 0, strpos($host, '.'));
 
-if(file_exists('')) {
+if(file_exists('/var/log/nginx/'. $subdom .'.error.log')) {
+	$logName = $subdom .'.error.log';
 	$log = htmlentities(`tail -n20 /var/log/nginx/$subdom.error.log`);
 } else {
+	$logName = 'error.log';
 	$log = htmlentities(`tail -n20 /var/log/nginx/error.log`);
 }
 
-$sai   = [
+$sai = [
 	'PHP message:',
 	'PHP Warning:',
 	'PHP Fatal error:',
@@ -90,18 +95,47 @@ $entra = [
 ];
 $log = str_replace($sai, $entra, $log);
 
-echo $log;
-
-echo '</div>';
-
-
-
-
+echo '
+	<hr>
+	<b>'. $logName .'</b>
+	<pre>
+	<div style="background: black; color: white; padding: 5px; width: 95%; overflow: auto">'
+		. $log
+	.'</div>';
 
 print_r($_SESSION);
 
 print_r($_SERVER);
+?>
+</pre>
+<script>
 
-echo '</pre>';
+let elems = document.querySelectorAll('div[target]');
 
+if(elems) {
+	elems.forEach(item => {
+		item.addEventListener('click', function(ev) {
+			let target = this.getAttribute('target');
+			document.getElementById(target).classList.toggle('hide');
+			let json = localStorage.getItem('debugLayout') ?? '{}';
+			let arr = JSON.parse(json);
+			arr[target] = (document.getElementById(target).classList.contains('hide')) ? 'hide' : '';
+			localStorage.setItem('debugLayout', JSON.stringify(arr));
+		});
+	});
+}
+
+let layouts = JSON.parse(localStorage.getItem('debugLayout') ?? '{}');
+
+for(item in layouts) {
+	if(layouts[item] == 'hide') document.getElementById(item).classList.add('hide');
+}
+
+function nl2br(elem) {
+	console.log(elem.innerHTML.replaceAll("\\n", "\n").replaceAll("\\t", "\t"));
+	elem.innerHTML = elem.innerHTML.replaceAll("\\n", "<br>").replaceAll("\\t", " ");
+}
+</script>
+
+<?php
 phpinfo();
