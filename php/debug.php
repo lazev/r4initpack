@@ -20,6 +20,10 @@ body {
 table tr td {
 	white-space: nowrap;
 }
+
+.phpinfo * {
+	color: black;
+}
 </style>
 
 <?php
@@ -69,13 +73,15 @@ foreach($r4log as $val) {
 $host = $_SERVER['HTTP_HOST'];
 $subdom = substr($host, 0, strpos($host, '.'));
 
+/*
 if(file_exists('/var/log/nginx/'. $subdom .'.error.log')) {
 	$logName = $subdom .'.error.log';
 	$log = htmlentities(`tail -n20 /var/log/nginx/$subdom.error.log`);
 } else {
+*/
 	$logName = 'error.log';
 	$log = htmlentities(`tail -n20 /var/log/nginx/error.log`);
-}
+//}
 
 $sai = [
 	'PHP message:',
@@ -137,5 +143,6 @@ function nl2br(elem) {
 }
 </script>
 
-<?php
-phpinfo();
+<div class="phpinfo">
+<?php phpinfo(); ?>
+</div>
