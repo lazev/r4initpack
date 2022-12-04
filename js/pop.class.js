@@ -164,10 +164,11 @@ var Pop = {
 
 				let over = document.getElementById('R4PopOverlay-'+ idElem);
 
-				if(over) over.remove();
+				if(over) {
+					over.remove();
+					document.body.classList.remove('noscroll');
+				}
 				else elem.remove();
-
-				document.body.classList.remove('noscroll');
 
 				let origin = document.querySelector('[R4PopTarget='+ idElem +']');
 				if(origin) origin.removeAttribute('R4PopTarget');
