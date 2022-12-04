@@ -14,7 +14,7 @@ button.R4 {
 	text-transform: uppercase;
 	color: white;
 	background-color: #616161;
-	box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);
+	box-shadow: 0 2px 2px 0 #D7D7D7, 0 3px 1px -2px #C8C8C8, 0 1px 5px 0 #DCDCDC;
 	font-size: 14px;
 	font-weight: 500;
 	line-height: 36px;
@@ -68,7 +68,7 @@ button.R4.bgWhite::after {
 
 /* Hover, Focus */
 button.R4:focus:not(.flat):not([disabled]) {
-	box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.5);
+	box-shadow: 0 1px 10px 0 #7D7D7D;
 }
 
 button.R4:focus::before {
@@ -77,7 +77,7 @@ button.R4:focus::before {
 
 /* Active */
 button.R4:active:not(.flat):not([disabled]) {
-	box-shadow: 0 1px 5px -3px rgba(0, 0, 0, 0.1)
+	box-shadow: 0 1px 5px -3px #E1E1E1
 }
 
 button.R4:active::after {

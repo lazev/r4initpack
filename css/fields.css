@@ -127,7 +127,7 @@
 	margin-left: 5px;
 	display: inline-block;
 	border-radius: 3px;
-	box-shadow: 0 2px 2px 0 rgba(0,0,0,.16), 0 0 2px 0 rgba(0,0,0,.12);
+	box-shadow: 0 2px 2px 0 #D2D2D2, 0 0 2px 0 #DCDCDC;
 }
 
 .R4Fields > .tagList > .tagItem > .closer {
@@ -170,7 +170,7 @@
 	list-style: none;
 	padding: 0;
 	margin-bottom: 0;
-	box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+	box-shadow: 0 2px 2px 0 #D7D7D7,0 3px 1px -2px #C8C8C8,0 1px 5px 0 #DCDCDC;
 }
 
 .R4TypeAheadList > ul > li {
@@ -249,10 +249,10 @@
 .R4Fields.switch > label:before {
 	content: '';
 	position: absolute;
-	top: 13px;
+	top: 9px;
 	left: 0;
 	width: 36px;
-	height: 14px;
+	height: 21px;
 	background-color: rgba(0, 0, 0, 0.26);
 	border-radius: 14px;
 	z-index: 1;
@@ -263,14 +263,14 @@
 	position: absolute;
 	top: 10px;
 	left: 0;
-	width: 20px;
-	height: 20px;
+	width: 19px;
+	height: 19px;
 	background-color: #fff;
 	border-radius: 14px;
 	box-shadow:
-		0 2px 2px 0 rgba(0, 0, 0, 0.14),
-		0 3px 1px -2px rgba(0, 0, 0, 0.2),
-		0 1px 5px 0 rgba(0, 0, 0, 0.12);
+		0 2px 2px 0 #D7D7D7,
+		0 3px 1px -2px #C8C8C8,
+		0 1px 5px 0 #DCDCDC;
 	z-index: 2;
 	transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 	transition-property: left, background-color;
@@ -279,11 +279,11 @@
 	color: #337ab7;
 }
 .R4Fields.switch > input:checked + label:before {
-	background-color: rgba(63, 81, 181, 0.5);
+	background-color: #2E6DB7;
 }
 .R4Fields.switch > input:checked + label:after {
 	left: 16px;
-	background-color: #337ab7;
+	background-color: white;
 }
 
 fieldset.R4,
