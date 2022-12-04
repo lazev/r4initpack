@@ -69,13 +69,13 @@ var Tabs = {
 					newTarget.classList.add('R4TabTargetOn');
 				}
 
-				let tabOn = elem.querySelectorAll('.R4TabOn');
+				let tabOn = elem.querySelectorAll('.R4TabActive');
 				if(tabOn.length) tabOn.forEach(tbon => {
-					tbon.classList.remove('R4TabOn');
+					tbon.classList.remove('R4TabActive');
 					tbon.style.backgroundColor = '';
 				});
 
-				item.classList.add('R4TabOn');
+				item.classList.add('R4TabActive');
 				item.style.backgroundColor = itemColor;
 				elem.style.borderColor = itemColor;
 
@@ -104,5 +104,10 @@ var Tabs = {
 	reset: tabElem => {
 		let elId = tabElem.querySelector('.R4PrimaryTab').getAttribute('target');
 		Tabs.click(elId);
+	},
+
+
+	getActive: tabElem => {
+		return tabElem.querySelector('.R4TabActive');
 	}
 };

@@ -9,6 +9,6 @@
 	box-shadow: 0 0 0 0;
 }
 
-.R4Tabs .R4TabItem.R4TabOn {
+.R4Tabs .R4TabItem.R4TabActive {
 /*	background-color: blue;*/
 }
