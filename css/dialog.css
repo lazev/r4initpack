@@ -42,7 +42,7 @@
 
 .R4Overlay .R4Dialog > header > .R4DialogCloser {
 	float: left;
-	padding: 0px 10px;
+	padding: 0px 7px;
 	cursor: pointer;
 	font-size: 28px;
 }

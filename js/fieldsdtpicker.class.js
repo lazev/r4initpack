@@ -1,5 +1,8 @@
 var FieldsDtPicker = {
 
+	iconBtnNext: '»',
+	iconBtnPrev: '«',
+
 	create: elem => {
 
 		let cell, month, year;
@@ -72,7 +75,7 @@ var FieldsDtPicker = {
 
 		let btnNext = document.createElement('button');
 		btnNext.setAttribute('class', 'col-2 col-xs-2');
-		btnNext.innerHTML = '»';
+		btnNext.innerHTML = FieldsDtPicker.iconBtnNext;
 		btnNext.addEventListener('click', function(ev){
 			if(elMonth.value == 11) {
 				elMonth.value = 0;
@@ -91,7 +94,7 @@ var FieldsDtPicker = {
 
 		let btnPrev = document.createElement('button');
 		btnPrev.setAttribute('class', 'col-2 col-xs-2');
-		btnPrev.innerHTML = '«';
+		btnPrev.innerHTML = FieldsDtPicker.iconBtnPrev;
 		btnPrev.addEventListener('click', function(ev){
 			if(elMonth.value == 0) {
 				elMonth.value = 11;

@@ -4,10 +4,13 @@ FieldsTags = {
 
 	dom: {},
 
+	iconRemove: 'x',
+
 	create: (elem, info) => {
 
 		if(info.maxSel)            elem.setAttribute('maxSel',            info.maxSel    );
 		if(info.onSel)             elem.setAttribute('onSel',             info.onSel     );
+		if(info.onDel)             elem.setAttribute('onDel',             info.onDel     );
 		if(info.onAddTag)          elem.setAttribute('onAddTag',          info.onAddTag  );
 		if(info.typeahead)         elem.setAttribute('typeahead',         info.typeahead );
 		if(info.source)            elem.setAttribute('source',            info.source    );
@@ -38,6 +41,7 @@ FieldsTags = {
 						elem,
 						elem.parentNode.querySelector('.tagList').querySelector('.tagItem:last-child')
 					);
+					FieldsTags.onDelTag(elem);
 				}
 			}
 		});
@@ -121,10 +125,11 @@ FieldsTags = {
 		el.setAttribute('text', txt);
 
 		let rem = document.createElement('span');
-		rem.innerHTML = 'x';
+		rem.innerHTML = FieldsTags.iconRemove;
 		rem.classList.add('closer');
 		rem.addEventListener('click', ev => {
 			FieldsTags.remTag(elem, ev.target.parentNode);
+			FieldsTags.onDelTag(elem);
 		});
 
 		el.append(rem);
@@ -159,6 +164,16 @@ FieldsTags = {
 		if(target) target.remove();
 		elem.classList.remove('hidden');
 		FieldsTags.withContent(elem);
+	},
+
+
+	onDelTag: elem => {
+
+		let onDel = elem.getAttribute('onDel');
+
+		if(typeof eval(onDel) === 'function') {
+			eval(onDel +'("'+ FieldsTags.getVal(elem) +'")');
+		}
 	},
 
 

@@ -2,69 +2,93 @@
 
 $rootFolder = './public/';
 
-$headerFile = './src/_assets/templates/templates.html';
+$templatesPath = './src/_assets/templates/';
 
-$headerCont = file_get_contents($headerFile);
+$templatesArr = [];
 
-$headerArr  = explode('<!--/R4TEMPLATE-->', $headerCont);
+$arrFiles = scandir($templatesPath);
 
-foreach($headerArr as $head) {
+foreach($arrFiles as $file) {
+	if((substr($templatesPath . $file, -4) == 'html') || (substr($templatesPath . $file, -3) == 'htm')) {
+		$tconterCont = file_get_contents($templatesPath . $file);
 
-	$head = trim($head);
-
-	if(!empty($head)) {
-
-		preg_match_all('|\<!--R4TEMPLATE-(.*)--\>|', $head, $match);
-
-		$version = $match[0][0];
-		$head   .= PHP_EOL .'<!--/R4TEMPLATE-->';
-
-		searchAll($rootFolder, $version, $head);
-	}
-}
-
-moduleSearchAll($rootFolder);
-
-
-function searchAll($rootFolder, $version, $head) {
-	global $headerFile;
-
-	$arrFiles = scandir($rootFolder);
-
-	foreach($arrFiles as $file) {
-		if(substr($file, 0, 1) == '.') continue;
-		if($rootFolder . $file == $headerFile) continue;
-
-		if(is_dir($rootFolder . $file) && !is_link($rootFolder . $file))  {
-
-			searchAll($rootFolder . $file .'/', $version, $head);
-
+		if(strpos($tconterCont, '/R4TEMPLATE') !== false) { //deprecated
+			$arr = explode('<!--/R4TEMPLATE-->', $tconterCont);
+			if(is_array($arr)) foreach($arr as $item) {
+				$item = trim($item);
+				if(!empty($item)) $templatesArr[] = $item;
+			}
 		} else {
-
-			if((substr($rootFolder . $file, -4) == 'html') || (substr($rootFolder . $file, -3) == 'htm')) {
-				replacer($rootFolder . $file, $version, $head);
+			$arr = explode('<!--R4TEMPLATE', $tconterCont);
+			if(is_array($arr)) foreach($arr as $item) {
+				$item = trim($item);
+				if(!empty($item)) $templatesArr[] = '<!--R4TEMPLATE'. $item;
 			}
 		}
 	}
 }
 
 
-function replacer($filename, $version, $head) {
+foreach($templatesArr as $tcont) {
+
+	$tcont = trim($tcont);
+
+	if(!empty($tcont)) {
+
+		preg_match_all('|\<!--R4TEMPLATE-(.*)--\>|', $tcont, $match);
+
+		$tid   = $match[0][0];
+		//$tcont .= PHP_EOL .'<!--/R4TEMPLATE-->';
+
+		searchAll($rootFolder, $tid, $tcont);
+	}
+}
+
+moduleSearchAll($rootFolder);
+
+
+function searchAll($rootFolder, $tid, $tcont) {
+	global $templatesPath;
+
+	$arrFiles = scandir($rootFolder);
+
+	foreach($arrFiles as $file) {
+		if(substr($file, 0, 1) == '.') continue;
+
+		if(is_dir($rootFolder . $file) && !is_link($rootFolder . $file))  {
+
+			if($rootFolder . $file == $templatesPath) continue;
+
+			searchAll($rootFolder . $file .'/', $tid, $tcont);
+
+		} else {
+
+			if((substr($rootFolder . $file, -4) == 'html') || (substr($rootFolder . $file, -3) == 'htm')) {
+				replacer($rootFolder . $file, $tid, $tcont);
+			}
+		}
+	}
+}
+
+
+function replacer($filename, $tid, $tcont) {
 
 	$filecont = file_get_contents($filename);
 
-	if($version) {
-		$filecont = str_replace($version, $head, $filecont);
+	if($tid) {
+		$filecont = str_replace($tid, $tcont, $filecont);
 	}
 
-	$filecont = replaceCaches($filecont, $filename);
+	$filecont = cacheReplacer($filecont, $filename);
 
 	file_put_contents($filename, $filecont);
 }
 
 
+//Substitui links que comecem por R4Cache:: por link?unixtime da
+//data de modificação do arquivo linkado para evitar o cache.
 
-function replaceCaches($content, $filename) {
+function cacheReplacer($content, $filename) {
 	preg_match_all('|R4Cache::(\S*)\"|m', $content, $outArr);
 
 	foreach($outArr[1] as $item) {
@@ -93,16 +117,21 @@ function replaceCaches($content, $filename) {
 
 
 
+
+//Se o módulo contém um index.html e uma pasta chamada templates,
+//coloca todo o conteúdo dos arquivos html da pasta templates
+//para dentro do arquivo index.html
 function moduleSearchAll($rootFolder) {
-	global $headerFile;
+	global $templatesPath;
 
 	$arrFiles = scandir($rootFolder);
 
 	foreach($arrFiles as $file) {
 		if(substr($file, 0, 1) == '.') continue;
-		if($rootFolder . $file == $headerFile) continue;
 
 		if(is_dir($rootFolder . $file) && !is_link($rootFolder . $file)) {
+
+			if($rootFolder . $file == $templatesPath) continue;
 
 			if($file == 'templates') {
 

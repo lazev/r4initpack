@@ -5,6 +5,12 @@ var Table = {
 	body: [],
 	foot: [],
 
+	iconLnkFirst: '&#x219E',
+	iconLnkPrev:  '&#x21BC',
+	iconLnkNext:  '&#x21C0',
+	iconLnkLast:  '&#x21A0',
+	iconOrderBy:  '&#8597',
+
 	create: function(opts){
 
 		if(!opts) opts = {};
@@ -395,7 +401,7 @@ var Table = {
 		}
 
 		if(clicked) {
-			icon = '<span class="spinning">&#8597;</span>';
+			icon = '<span class="spinning">'+ Table.iconOrderBy +'</span>';
 		}
 
 		let cleaner = table.querySelectorAll('thead > tr > th');
@@ -432,10 +438,10 @@ var Table = {
 		next.setAttribute('class',  'col-xs-3 center R4TablePageNext'  );
 		last.setAttribute('class',  'col-xs-3 center R4TablePageLast'  );
 
-		first.innerHTML = '&#x219E';
-		prev.innerHTML  = '&#x21BC';
-		next.innerHTML  = '&#x21C0';
-		last.innerHTML  = '&#x21A0';
+		first.innerHTML = Table.iconLnkFirst;
+		prev.innerHTML  = Table.iconLnkPrev;
+		next.innerHTML  = Table.iconLnkNext;
+		last.innerHTML  = Table.iconLnkLast;
 
 		pgntn.appendChild(first);
 		pgntn.appendChild(prev);
@@ -446,9 +452,9 @@ var Table = {
 	},
 
 
-	createPgntnBtn: function(numPage, icon, colorClass, disabled) {
+	createPgntnBtn: function(numPage, icon, disabled) {
 		let btn = document.createElement('button');
-		btn.setAttribute('class',  'R4 bgWhite '+ colorClass +' ');
+		btn.setAttribute('class',  'R4');
 		btn.setAttribute('numPage', numPage);
 		if(disabled) btn.setAttribute('disabled', 'true');
 		btn.innerHTML = icon;
@@ -475,20 +481,20 @@ var Table = {
 		let lnkFirst, lnkPrev, lnkNext, lnkLast;
 
 		if(currentPage <= 1) {
-			lnkFirst = Table.createPgntnBtn(0, '&#x219E', 'light', true);
-			lnkPrev  = Table.createPgntnBtn(0, '&#x21BC', 'light', true);
+			lnkFirst = Table.createPgntnBtn(0, Table.iconLnkFirst, true);
+			lnkPrev  = Table.createPgntnBtn(0, Table.iconLnkPrev,  true);
 		} else {
-			lnkFirst = Table.createPgntnBtn(0,             '&#x219E', 'primary', false);
-			lnkPrev  = Table.createPgntnBtn(currentPage-1, '&#x21BC', 'primary', false);
+			lnkFirst = Table.createPgntnBtn(0,             Table.iconLnkFirst, false);
+			lnkPrev  = Table.createPgntnBtn(currentPage-1, Table.iconLnkPrev, false);
 			hasPgs = true;
 		}
 
 		if(lastreg >= totalReg) {
-			lnkNext = Table.createPgntnBtn(0, '&#x21C0', 'light', true);
-			lnkLast = Table.createPgntnBtn(0, '&#x21A0', 'light', true);
+			lnkNext = Table.createPgntnBtn(0, Table.iconLnkNext, true);
+			lnkLast = Table.createPgntnBtn(0, Table.iconLnkLast, true);
 		} else {
-			lnkNext = Table.createPgntnBtn(currentPage+1, '&#x21C0', 'primary', false);
-			lnkLast = Table.createPgntnBtn(lastpg+1,      '&#x21A0', 'primary', false);
+			lnkNext = Table.createPgntnBtn(currentPage+1, Table.iconLnkNext, false);
+			lnkLast = Table.createPgntnBtn(lastpg+1,      Table.iconLnkLast, false);
 			hasPgs = true;
 		}
 
@@ -555,7 +561,7 @@ var Table = {
 		});
 
 		let btnSel = document.createElement('button');
-		btnSel.setAttribute('class', 'R4 bgWhite grey');
+		btnSel.setAttribute('class', 'R4');
 		btnSel.innerHTML = 'reg/pag';
 		btnSel.id = idDestiny +'BtnRegPerPage';
 
@@ -595,7 +601,7 @@ var Table = {
 			fldsObj.push({ id: 'listColItem_'+ k, type: 'switch', checked: checked, value: k });
 		}
 
-		html += '<button class="R4 bgSuccess" id="'+ idDestiny +'ColSelBtnSave">Salvar</button>'+
+		html += '<button class="R4" id="'+ idDestiny +'ColSelBtnSave">Salvar</button>'+
 		        '</div>';
 
 		Pop.click(btnElem, {

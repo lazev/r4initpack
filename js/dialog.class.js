@@ -4,6 +4,8 @@ var Dialog = {
 	beforeCloseFuncs: {},
 	onCloseFuncs: {},
 
+	iconCloser: '<svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/></svg>',
+
 	create: function(opts) {
 		return new Promise((resolve, reject) => {
 
@@ -74,7 +76,7 @@ var Dialog = {
 			if(ephemeral) over.setAttribute('ephemeral', 'true');
 
 			let closer = document.createElement('div');
-			closer.innerHTML = '<img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAQAAAAngNWGAAAAWklEQVR4Ac3RAQbAMAxG4Qd6pUJAy+xWu9qOsxlgQgq2AxT5AX0B+IgIa7XREWoED4UkI3AsZ06orJFUcYbCXj5uzmkOGSar02NUGgSm/sWpGh1cFIR2Oiv1A9VmLUcOOFMwAAAAAElFTkSuQmCC" alt="Back arrow">';
+			closer.innerHTML = Dialog.iconCloser;
 			closer.style.float = 'left';
 			closer.setAttribute('target', idElem);
 			closer.classList.add('R4DialogCloser');

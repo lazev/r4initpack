@@ -1,5 +1,7 @@
 var Warning = {
 
+	iconCloser: '&#x2716',
+
 	show: function(msg, obs, opts) {
 		if(!opts) opts = {};
 
@@ -21,7 +23,7 @@ var Warning = {
 		if(fixed) {
 			let closer = document.createElement('div');
 			closer.classList.add('R4WarningCloser');
-			closer.innerHTML = '&#x2716;';
+			closer.innerHTML = Warning.iconCloser;
 			closer.style.float = 'right';
 			closer.addEventListener('click', function(event) {
 				Warning.hide(elem);
