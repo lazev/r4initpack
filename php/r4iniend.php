@@ -8,6 +8,16 @@ if(!defined('R4ALREADYINIT')) {
 		}
 	}
 
+	if(isset($_CONFIG['requireReferer'])) {
+		if($_CONFIG['requireReferer']) {
+			if(strpos($_SERVER['HTTP_REFERER'], $_CONFIG['requireReferer']) !== 0) {
+				header('HTTP/1.1 403 Forbidden');
+				exit();
+			}
+		}
+	}
+
+
 	require 'r4.class.php';
 	require 'db.class.php';
 

@@ -7,6 +7,7 @@ class R4 {
 	}
 
 
+
 	public static function dieAPI($stat=0, $msg='', $obs='', $fields=[]) {
 		$jsonfields = (count($fields)) ? $jsonfields = ', "errFields":'. json_encode($fields) : '';
 		echo '{"error": 1, "status": "'. $stat .'", "errMsg": "'. $msg .'", "errObs": "'. $obs .'"'. $jsonfields .'}';
@@ -57,7 +58,7 @@ class R4 {
 			$key = str_replace($ent, $sai, $key);
 
 			if(is_array($val)) $ret[$key] = R4::getRequest($val);
-			$ret[$key] = str_replace($ent, $sai, $val);
+			else $ret[$key] = addslashes(str_replace($ent, $sai, $val));
 		}
 
 		return $ret;

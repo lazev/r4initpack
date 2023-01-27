@@ -591,7 +591,7 @@ var Table = {
 		btnElem.setAttribute('class', 'hiddenPrint');
 		btnElem.innerHTML = 'Escolher colunas';
 
-		let html    = '<div id="'+ idDestiny +'ColSelOptBox" class="paspatur"><b>Opções de colunas</b>';
+		let html    = '<div id="'+ idDestiny +'ColSelOptBox" class="R4TableColSelOptBox paspatur"><b>Opções de colunas</b>';
 		let fldsObj = [];
 		let checked = false;
 
