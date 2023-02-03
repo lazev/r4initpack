@@ -130,16 +130,16 @@ var FieldsDtPicker = {
 			elValue
 		);
 
+		tbl.addEventListener('click', function(ev) {
+			elem.focus();
+		});
+
 		box.append(elMonth);
 		box.append(elYear);
 		box.append(btnPrev);
 		box.append(btnNext);
 		box.append(tbl);
 		box.append(btnToday);
-
-		box.addEventListener('click', function(ev) {
-			elem.focus();
-		});
 
 		return box;
 	},
