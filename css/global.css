@@ -84,6 +84,8 @@ svg.icon circle {
 	padding: 3px;
 	background-color: #2196f3;
 	color: white;
+	margin-left: 1px;
+	margin-right: 1px;
 }
 
 .transition { transition: 0.2s ease-out; }
@@ -111,7 +113,7 @@ svg.icon circle {
 }
 
 @keyframes highlight-bg {
-	0% { background: #f0e68c; }
+	0% { background: #f0e68c !important; }
 	100% { background: transparent; }
 }
 

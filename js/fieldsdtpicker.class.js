@@ -10,7 +10,6 @@ var FieldsDtPicker = {
 		let today        = new Date();
 		let currentMonth = today.getMonth();
 		let currentYear  = today.getFullYear();
-		let currentDay   = today.getDate();
 		let months = [
 			'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
 			'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
@@ -35,7 +34,7 @@ var FieldsDtPicker = {
 
 		let elMonth = document.createElement('select');
 		elMonth.setAttribute('class', 'col-4 col-xs-4');
-		elMonth.addEventListener('change', function(ev){
+		elMonth.addEventListener('change', function(){
 			FieldsDtPicker.createCalendar(
 				tbl,
 				elem,
@@ -55,7 +54,7 @@ var FieldsDtPicker = {
 
 		let elYear = document.createElement('select');
 		elYear.setAttribute('class', 'col-4 col-xs-4');
-		elYear.addEventListener('change', function(ev){
+		elYear.addEventListener('change', function(){
 			FieldsDtPicker.createCalendar(
 				tbl,
 				elem,
@@ -76,7 +75,7 @@ var FieldsDtPicker = {
 		let btnNext = document.createElement('button');
 		btnNext.setAttribute('class', 'col-2 col-xs-2');
 		btnNext.innerHTML = FieldsDtPicker.iconBtnNext;
-		btnNext.addEventListener('click', function(ev){
+		btnNext.addEventListener('click', function(){
 			if(elMonth.value == 11) {
 				elMonth.value = 0;
 				elYear.value = parseInt(elYear.value)+1;
@@ -95,7 +94,7 @@ var FieldsDtPicker = {
 		let btnPrev = document.createElement('button');
 		btnPrev.setAttribute('class', 'col-2 col-xs-2');
 		btnPrev.innerHTML = FieldsDtPicker.iconBtnPrev;
-		btnPrev.addEventListener('click', function(ev){
+		btnPrev.addEventListener('click', function(){
 			if(elMonth.value == 0) {
 				elMonth.value = 11;
 				elYear.value = parseInt(elYear.value)-1;
@@ -114,12 +113,9 @@ var FieldsDtPicker = {
 		let btnToday = document.createElement('button');
 		btnToday.setAttribute('class', 'col-4 col-xs-4 onRight');
 		btnToday.innerHTML = 'Hoje';
-		btnToday.addEventListener('click', function(ev) {
-			let zeroday = (currentDay < 10) ? '0'+ currentDay : currentDay;
-			let zeromon = parseInt(currentMonth)+1;
-			zeromon = (zeromon < 10) ?  '0'+ zeromon : zeromon;
-
-			FieldsDtPicker.setVal(elem, currentYear +'-'+ zeromon +'-'+ zeroday);
+		btnToday.addEventListener('click', function() {
+			let timezoneOffset = (new Date()).getTimezoneOffset() * 60000;
+			FieldsDtPicker.setVal(elem, (new Date(Date.now() - timezoneOffset)).toISOString().substring(0, 10));
 		});
 
 		FieldsDtPicker.createCalendar(
@@ -130,7 +126,7 @@ var FieldsDtPicker = {
 			elValue
 		);
 
-		tbl.addEventListener('click', function(ev) {
+		tbl.addEventListener('click', function() {
 			elem.focus();
 		});
 
@@ -193,7 +189,7 @@ var FieldsDtPicker = {
 					cell = document.createElement('td');
 					cell.innerHTML = day;
 					cell.setAttribute('value', val);
-					cell.addEventListener('click', function(ev) {
+					cell.addEventListener('click', function() {
 						FieldsDtPicker.setVal(destiny, this.getAttribute('value'));
 					});
 

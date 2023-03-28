@@ -561,7 +561,7 @@ var Table = {
 		});
 
 		let btnSel = document.createElement('button');
-		btnSel.setAttribute('class', 'R4');
+		btnSel.setAttribute('class', 'R4 col-xs-12');
 		btnSel.innerHTML = 'reg/pag';
 		btnSel.id = idDestiny +'BtnRegPerPage';
 
@@ -584,7 +584,7 @@ var Table = {
 	},
 
 
-	listColSelector: (idDestiny, listExtraCols, selExtraCols) => {
+	listColSelector: function(idDestiny, listExtraCols, selExtraCols) {
 
 		var btnElem = document.createElement('a');
 		btnElem.setAttribute('href', '#');

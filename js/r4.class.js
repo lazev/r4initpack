@@ -152,29 +152,17 @@ var R4 = {
 	},
 
 
-	checkDate: function(x) {
-		if(x.indexOf('-') == -1) return false;
-		else if (x.indexOf('-') == x.lastIndexOf('-')) return false;
-		else {
-			let year  = x.substring(0, x.indexOf('-'));
-			let month = x.substring(x.indexOf('-')+1,     x.lastIndexOf('-'));
-			let day   = x.substring(x.lastIndexOf('-')+1, x.length);
+	checkDate: function(dateStr) {
+		let regex = /^\d{4}-\d{2}-\d{2}$/;
 
-			if(
-				(month>12) || (month < 1) || (year.length == 3)
-				|| ((year%4!=0) && (month==2) && (day==29))
-				|| ((month==2) && (day>29))
-				|| (
-						((month==4) || (month==6) || (month==9) || (month==11))
-					&& (day > 30)
-				)
-				|| (
-						((month==1) || (month==3)  || (month==5)   || (month==7)
-					|| (month==8)  || (month==10) || (month==12)) && (day > 31)
-				)
-			) return false;
-		}
-		return true;
+		if(dateStr.match(regex) === null) return false;
+
+		let date = new Date(dateStr);
+		let timestamp = date.getTime();
+
+		if(typeof timestamp !== 'number' || Number.isNaN(timestamp)) return false;
+
+		return date.toISOString().startsWith(dateStr);
 	},
 
 
@@ -367,15 +355,29 @@ var R4 = {
 	},
 
 
+	changeDate: function(dtStr, year, month, day) {
+
+		let dt = new Date(dtStr +' 00:00:00');
+
+		if(year)  dt.setFullYear( dt.getFullYear() + year );
+		if(month) dt.setMonth( dt.getMonth() + month );
+		if(day)   dt.setDate( dt.getDate() + day );
+
+		return dt.toISOString().substr(0, 10);
+	},
+
+
 	currentDate: function() {
-		let now = new Date().toISOString();
-		return now.substr(0, 10);
+		let tz = (new Date()).getTimezoneOffset() * 60000;
+
+		return (new Date(Date.now() - tz)).toISOString().substring(0, 10);
 	},
 
 
 	currentDateTime: function() {
-		let now = new Date().toISOString();
-		return now.substr(0, 19).replace('T', ' ');
+		let tz = (new Date()).getTimezoneOffset() * 60000;
+
+		return (new Date(Date.now() - tz)).toISOString().substring(0, 19).replace('T', ' ');
 	},
 
 

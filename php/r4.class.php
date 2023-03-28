@@ -1,11 +1,24 @@
 <?php
 class R4 {
 
-	public static function retOkAPI($params=[]) {
-		$params['ok'] = 1;
-		echo json_encode($params);
+	public static function getRequest($cont='') {
+
+		if($cont==='') $cont = $_REQUEST;
+
+		if(!is_array($cont)) return [];
+
+		return $cont;
 	}
 
+
+	public static function retOkAPI($params=[]) {
+
+		$params = R4::recursiveTagSymbolsReplace($params);
+
+		$params['ok'] = 1;
+
+		echo json_encode($params);
+	}
 
 
 	public static function dieAPI($stat=0, $msg='', $obs='', $fields=[]) {
@@ -42,43 +55,14 @@ class R4 {
 	}
 
 
-	public static function getRequest($cont='') {
-
-		if($cont==='') $cont = $_REQUEST;
-
-		if(!is_array($cont)) return [];
-
-		$ret = [];
-
-		$ent = ['<',    '>'   ];
-		$sai = ['&lt;', '&gt;'];
-
-		foreach($cont as $key => $val) {
-
-			$key = str_replace($ent, $sai, $key);
-
-			if(is_array($val)) $ret[$key] = R4::getRequest($val);
-			else $ret[$key] = addslashes(str_replace($ent, $sai, $val));
-		}
-
-		return $ret;
-	}
-
-
 	public static function intArray($val) {
 		if(is_array($val)) {
 			$arr = $val;
 		} else {
-			if(strpos($val, ',') !== false) {
-				$arr = explode(',', $val);
-			} else {
-				$arr = [$val];
-			}
+			$arr = (strpos($val, ',') !== false) ? explode(',', $val) : [$val];
 		}
 
-		foreach($arr as $item) {
-			$ret[] = (int)$item;
-		}
+		foreach($arr as $item) $ret[] = (int)$item;
 
 		return $ret;
 	}
@@ -89,19 +73,20 @@ class R4 {
 			'changed' => [],
 			'merged'  => []
 		];
+
 		foreach($new as $key => $val) {
 			$up = false;
-			//only if exists on DB
+			//Apenas se tem no BD
 			if(isset($old[$key])) {
-				//only if the new value is different from the DB value
+				//Apenas se o novo valor é diferente do valor do BD
 				if($old[$key] != $val) {
-					//but do the update if the new value is empty...
+					//Se o valor novo é em branco, mas no BD
+					//os valores em branco são diferentes
 					if(
 							(empty($val))
 						|| ($val == '0000-00-00')
 						|| ($val == '0000-00-00 00:00:00')
 					){
-						//...and the DB value is not empty
 						if(!empty($old[$key])) {
 							if(
 								($old[$key] != '0000-00-00')
@@ -377,15 +362,35 @@ class R4 {
 
 	public static function stripAccent($string) {
 		return str_replace(
-			array('à','á','â','ã','ä', 'ç', 'è','é','ê','ë', 'ì','í','î','ï', 'ñ',
-			      'ò','ó','ô','õ','ö', 'ù','ú','û','ü', 'ý','ÿ', 'À','Á','Â','Ã','Ä',
-			      'Ç', 'È','É','Ê','Ë', 'Ì','Í','Î','Ï', 'Ñ', 'Ò','Ó','Ô','Õ','Ö',
-			      'Ù','Ú','Û','Ü', 'Ý'),
-			array('a','a','a','a','a', 'c', 'e','e','e','e', 'i','i','i','i', 'n',
-			      'o','o','o','o','o', 'u','u','u','u', 'y','y', 'A','A','A','A','A',
-			      'C', 'E','E','E','E', 'I','I','I','I', 'N', 'O','O','O','O','O',
-			      'U','U','U','U', 'Y'),
+			array('à','á','â','ã','ä','ç','è','é','ê','ë','ì','í','î','ï','ñ',
+			      'ò','ó','ô','õ','ö','ù','ú','û','ü','ý','ÿ','À','Á','Â','Ã','Ä',
+			      'Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ñ','Ò','Ó','Ô','Õ','Ö',
+			      'Ù','Ú','Û','Ü','Ý'),
+			array('a','a','a','a','a','c','e','e','e','e','i','i','i','i', 'n',
+			      'o','o','o','o','o','u','u','u','u','y','y','A','A','A','A','A',
+			      'C','E','E','E','E','I','I','I','I','N','O','O','O','O','O',
+			      'U','U','U','U','Y'),
 			$string);
 	}
 
+
+	public static function recursiveTagSymbolsReplace($subject) {
+		return is_array($subject)
+			? array_map('R4::recursiveTagSymbolsReplace', $subject)
+			: str_replace(['<', '>'], ['&lt;', '&gt;'], $subject);
+	}
+
+
+	public static function recursiveStripSlashes($subject) {
+		return is_array($subject)
+			? array_map('R4::recursiveStripSlashes', $subject)
+			: stripslashes($subject);
+	}
+
+
+	public static function recursiveStrEscape($subject) {
+		return is_array($subject)
+			? array_map('R4::recursiveStrEscape', $subject)
+			: mb_ereg_replace('[\x00\x0A\x0D\x1A\x22\x27\x5C]', '\\\0', $subject);
+	}
 }

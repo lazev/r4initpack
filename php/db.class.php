@@ -78,11 +78,16 @@ class DB {
 	}
 
 
-	public function sql($com, $dataFields='', $stripTags=true, $errorAlert=true) {
+	public function sql($sqlQuery, $dataFields='', $errorAlert=true) {
+		if(is_null($this->DBCon)) {
+			$this->errCod = 400;
+			$this->errMsg = 'Sem conexão com o banco de dados';
+			$this->errCom = $sqlQuery;
+			return false;
+		}
 
-		$com = trim($com);
+		$sqlQuery = trim($sqlQuery, " \n\r\t\v\x00;");
 
-		//If $dataFields is empty, just run the $com command
 		if(!empty($dataFields)) {
 			if(is_array($dataFields)) {
 				foreach($dataFields as $field => $value) {
@@ -96,74 +101,44 @@ class DB {
 						elseif($value === NULL)
 							$values[] = 'NULL';
 						else {
-							if($stripTags) $value = strip_tags($value);
-							$value = iconv('UTF-8', 'UTF-8//IGNORE', $value);
-							$value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/u', '', $value);
-							$value = str_replace('\0', '/0', $value);
-							$value = addslashes($value);
-							$values[] = "'$value'";
+							$values[] = "'". $this->real_escape_string($value) ."'";
 						}
 					}
 				}
 			}
 
-			if(strtolower(substr($com, 0, 6)) == 'insert') { //INSERT
+			if(strtolower(substr($sqlQuery, 0, 6)) == 'insert') { //INSERT
 				$field = implode(', ', $fields);
 				$value = implode(', ', $values);
-				$com = $com .' ('. $field .') values ('. $value .')';
+				$sqlQuery = $sqlQuery .' ('. $field .') values ('. $value .')';
 			}
 
-			elseif(strtolower(substr($com, 0, 6)) == 'update') { //UPDATE
+			elseif(strtolower(substr($sqlQuery, 0, 6)) == 'update') { //UPDATE
 				foreach($fields as $key => $field) {
 					$texts[] = $field .'='. $values[$key];
 				}
 				$text = implode(', ', $texts);
-				$com = str_replace('[fields]', $text, $com);
+				$sqlQuery = str_replace('[fields]', $text, $sqlQuery);
 			}
 		}
 
 		if($this->debug) {
-			echo '<p>'. PHP_EOL . $com . PHP_EOL .'</p>';
+			echo '<p>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
 		}
 
-		//Do the sql command
-		try {
+		$result = $this->trySQL($sqlQuery, $errorAlert);
+		if($result === false) return false;
 
-			$result = $this->DBCon->query($com);
+		if(strtolower(substr($sqlQuery, 0, 6)) != 'select')  return true;
 
-		} catch (Exception $e) {
-
-			$this->errCod = $e->getCode();
-			$this->errMsg = $this->errCod .' - '. $e->getMessage();
-			$this->errCom = $com;
-
-			if($errorAlert) {
-				$this->errorMonitor(
-					'MySQL error on '
-					. $this->currentBase .'@'. $this->currentHost .': '.
-					$this->errMsg . ': ['. $this->errCom .']'
-				);
-			}
-
-			return false;
-		}
-
-		$this->affectedRows = $this->DBCon->affected_rows;
-
-		//If it is a select command, return an array;
-		if(strtolower(substr($com, 0, 6)) != 'select') {
-			return true;
-		}
 		else {
-			if(strtolower(substr($com, -7)) == 'limit 1') { //If is 'limit 1' set, return the value directly
+			$response = [];
+
+			if(strtolower(substr($sqlQuery, -7)) == 'limit 1') {
 				$response = $result->fetch_array(MYSQLI_ASSOC);
 			}
-			else { //Else, return into a list
-				$response = array();
-
-				while($row = $result->fetch_array(MYSQLI_ASSOC))  {
-					$response[] = $row;
-				}
+			else {
+				while($row = $result->fetch_array(MYSQLI_ASSOC)) $response[] = $row;
 			}
 
 			return $response;
@@ -171,21 +146,70 @@ class DB {
 	}
 
 
-	public function pureSQL($com, $errorAlert=true) {
-
-		if($this->debug) {
-			echo '<p>'. PHP_EOL . $com . PHP_EOL .'</p>';
+	public function select($sqlQuery='', $dataFields=[], $errorAlert=true) {
+		if(is_null($this->DBCon)) {
+			$this->errCod = 400;
+			$this->errMsg = 'Sem conexão com o banco de dados';
+			$this->errCom = $sqlQuery;
+			return false;
 		}
 
+		$sqlQuery = trim($sqlQuery, " \n\r\t\v\x00;");
+
+		if($this->debug) {
+			echo '<p><b>Query antes:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p><b>Payload:</b><br>';
+			print_r($dataFields);
+		}
+
+		if(count($dataFields)) {
+			foreach($dataFields as $key => $val) {
+				$sqlQuery = str_replace(':'. $key, $this->real_escape_string($val), $sqlQuery);
+			}
+		}
+
+		if($this->debug) {
+			echo '<p><b>Query depois:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
+		}
+
+		$result = $this->trySQL($sqlQuery, $errorAlert);
+		if($result === false) return false;
+
+		$response = [];
+
+		if(strtolower(substr($sqlQuery, -7)) == 'limit 1') {
+			$response = $result->fetch_array(MYSQLI_ASSOC);
+		}
+		else {
+			while($row = $result->fetch_array(MYSQLI_ASSOC)) $response[] = $row;
+		}
+
+		return $response;
+	}
+
+
+	public function pureSQL($sqlQuery, $errorAlert=true) {
+
+		if($this->debug) {
+			echo '<p>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
+		}
+
+		$result = $this->trySQL($sqlQuery, $errorAlert);
+		if($result === false) return false;
+
+		return $result;
+	}
+
+
+	private function trySQL($sqlQuery, $errorAlert=true) {
 		try {
 
-			$result = $this->DBCon->query($com);
+			$result = $this->DBCon->query($sqlQuery);
 
 		} catch (Exception $e) {
 
 			$this->errCod = $e->getCode();
 			$this->errMsg = $this->errCod .' - '. $e->getMessage();
-			$this->errCom = $com;
+			$this->errCom = $sqlQuery;
 
 			if($errorAlert) {
 				$this->errorMonitor(
@@ -219,7 +243,6 @@ class DB {
 
 	public function countRows($result) {
 		return mysqli_num_rows($result);
-
 	}
 
 

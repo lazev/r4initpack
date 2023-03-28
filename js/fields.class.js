@@ -24,7 +24,7 @@ var Fields = {
 
 				resolve();
 			})
-			.catch(err => {
+			.catch(() => {
 				reject('Erro ao abrir o JSON do fields');
 			});
 		});
@@ -33,7 +33,7 @@ var Fields = {
 
 	create: function(jsonFields, prefix) {
 
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 
 			var item, elem, rcpt, label, arrFields = [];
 
@@ -93,7 +93,7 @@ var Fields = {
 
 	createInput: function(item, prefix) {
 
-		let elem, type, inputmode, label, passEye, wrapClass, tagList;
+		let elem, type, inputmode, label, passEye, tagList;
 
 		let id   = (prefix)   ? prefix +'_'+ item.id : item.id;
 		let name = item.name || item.id;
@@ -135,7 +135,7 @@ var Fields = {
 			elem = document.createElement('textarea');
 
 			if(item.autosize) {
-				elem.addEventListener('keyup', function(ev){
+				elem.addEventListener('keyup', function(){
 					if(elem.clientHeight < elem.scrollHeight) {
 						let limit = 0;
 						while(elem.offsetHeight < elem.scrollHeight) {
@@ -175,13 +175,13 @@ var Fields = {
 					elem = FieldsTags.create(elem, item);
 
 					if(item.type == 'phonetags') {
-						elem.addEventListener('input', function(ev){ this.value = R4.phoneMask(this.value); });
+						elem.addEventListener('input', function(){ this.value = R4.phoneMask(this.value); });
 					}
 
 					break;
 
 				case 'username':
-					elem.addEventListener('input', function(ev){ this.value = R4.friendlyName(this.value); });
+					elem.addEventListener('input', function(){ this.value = R4.friendlyName(this.value); });
 					break;
 
 				case 'password':
@@ -189,7 +189,7 @@ var Fields = {
 					passEye = document.createElement('span');
 					passEye.setAttribute('class', 'passEye');
 					passEye.innerHTML = Fields.iconShowPass;
-					passEye.addEventListener('click', function(e){
+					passEye.addEventListener('click', function(){
 						elem.setAttribute(
 							'type',
 							elem.getAttribute('type') === 'password' ? 'text' : 'password'
@@ -201,14 +201,14 @@ var Fields = {
 					type = 'text';
 					inputmode = 'date';
 
-					elem.addEventListener('click', function(ev){
+					elem.addEventListener('click', function(){
 						Pop.create({
 							destiny: elem,
 							html: FieldsDtPicker.create(elem)
 						});
 					});
 
-					elem.addEventListener('focus', function(ev){
+					elem.addEventListener('focus', function(){
 						Pop.create({
 							destiny: elem,
 							html: FieldsDtPicker.create(elem),
@@ -216,7 +216,7 @@ var Fields = {
 						});
 					});
 
-					elem.addEventListener('blur', function(ev){
+					elem.addEventListener('blur', function(){
 						elem.value = R4.completeDate(elem.value);
 						Pop.destroyByParent(elem);
 					});
@@ -246,7 +246,7 @@ var Fields = {
 					type = 'text';
 					inputmode = 'numeric';
 
-					elem.addEventListener('input', function(ev){ this.value = R4.integerMask(this.value); });
+					elem.addEventListener('input', function(){ this.value = R4.integerMask(this.value); });
 
 					if(item.type == 'integer') {
 						if(item.min < 0) item.min = 0;
@@ -261,25 +261,25 @@ var Fields = {
 					inputmode = 'decimal';
 
 					elem = Fields.setCalcEvents(elem);
-					elem.addEventListener('input', function(ev){ this.value = R4.decimalInputMask(this.value); });
+					elem.addEventListener('input', function(){ this.value = R4.decimalInputMask(this.value); });
 
 					break;
 
 				case 'cep':
 					type = 'tel';
-					elem.addEventListener('input', function(ev){ this.value = R4.cepMask(this.value); });
+					elem.addEventListener('input', function(){ this.value = R4.cepMask(this.value); });
 					break;
 
 				case 'cpf':
 				case 'cnpj':
 				case 'cpfcnpj':
 					type = 'tel';
-					elem.addEventListener('input', function(ev){ this.value = R4.cpfcnpjMask(this.value); });
+					elem.addEventListener('input', function(){ this.value = R4.cpfcnpjMask(this.value); });
 					break;
 
 				case 'phone':
 					type = 'tel';
-					elem.addEventListener('input', function(ev){ this.value = R4.phoneMask(this.value); });
+					elem.addEventListener('input', function(){ this.value = R4.phoneMask(this.value); });
 					break;
 
 				case 'hidden':
@@ -356,7 +356,7 @@ var Fields = {
 		wrap.append(elem);
 		wrap.append(label);
 
-		elem.addEventListener('blur', function(event){
+		elem.addEventListener('blur', function(){
 			if(this.selectedIndex > -1 && this.options[this.selectedIndex].innerHTML) {
 				wrap.classList.add('withContent');
 			} else {
@@ -393,9 +393,8 @@ var Fields = {
 				opt.setAttribute('value', k);
 				opt.innerHTML = options[k];
 
-				if(value == k) {
+				if(value == k)
 					opt.setAttribute('selected', 'selected');
-				}
 
 				elem.append(opt);
 			}
@@ -407,9 +406,11 @@ var Fields = {
 					opt.setAttribute('value', options[k].key);
 					opt.innerHTML = options[k].value;
 
-					if(value == options[k].key) {
+					if(typeof options[k].classes != 'undefined')
+						opt.setAttribute('class', options[k].classes);
+
+					if(value == options[k].key)
 						opt.setAttribute('selected', 'selected');
-					}
 
 					elem.append(opt);
 				}
@@ -462,7 +463,7 @@ var Fields = {
 		let attr    = item.attr    || {};
 		let value   = item.value   || 1;
 		let checked = item.checked || false;
-		let label   = item.label   ?? 'abc';
+		let label   = item.label   || '';
 		let classes = [];
 
 		let attrib  = {
@@ -523,19 +524,19 @@ var Fields = {
 			elem.classList.add('WithValidate');
 		}
 
-		elem.addEventListener('keyup', function(ev){
+		elem.addEventListener('keyup', function(){
 			if(elem.parentNode.classList.contains('errField')) {
 				Fields.validate(this);
 			}
 		});
 
-		elem.addEventListener('click', function(ev){
+		elem.addEventListener('click', function(){
 			if(elem.parentNode.classList.contains('errField')) {
 				Fields.validate(this);
 			}
 		});
 
-		elem.addEventListener('blur', function(ev) {
+		elem.addEventListener('blur', function() {
 			Fields.validate(elem);
 		});
 	},
@@ -555,7 +556,7 @@ var Fields = {
 
 	setErrFields: function(err, prefix) {
 		if(err.errFields) {
-			var txt, r, elem;
+			var txt, elem;
 
 			for(var campo in err.errFields) {
 				elem = document.getElementById(prefix +'_'+ campo);
@@ -584,7 +585,6 @@ var Fields = {
 		let id = elem.id;
 		elem.parentNode.classList.remove('errField');
 		elem.removeEventListener('mouseenter', Fields.listActiveErrFields[id]);
-		Fields.listActiveErrFields[id];
 		delete Fields.listActiveErrFields[id];
 	},
 
@@ -658,7 +658,7 @@ var Fields = {
 				let splits = elem.attr('decimal').split(',');
 				let decVal = parseInt(splits[1]);
 				let intVal = parseInt(splits[0])-decVal;
-        let regExp = null;
+				let regExp = null;
 
 				if(decVal > 0) {
 					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
@@ -864,9 +864,19 @@ var Fields = {
 				FieldsTags.setVal(elem, value, label);
 				break;
 			default:
+				if(typeof value === 'string' && value.indexOf('&') > -1)
+					value = Fields.htmlTagsEntitiesDecode(value);
+
 				elem.value = value;
 		}
 		elem.dispatchEvent(new Event('blur'));
+	},
+
+
+	htmlTagsEntitiesDecode: function(txt) {
+		txt = txt.replaceAll('&lt;', '<');
+		txt = txt.replaceAll('&gt;', '>');
+		return txt;
 	},
 
 
@@ -894,7 +904,7 @@ var Fields = {
 			}
 		});
 
-		elem.addEventListener('blur', function(ev){
+		elem.addEventListener('blur', function(){
 			elem.value = elem.value.replaceAll('=', '');
 		});
 
