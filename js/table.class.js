@@ -5,13 +5,16 @@ var Table = {
 	body: [],
 	foot: [],
 
+	lineCells: [],
+	cellClass: [],
+
 	iconLnkFirst: '&#x219E',
 	iconLnkPrev:  '&#x21BC',
 	iconLnkNext:  '&#x21C0',
 	iconLnkLast:  '&#x21A0',
 	iconOrderBy:  '&#8597',
 
-	create: function(opts){
+	create: function(opts) {
 
 		if(!opts) opts = {};
 
@@ -102,6 +105,31 @@ var Table = {
 		if(typeof listExtraCols == 'object') {
 			Table.listColSelector(idDestiny, listExtraCols, selExtraCols);
 		}
+	},
+
+
+	initLine: function() {
+		Table.lineCells = [];
+		Table.cellClass = [];
+	},
+
+
+	addCell: function(content, classes) {
+		if(!content) content = '';
+		if(!classes) classes = '';
+
+		Table.lineCells.push(content);
+		Table.cellClass.push(classes);
+	},
+
+
+	getCells: function() {
+		return Table.lineCells;
+	},
+
+
+	getClasses: function() {
+		return Table.cellClass;
 	},
 
 

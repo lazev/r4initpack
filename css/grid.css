@@ -5,7 +5,7 @@
 
 .row {
 	position: relative;
-	width: 100%;
+	width: auto;
 }
 
 .row [class^="col"] {

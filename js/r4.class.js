@@ -29,6 +29,10 @@ let methods = {
 		}
 	},
 
+	find: function(selector) {
+		return this.querySelectorAll(selector);
+	},
+
 	visible: function() {
 		return (this.offsetParent !== null);
 	}
@@ -139,7 +143,7 @@ var R4 = {
 				clearInterval(typeEffectInterval);
 				el.innerHTML = txt;
 			}
-		}, (speed ?? 15));
+		}, (speed || 15));
 	},
 
 
@@ -393,7 +397,7 @@ var R4 = {
 
 
 	dateUnmask: function(dt, ifempty) {
-		if(!dt) return ifempty ?? '';
+		if(!dt) return ifempty || '';
 
 		return dt.substr(6, 4) +'-'
 		     + dt.substr(3, 2) +'-'
@@ -678,7 +682,7 @@ var R4 = {
 
 
 	getScript: function(files) {
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 			let counter  = 0;
 			let arrFiles = [];
 
@@ -739,7 +743,7 @@ var R4 = {
 
 
 	setRemoteHTML: function(destiny, source, callback) {
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 
 			R4.getHTML(source)
 
@@ -949,7 +953,7 @@ var R4 = {
 
 	sWorker: swFilePath => {
 
-		window.isUpdateAvailable = new Promise(function(resolve, reject) {
+		window.isUpdateAvailable = new Promise((resolve, reject) => {
 			console.log('Worker init');
 
 			if('serviceWorker' in navigator) {
@@ -971,7 +975,10 @@ var R4 = {
 					};
 				})
 
-				.catch(err => console.error('[SW ERROR]', err));
+				.catch(err => {
+					console.error('[SW ERROR]', err);
+					reject(err);
+				});
 			}
 		});
 
