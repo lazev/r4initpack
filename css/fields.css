@@ -5,8 +5,8 @@
 }
 
 .R4Fields:not(.switch):not(.tags) > input,
-.R4Fields > textarea,
-.R4Fields > select,
+.R4Fields                         > textarea,
+.R4Fields                         > select,
 .R4Fields.tags {
 	font-size: 18px;
 	padding: 4px 3px 6px 5px;
@@ -24,28 +24,28 @@
 }
 
 .R4Fields:not(.switch):not(.tags) > input:disabled,
-.R4Fields > textarea:disabled,
-.R4Fields > select:disabled {
+.R4Fields                         > textarea:disabled,
+.R4Fields                         > select:disabled {
 	background-color: lightgray;
 }
 
 .R4Fields:not(.switch):not(.tags) > input:focus,
-.R4Fields > textarea:focus,
-.R4Fields > select:focus {
+.R4Fields                         > textarea:focus,
+.R4Fields                         > select:focus {
 	outline: none;
 	background-color: #fffdeb;
 	border-bottom: 1px solid #337ab7;
 }
 
 .R4Fields.errField:not(.switch):not(.tags) > input,
-.R4Fields.errField > textarea,
-.R4Fields.errField > select {
+.R4Fields.errField                         > textarea,
+.R4Fields.errField                         > select {
 	border-bottom: 1px solid red;
 }
 
 .R4Fields.errField:not(.switch):not(.tags) > input:focus,
-.R4Fields.errField > textarea:focus,
-.R4Fields.errField > select:focus {
+.R4Fields.errField                         > textarea:focus,
+.R4Fields.errField                         > select:focus {
 	outline: none;
 	border-bottom: 1px solid red;
 }
@@ -66,21 +66,21 @@
 	overflow: hidden;
 }
 
-.R4Fields:not(.switch) > input:focus ~ label,
-.R4Fields > textarea:focus ~ label,
-.R4Fields > select:focus ~ label,
-.R4Fields > input:-webkit-autofill ~ label,
-.R4Fields.withContent > label {
+.R4Fields:not(.switch) > input:focus            ~ label,
+.R4Fields              > textarea:focus         ~ label,
+.R4Fields              > select:focus           ~ label,
+.R4Fields              > input:-webkit-autofill ~ label,
+.R4Fields:not(.switch).withContent > label {
 	top: -13px;
 	font-size: 14px;
 	color: #337ab7;
 }
 
 .R4Fields.errField:not(.switch) > input:focus ~ label,
-.R4Fields.errField > textarea:focus ~ label,
-.R4Fields.errField > select:focus ~ label,
-.R4Fields.errField > input:-webkit-autofill ~ label,
-.R4Fields.errField.withContent > label {
+.R4Fields.errField              > textarea:focus ~ label,
+.R4Fields.errField              > select:focus ~ label,
+.R4Fields.errField              > input:-webkit-autofill ~ label,
+.R4Fields.errField.withContent  > label {
 	color: red;
 }
 
@@ -228,6 +228,7 @@
 /* SWITCH ================================= */
 .R4Fields.switch {
 	font-size: 14px;
+	z-index: 0;
 /*
 	display: inline-block;
 	position: relative;
