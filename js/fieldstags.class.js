@@ -187,7 +187,7 @@ FieldsTags = {
 
 		elem.value = '';
 
-		if(val) {
+		if(val && val != '0') {
 
 			val = val.toString();
 

@@ -60,6 +60,16 @@ table.R4.striped > tbody > tr:hover {
 	font-size: 0.6rem;
 }
 
+table.R4 .badgeTags {
+	background-color: #4f728f !important;
+	border-radius: 3px;
+	padding: 3px 5px;
+	color: white;
+	margin-left: 1px;
+	margin-right: 1px;
+	font-size: 0.6rem;
+}
+
 
 /*Responsive table*/
 @media only screen and (max-width: 33.75em) {  /* 540px */

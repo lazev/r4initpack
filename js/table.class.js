@@ -311,7 +311,10 @@ var Table = {
 					td.classList.add('center');
 				}
 				else if(type == 'tags') {
-					value = value.replaceAll(',', ', ');
+					let box = '<span class="badgeTags">';
+					if(value) {
+						value = box + value.replaceAll(',', '</span>'+ box) +'</span>';
+					}
 				}
 
 				if((!footLine) && (position == 0) && (Table.dom[idDestiny].withCheck)) {

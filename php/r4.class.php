@@ -15,6 +15,8 @@ class R4 {
 
 		$params = R4::recursiveTagSymbolsReplace($params);
 
+		$params = R4::recursiveNumericCast($params);
+
 		$params['ok'] = 1;
 
 		echo json_encode($params);
@@ -371,6 +373,13 @@ class R4 {
 			      'C','E','E','E','E','I','I','I','I','N','O','O','O','O','O',
 			      'U','U','U','U','Y'),
 			$string);
+	}
+
+
+	public static function recursiveNumericCast($subject) {
+		return is_array($subject)
+			? array_map('R4::recursiveNumericCast', $subject)
+			: ((is_numeric($subject)) ? $subject*1 : $subject);
 	}
 
 

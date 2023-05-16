@@ -42,6 +42,11 @@ var FieldsDtPicker = {
 				elYear.value,
 				elValue
 			);
+			elem.focus();
+		});
+
+		elMonth.addEventListener('blur', function(){
+			elem.focus();
 		});
 
 		months.forEach((item, key) => {
@@ -62,6 +67,11 @@ var FieldsDtPicker = {
 				elYear.value,
 				elValue
 			);
+			elem.focus();
+		});
+
+		elYear.addEventListener('blur', function(){
+			elem.focus();
 		});
 
 		for(var ii=currentYear-99; ii<currentYear+100; ii++) {

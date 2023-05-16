@@ -387,7 +387,13 @@ var R4 = {
 
 	dateMask: function(date) {
 		if(!date) return '';
+
 		if(date == '0000-00-00' || date == '0000-00-00 00:00:00') return '';
+
+		if(typeof date != 'string') {
+			console.warn('R4.dateMask() expects date to be string, '+ typeof date +' given:', date);
+			return date;
+		}
 
 		let dthr = date.trim().split(' ');
 		let dt   = dthr[0].split('-');
@@ -500,24 +506,24 @@ var R4 = {
 
 
 	onlyNumbers: function(v) {
-		return v.replace(/\D/g, '');
+		return v.toString().replace(/\D/g, '');
 	},
 
 
 	integerMask: function(v) {
-		return v.replace(/([^0-9-])/g, '');
+		return v.toString().replace(/([^0-9-])/g, '');
 	},
 
 
 	cepMask: function(v) {
-		return v
+		return v.toString()
 			.replace(/\D/g, '')
 			.replace(/^(\d{5})(\d)/, '$1-$2');
 	},
 
 
 	phoneMask: function(v) {
-		return v
+		return v.toString()
 			.replace(/\D/g, '')
 			.replace(/^(\d\d)(\d)/g, '($1) $2')
 			.replace(/(\d{4})(\d)/, '$1-$2');
@@ -525,14 +531,14 @@ var R4 = {
 
 
 	cpfcnpjMask: function(v) {
-		v = v.replace(/\D/g, '');
+		v = v.toString().replace(/\D/g, '');
 		if(v.length < 12) return R4.cpfMask(v);
 		else return R4.cnpjMask(v);
 	},
 
 
 	cpfMask: function(v){
-		return v
+		return v.toString()
 			.replace(/\D/g, '')
 			.replace(/(\d{3})(\d)/, '$1.$2')
 			.replace(/(\d{3})(\d)/, '$1.$2')
@@ -541,7 +547,7 @@ var R4 = {
 
 
 	cnpjMask: function(v){
-		return v
+		return v.toString()
 			.replace(/\D/g, '')
 			.replace(/(\d{2})(\d)/, '$1.$2')
 			.replace(/(\d{3})(\d)/, '$1.$2')
@@ -552,7 +558,7 @@ var R4 = {
 
 
 	decimalInputMask: function(v) {
-		return v.replace(/([^0-9-.,=+*\/\(\)])/g, '');
+		return v.toString().replace(/([^0-9-.,=+*\/\(\)])/g, '');
 	},
 
 
