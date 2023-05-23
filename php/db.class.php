@@ -13,8 +13,8 @@ class DB {
 
 	public function connect($host='', $dbname='', $user='', $pass='', $errAlert=true) {
 
-		if(!$user) $user = DBUSER;
-		if(!$pass) $pass = DBPASS;
+		if(empty($user) && defined('DBUSER')) $user = DBUSER;
+		if(empty($pass) && defined('DBPASS')) $pass = DBPASS;
 
 		if(!empty($host)) {
 			if($this->currentHost != $host) {

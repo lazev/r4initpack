@@ -1,8 +1,8 @@
 <?php
+header('Content-Type: application/javascript');
+
 require_once 'config.inc.php';
 
-$arr = [
+echo 'const _CONFIG = '. json_encode([
 	'rootURL' => ROOT_URL
-];
-
-echo 'const _CONFIG = '. json_encode($arr);
+]);

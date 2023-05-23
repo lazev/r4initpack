@@ -2,10 +2,9 @@
 
 class Users {
 
-	public $errMsg = '';
-	public $errObs = '';
+	public $errMsg    = '';
+	public $errObs    = '';
 	public $errFields = [];
-
 
 	public function read($id) {
 		global $db;
@@ -18,12 +17,17 @@ class Users {
 			return false;
 		}
 
-		$dados = $db->sql("
+		//O uso de variáveis como :id e a matriz com valores
+		//passado no segundo parâmetro da função select serve
+		//para evitar o uso de SQL Injections. Uso opcional.
+		$dados = $db->select("
 			select *
 			from `users`
-			where id = $id
+			where id = ':id'
 			limit 1
-		");
+		", [
+			'id' => $id
+		]);
 
 		unset($dados['pass']);
 
@@ -73,7 +77,8 @@ class Users {
 	public function insert($new) {
 		global $db;
 
-		if($this->validFields($new, 'users') === false) return false;
+		if($this->validFields($new, 'users') === false)
+			return false;
 
 		$check = $db->sql('insert into `users`', $new);
 
@@ -85,7 +90,7 @@ class Users {
 
 		$id = $db->getInsertId();
 
-		if($id == 0) {
+		if($id === false || $id < 1) {
 			$this->errMsg = 'Erro ao inserir o usuário';
 			$this->errObs = '';
 			return false;
@@ -102,7 +107,9 @@ class Users {
 	public function update($id, $new) {
 		global $db;
 
-		$old = $db->sql("
+		$id = (int)$id;
+
+		$old = $db->select("
 			select *
 			from `users`
 			where id = $id
@@ -113,7 +120,8 @@ class Users {
 		$new = $arr['merged'];
 		$alt = $arr['changed'];
 
-		if($this->validFields($new, 'users') === false) return false;
+		if($this->validFields($new, 'users') === false)
+			return false;
 
 		$retdb = $db->sql("
 			update `users`
@@ -135,6 +143,23 @@ class Users {
 	}
 
 
+	private function validFields($dados, $prefix='users') {
+
+		require_once R4PHP .'validFields.class.php';
+		$validFields = new ValidFields;
+		$validFields->addSchema(dirname(__FILE__) .'/fields.json', $prefix);
+
+		if(!$validFields->valid($dados)) {
+			$this->errMsg    = $validFields->errMsg;
+			$this->errObs    = $validFields->errObs;
+			$this->errFields = $validFields->getValidateErrors();
+			return false;
+		}
+
+		return true;
+	}
+
+
 	public function delete($ids) {
 		global $db;
 
@@ -142,7 +167,7 @@ class Users {
 
 		$strId = implode(', ', $listId);
 
-		$users = $db->sql("
+		$users = $db->select("
 			select id, excluido
 			from `users`
 			where id in ($strId)
@@ -158,12 +183,12 @@ class Users {
 		foreach($listId as $id) {
 
 			if(!$list[$id]['id']) {
-				$alert[$id] = 'Registro não encontrado';
+				$alert[$id] = 'Item não encontrado';
 				continue;
 			}
 
 			if($item['excluido'] == 1) {
-				$alert[$id] = 'Registro já excluído antes';
+				$alert[$id] = 'Item já excluído antes';
 				continue;
 			}
 
@@ -176,7 +201,7 @@ class Users {
 			");
 
 			if($ret === false) {
-				$alert[$id] = 'Erro na exclusão do registro';
+				$alert[$id] = 'Erro na exclusão do item';
 				continue;
 			}
 
@@ -199,7 +224,7 @@ class Users {
 
 		$strId = implode(', ', $listId);
 
-		$users = $db->sql("
+		$users = $db->select("
 			select id, excluido
 			from `users`
 			where id in ($strId)
@@ -215,12 +240,12 @@ class Users {
 		foreach($listId as $id) {
 
 			if(!$list[$id]['id']) {
-				$alert[$id] = 'Registro não encontrado';
+				$alert[$id] = 'Item não encontrado';
 				continue;
 			}
 
 			if($item['excluido'] != 1) {
-				$alert[$id] = 'Registro não estava excluído';
+				$alert[$id] = 'Item não estava excluído';
 				continue;
 			}
 
@@ -233,7 +258,7 @@ class Users {
 			");
 
 			if($ret === false) {
-				$alert[$id] = 'Erro na recuperação do registro';
+				$alert[$id] = 'Erro na recuperação do item';
 				continue;
 			}
 
@@ -254,36 +279,42 @@ class Users {
 
 		$params = $this->listFilter($listFilter, $listParams);
 
-		$limit       = $params['limit'];
-		$orderBy     = $params['orderBy'];
 		$currentPage = $params['currentPage'];
 		$regPerPage  = $params['regPerPage'];
 		$strFilter   = $params['strFilter'];
+		$descrFilter = $params['descrFilter'];
+
+		$bindFilter            = $params['bindFilter'];
+		$bindFilter['limit']   = $params['limit'];
+		$bindFilter['orderBy'] = $params['orderBy'];
 
 		//$db->setDebug(1); //mostra o SQL na tela
 
-		$list = $db->sql("
+		$list = $db->select("
 			select id, user, nome, fones, tags, ativo
 			from `users`
 			where excluido = 0
 			$strFilter
-			order by $orderBy
-			limit $limit
-		");
+			order by :orderBy
+			limit :limit
+		", $bindFilter);
 
-		$count = $db->sql("
+
+		$count = $db->select("
 			select count(*) as 'total'
 			from `users`
 			where excluido = 0
 			$strFilter
 			limit 1
-		");
+		", $bindFilter);
+
 
 		$info = [
-			'orderBy'     => $orderBy,
+			'orderBy'     => $params['orderBy'],
 			'currentPage' => $currentPage,
 			'regPerPage'  => $regPerPage,
-			'totalReg'    => (int)$count['total']
+			'totalReg'    => (int)$count['total'],
+			'descrFilter' => $descrFilter
 		];
 
 		return [
@@ -298,29 +329,29 @@ class Users {
 		if(!is_array($listParams)) $listParams = [];
 		if(!is_array($listFilter)) $listFilter = [];
 
-		$orderBy     = $listParams['orderBy']     ?? '';
-		$currentPage = $listParams['currentPage'] ?? 0;
-		$regPerPage  = $listParams['regPerPage']  ?? 0;
-
-		if(empty($orderBy))     $orderBy     = 'nome';
-		if(empty($currentPage)) $currentPage = 1;
-		if(empty($regPerPage))  $regPerPage  = 15;
-
+		$orderBy     = @$listParams['orderBy']     ?: 'nome';
+		$currentPage = @$listParams['currentPage'] ?: 1;
+		$regPerPage  = @$listParams['regPerPage']  ?: 15;
 		$limit = $regPerPage*($currentPage-1) .','. $regPerPage;
-
-		//Filters
 		$arrFilter   = [];
+		$bindFilter  = [];
+		$descrFilter = [];
 
-		$filter = $listFilter['busca'] ?? false;
+
+		$filter = trim(@$listFilter['busca'] ?: '');
 		if($filter) {
+
 			$arrFilter[] = "and (
-				id = '$filter'
-				or nome like '%$filter%'
-				or user like '%$filter%'
-				or concat(',', tags, ',') like '%,$filter,%'
-				or fones like '%$filter%'
-				or emails like '%$filter%'
+				id = ':busca'
+				or nome like '%:busca%'
+				or user like '%:busca%'
+				or concat(',', tags, ',') like '%,:busca,%'
+				or fones like '%:busca%'
+				or emails like '%:busca%'
 			)";
+
+			$bindFilter['busca']  = $filter;
+			$descrFilter['Busca'] = $filter;
 		}
 
 		return [
@@ -328,25 +359,10 @@ class Users {
 			'orderBy'     => $orderBy,
 			'currentPage' => $currentPage,
 			'regPerPage'  => $regPerPage,
-			'strFilter'   => (count($arrFilter)) ? implode(' ', $arrFilter) : ''
+			'strFilter'   => (count($arrFilter)) ? implode(' ', $arrFilter) : '',
+			'bindFilter'  => $bindFilter,
+			'descrFilter' => $descrFilter
 		];
-	}
-
-
-	private function validFields($dados, $prefix='users') {
-
-		require_once R4PHP .'validFields.class.php';
-		$validFields = new ValidFields;
-		$validFields->addSchema(dirname(__FILE__) .'/fields.json', $prefix);
-
-		if(!$validFields->valid($dados)) {
-			$this->errMsg    = $validFields->errMsg;
-			$this->errObs    = $validFields->errObs;
-			$this->errFields = $validFields->getValidateErrors();
-			return false;
-		}
-
-		return true;
 	}
 
 

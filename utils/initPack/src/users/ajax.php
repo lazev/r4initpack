@@ -1,11 +1,19 @@
 <?php
+$_CONFIG = [
+	'requireLogin' => true,
+	'requireReferer' => 'https'
+];
+
 require '../config.inc.php';
 require R4PHP .'r4iniend.php';
-require ROOT .'_assets/php/log.class.php';
+
+$input = R4::getRequest();
+
 require ROOT .'users/users.class.php';
+
 $users = new Users;
 
-switch($_REQUEST['com']) {
+switch($input['com']) {
 
 	case 'getInit':
 
@@ -16,7 +24,7 @@ switch($_REQUEST['com']) {
 
 	case 'read':
 
-		$id = (int)$_REQUEST['idUser'];
+		$id = (int)$input['idUser'];
 
 		$dados = $users->read($id);
 
@@ -33,9 +41,9 @@ switch($_REQUEST['com']) {
 
 
 	case 'save':
-		$id = (int)$_REQUEST['idUser'];
+		$id = (int)$input['idUser'];
 
-		$dados = $users->save($id, $_REQUEST);
+		$dados = $users->save($id, $input);
 
 		if($dados === false) {
 			Log::erro('users', $id, $users->errMsg, $users->errObs, $users->errFields);
@@ -51,8 +59,8 @@ switch($_REQUEST['com']) {
 
 	case 'list':
 
-		$listFilter = $_REQUEST['listFilter'] ?: [];
-		$listParams = $_REQUEST['listParams'] ?: [];
+		$listFilter = $input['listFilter'] ?? [];
+		$listParams = $input['listParams'] ?? [];
 
 		$dados = $users->list($listFilter, $listParams);
 
@@ -71,7 +79,7 @@ switch($_REQUEST['com']) {
 
 	case 'delete':
 
-		$ids = $_REQUEST['ids'];
+		$ids = $input['ids'];
 
 		$dados = $users->delete($ids);
 
@@ -90,7 +98,7 @@ switch($_REQUEST['com']) {
 
 	case 'undel':
 
-		$ids = $_REQUEST['ids'];
+		$ids = $input['ids'];
 
 		$dados = $users->undel($ids);
 

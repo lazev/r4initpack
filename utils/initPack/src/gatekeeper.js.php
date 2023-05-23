@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/javascript');
+
 require_once 'config.inc.php';
 
 //Verifica se o usuário tá logado, se não, vai para a tela de login

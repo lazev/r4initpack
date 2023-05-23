@@ -1,10 +1,19 @@
+//Nome da classe igual ao nome do módulo, com letra maiúscula
 var Users = {
 
+	//Define os caminhos de arquivos externos usados pelo módulo
 	pathAjax:   _CONFIG.rootURL +'users/ajax.php',
 	pathFields: _CONFIG.rootURL +'users/fields.json',
+	pathForm:   _CONFIG.rootURL +'users/templates/formUsers.html',
+	pathCSS:    _CONFIG.rootURL +'users/style.css',
 
+	//Parâmetro que identifica o user que está sendo editado no momento.
+	//No momento de salvar a edição, esse id identifica que é pra atualizar
+	//Se for zero, ele vai gravar um novo user.
 	idUser: 0,
 
+
+	//Variáveis e listas específicas do módulo
 	listaTipos: [
 		{ key: 0,  value: ''            },
 		{ key: 5,  value: 'Estagiário'  },
@@ -14,14 +23,18 @@ var Users = {
 		{ key: 40, value: 'Diretor'     }
 	],
 
-	init: function(callback) {
+
+	//Roda as funções de inicialização do módulo
+	init: callback => {
 		Users.getInit(() => {
 
-			Users.setEvents();
+			Users.initFilter();
 
 			Users.initList();
 
-			Users.initFilter();
+			Users.initEvents();
+
+			Users.filter();
 
 			Users.initForm();
 
@@ -30,6 +43,10 @@ var Users = {
 	},
 
 
+	//Função comum em todos os módulos (mesmo que não seja usada)
+	//Ela busca dados essenciais pro funcionamento do módulo.
+	//Por exemplo, pode buscar uma lista de situações ou categorias
+	//pra guardar na memória ao carregar a tela.
 	getInit: function(callback) {
 
 		R4.getJSON(Users.pathAjax, {com: 'getInit'})
@@ -39,38 +56,51 @@ var Users = {
 		})
 
 		.catch(err => {
-			Warning.show('Erro ao buscar os dados iniciais', err);
+			Warning.show('Erro ao buscar dados iniciais', err);
 		});
 	},
 
 
-	setEvents: function() {
-		$('#usersBtnAdd').on('click', function() {
-			Users.insert();
-		});
+	//Inicializa o filtro do módulo. Neste caso aqui
+	//o filtro é apenas a busca simples, sem a chamada
+	//do filtro avançado.
+	initFilter: function() {
 
-		Pop.hint($('#usersBtnDel'), 'Excluir');
-		$('#usersBtnDel').on('click', function(ev) {
+		Fields.create([
+			{ id: 'busca', type: 'text' },
+		], 'filtro');
+
+		$('#formFilter').on('submit', function(ev) {
 			ev.preventDefault();
-			Users.delete('listaUsers');
+
+			Table.setInfo($('#listaProdTipos'), { currentPage: 1 });
+
+			Users.filter();
 		});
+
+		Pop.hint($('#filtro_btnFiltrar'), 'Busca rápida');
 	},
 
 
-	initList: function() {
+	//Inicia o elemento da listagem. Neste ponto apenas a matriz
+	//do cabeçalho é definida. Os dados da lista são gerados por
+	//ajax ao carregar a página
+	initList: () => {
 
+		//orderBy gera os eventos de ordenação a partir do clique
+		//no cabeçalho. O type indica a formatação do dado
 		Table.create({
 			idDestiny: 'listaUsers',
-			classes:   'striped',
-			withCheck: true,
+			classes:   'striped sticky',
 			arrHead:   [
 				{ label: 'Id',     orderBy: 'id'    },
 				{ label: 'User',   orderBy: 'user'  },
 				{ label: 'Nome',   orderBy: 'nome'  },
-				{ label: 'Fones',  orderBy: 'tags'  }, //O tipo tags dá uma separação após a vírgula
+				{ label: 'Fones',  orderBy: 'tags'  },
 				{ label: 'Tags',   orderBy: 'tags', type: 'tags' },
 				{ label: 'Ativo?', orderBy: 'ativo' }
 			],
+			withCheck:    true,
 			onLineClick:  value => Users.edit(value),
 			onOrderBy:    () => { Users.filter(); },
 			onPagination: () => { Users.filter(); },
@@ -79,25 +109,40 @@ var Users = {
 	},
 
 
-	initFilter: function() {
+	//Eventos vinculados ao módulo. Diferente dos
+	//eventos de formulário, estes não são chamados
+	//quando o form é incorporado em outro módulo.
+	initEvents: function() {
+		if($('#usersBtnAdd')) $('#usersBtnAdd').on('click', Users.insert);
 
-		Fields.create([
-			{ id: 'busca', type: 'text'    },
-			{ id: 'btn',   type: 'submit', classes: 'bgInfo' }
-		], 'filtro');
-
-		$('#formFiltro').on('submit', function(ev) {
-			ev.preventDefault();
-			Users.filter();
+		Pop.hint($('#usersBtnDel'), 'Excluir');
+		//Nunca usar arrow functions na associação de eventos.
+		//Quando usado o this não identifica o elemento do evento.
+		if($('#usersBtnDel')) $('#usersBtnDel').on('click', function() {
+			Users.delete('listaUsers');
 		});
 	},
 
 
+	//Inicia o formulário, criando uma dialog
+	//com o HTML encontrado dentro da pasta
+	//templates aqui dentro do próprio módulo
+	//mas o HTML poderia também estar direto
+	//no index.html
 	initForm: function() {
+
+		var formElem = $('#formUsers');
+
+		//A função dialog usa o HTML encontrado
+		//dentro do div #formProdTipos e adiciona
+		//botões com eventos
 		Dialog.create({
-			elem: $('#formUsers'),
+			elem: formElem,
 			title: 'Dados do usuário',
+			changeMonitor: true,
 			buttons: [
+				//O elemento com a classe R4DialogSaver recebe o evento
+				//de click automático ao pressionar ALT+ENTER
 				{
 					label: 'Salvar',
 					classes: 'R4DialogSaver bgSuccess white',
@@ -105,6 +150,8 @@ var Users = {
 						Users.save();
 					}
 				},
+				//O evento do botão fechar é definido
+				//automático pela classe R4DialogCloser
 				{
 					label: 'Fechar',
 					classes: 'R4DialogCloser'
@@ -115,12 +162,90 @@ var Users = {
 		Fields.createFromFile(Users.pathFields, 'users')
 
 		.then(() => {
-			Users.setFormEvents();
+			Users.formEvents();
 		});
 	},
 
 
-	setFormEvents: function() {
+	formEvents: function() {
+	},
+
+
+	filter: function() {
+		Users.list({
+			listParams: Table.getInfo($('#listaUsers')),
+			listFilter: Fields.objectize($('#formFiltro'))
+		});
+	},
+
+
+	list: function(arrFilter) {
+
+		if(!arrFilter) arrFilter = {};
+
+		R4.getJSON(Users.pathAjax, {
+			com: 'list',
+			listParams: arrFilter.listParams,
+			listFilter: arrFilter.listFilter
+		})
+
+		.then(ret => {
+
+			let destiny = $('#listaUsers'),
+			    body    = [],
+			    foot    = [];
+
+			Table.setInfo(destiny, ret.info);
+
+			if(!ret.list.length) {
+				Table.clearBody(destiny);
+				return;
+			}
+
+			let arrTxtAtivo = [
+				'<div class="bgDanger white center corner">Não</div>',
+				'<div class="bgSuccess white center corner">Sim</div>'
+			];
+
+			ret.list.forEach(item => {
+
+				body.push({
+					value: item.id,
+					cells: [
+						item.id,
+						item.user,
+						item.nome,
+						item.fones,
+						item.tags,
+						arrTxtAtivo[item.ativo]
+					],
+					classes: [
+						'nonClickCol',
+						'',
+						'',
+						'small',
+						'',
+						''
+					]
+				});
+
+			});
+
+			//foot.push({
+			//	cells: [
+			//		'',
+			//		'TOTAL',
+			//		R4.round(vTotal, 2)
+			//	]
+			//});
+
+			Table.updateContent(destiny, body, foot);
+		})
+
+		.catch(err => {
+			console.log(err);
+			Warning.show('Erro', err);
+		});
 	},
 
 
@@ -288,80 +413,34 @@ var Users = {
 	},
 
 
-	filter: function() {
-		Users.list({
-			listParams: Table.getInfo($('#listaUsers')),
-			listFilter: Fields.objectize($('#formFiltro'))
-		});
-	},
+	importForm: callback => {
 
+		return new Promise((resolve, reject) => {
 
-	list: function(arrFilter) {
+			R4.getHTML(Users.pathForm)
 
-		if(!arrFilter) arrFilter = {};
+			.then(html => {
 
-		R4.getJSON(Users.pathAjax, {
-			com: 'list',
-			listParams: arrFilter.listParams,
-			listFilter: arrFilter.listFilter
-		})
+				let elem = $new(html);
 
-		.then(ret => {
+				$('body').append(elem);
 
-			let destiny = $('#listaUsers'),
-			    body    = [],
-			    foot    = [];
+				R4.importCSS(Users.pathCSS);
+			})
 
-			Table.setInfo(destiny, ret.info);
+			.then(() => {
+				Users.getInit(() => {
+					Users.initForm();
 
-			if(!ret.list.length) {
-				Table.clearBody(destiny);
-				return;
-			}
+					Users.onSave = function(){};
 
-			let arrTxtAtivo = [
-				'<div class="bgDanger white center corner">Não</div>',
-				'<div class="bgSuccess white center corner">Sim</div>'
-			];
+					if(typeof callback == 'function') callback();
 
-			ret.list.forEach(item => {
-
-				body.push({
-					value: item.id,
-					cells: [
-						item.id,
-						item.user,
-						item.nome,
-						item.fones,
-						item.tags,
-						arrTxtAtivo[item.ativo]
-					],
-					classes: [
-						'nonClickCol',
-						'',
-						'',
-						'small',
-						'',
-						''
-					]
+					resolve();
 				});
+			})
 
-			});
-
-			//foot.push({
-			//	cells: [
-			//		'',
-			//		'TOTAL',
-			//		R4.round(vTotal, 2)
-			//	]
-			//});
-
-			Table.updateContent(destiny, body, foot);
-		})
-
-		.catch(err => {
-			console.log(err);
-			Warning.show('Erro', err);
+			.catch(err => { reject(err); });
 		});
 	}
 };

@@ -45,14 +45,20 @@
 			<!--R4TEMPLATE-footerSignature-->
 		</footer>
 
-		<script defer src="users/users.class.js"></script>
+		<!--
+		Iniciar o src com R4Cache:: faz o sistema controlar o cache
+		desse arquivo forçando atualização do navegador sempre que
+		o arquivo seja editado e alterado. O mesmo vale para CSS.
+		-->
+		<script defer src="R4Cache::users/users.class.js"></script>
+
 		<!--
 			Funções colocadas dentro de R4Init serão
 			chamadas assim que terminar de carregar
 		-->
 		<script>
-			var R4Init = function(){
-				Users.init(Users.filter);
+			const R4Init = function(){
+				Users.init();
 			};
 		</script>
 
