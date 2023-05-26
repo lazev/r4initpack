@@ -136,6 +136,13 @@ class R4 {
 	}
 
 
+	public static function ucase($subject) {
+		return is_array($subject)
+			? array_map('R4::ucase', $subject)
+			: mb_strtoupper($subject);
+	}
+
+
 	public static function changeDate($date, $year=0, $month=0, $day=0, $hour=0, $min=0, $sec=0) {
 		if(strlen($date) > 12) { //Date time (Y-m-d H:i:s)
 			$temp = explode(' ', $date);
@@ -379,7 +386,7 @@ class R4 {
 	public static function recursiveNumericCast($subject) {
 		return is_array($subject)
 			? array_map('R4::recursiveNumericCast', $subject)
-			: ((is_numeric($subject)) ? $subject*1 : $subject);
+			: ((is_numeric($subject) && ($subject[0] != 0 || mb_strlen($subject) == 1)) ? $subject*1 : $subject);
 	}
 
 
