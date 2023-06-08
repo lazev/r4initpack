@@ -79,6 +79,9 @@ var $new = function(html) {
 //Conjunto de funções gerais
 var R4 = {
 
+	moneySymbol: 'R$',
+
+
 	init: function() {
 		R4.listeners();
 		if(typeof R4Init === 'function') R4Init();
@@ -443,6 +446,13 @@ var R4 = {
 	},
 
 
+	moneyMask: function(number, mindec, maxdec) {
+		if(mindec === undefined) mindec = 2;
+
+		return R4.moneySymbol +' '+ R4.numberMask(number, mindec, maxdec);
+	},
+
+
 	numberUnmask: function(num) {
 		return R4.toUSNumber(num);
 	},
@@ -553,7 +563,6 @@ var R4 = {
 			.replace(/(\d{3})(\d)/, '$1.$2')
 			.replace(/(\d{3})(\d)/, '$1/$2')
 			.replace(/(\d{4})(\d)/, '$1-$2');
-
 	},
 
 

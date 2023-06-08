@@ -115,7 +115,7 @@ var Table = {
 
 
 	addCell: function(content, classes) {
-		if(!content) content = '';
+		if(content === null || content === undefined) content = '';
 		if(!classes) classes = '';
 
 		Table.lineCells.push(content);
@@ -205,7 +205,7 @@ var Table = {
 				th.classList.add('center');
 			}
 
-			else if(cell.type == 'decimal') {
+			else if(cell.type == 'decimal' || cell.type == 'money') {
 				th.classList.add('right');
 			}
 
@@ -294,7 +294,7 @@ var Table = {
 
 				let type = Table.dom[idDestiny].head[position].type;
 
-				if(value == null || value == undefined) value = '';
+				if(value === null || value === undefined) value = '';
 
 				else if(type == 'integer') {
 					td.classList.add('center');
@@ -306,6 +306,14 @@ var Table = {
 						td.classList.add('right');
 					}
 				}
+				else if(type == 'money') {
+					if(value !== '') {
+						let precision = Table.dom[idDestiny].head[position].precision ?? 2;
+						value = R4.moneyMask(value, precision);
+						td.classList.add('right');
+					}
+				}
+
 				else if(type == 'date') {
 					value = R4.dateMask(value);
 					td.classList.add('center');
