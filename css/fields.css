@@ -27,6 +27,7 @@
 .R4Fields                         > textarea:disabled,
 .R4Fields                         > select:disabled {
 	background-color: lightgray;
+	cursor: not-allowed;
 }
 
 .R4Fields:not(.switch):not(.tags) > input:focus,
@@ -282,6 +283,11 @@
 .R4Fields.switch > input:checked + label:after {
 	left: 16px;
 	background-color: white;
+}
+
+.R4Fields.switch > input:disabled + label {
+	color: lightgray;
+	cursor: not-allowed;
 }
 
 fieldset.R4,

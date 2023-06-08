@@ -952,6 +952,7 @@ var Fields = {
 		else {
 			elem.setAttribute('readonly', true);
 			elem.setAttribute('disabled', true);
+			if(elem.getAttribute('R4Type') == 'switch') elem.val(0);
 		}
 	},
 
