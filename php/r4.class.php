@@ -73,7 +73,8 @@ class R4 {
 	public static function mergeNewArr($old, $new) {
 		$ret = [
 			'changed' => [],
-			'merged'  => []
+			'merged'  => [],
+			'oldVal'  => []
 		];
 
 		foreach($new as $key => $val) {
@@ -110,8 +111,9 @@ class R4 {
 				}
 			}
 			if($up) {
-				$old[$key] = $val;
+				$ret['oldVal'][$key] = $old[$key];
 				$ret['changed'][$key] = $val;
+				$old[$key] = $val;
 			}
 		}
 		$ret['merged'] = $old;
