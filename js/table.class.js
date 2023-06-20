@@ -493,7 +493,8 @@ var Table = {
 
 	createPgntnBtn: function(numPage, icon, disabled) {
 		let btn = document.createElement('button');
-		btn.setAttribute('class',  'R4');
+		btn.setAttribute('type',  'button');
+		btn.setAttribute('class', 'R4');
 		btn.setAttribute('numPage', numPage);
 		if(disabled) btn.setAttribute('disabled', 'true');
 		btn.innerHTML = icon;
@@ -600,6 +601,7 @@ var Table = {
 		});
 
 		let btnSel = document.createElement('button');
+		btnSel.setAttribute('type', 'button');
 		btnSel.setAttribute('class', 'R4 col-xs-12');
 		btnSel.innerHTML = 'reg/pag';
 		btnSel.id = idDestiny +'BtnRegPerPage';
@@ -640,7 +642,7 @@ var Table = {
 			fldsObj.push({ id: 'listColItem_'+ k, type: 'switch', checked: checked, value: k });
 		}
 
-		html += '<button class="R4" id="'+ idDestiny +'ColSelBtnSave">Salvar</button>'+
+		html += '<button type="button" class="R4" id="'+ idDestiny +'ColSelBtnSave">Salvar</button>'+
 		        '</div>';
 
 		Pop.click(btnElem, {

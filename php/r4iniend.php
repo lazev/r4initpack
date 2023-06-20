@@ -2,7 +2,7 @@
 if(!defined('R4ALREADYINIT')) {
 	define('R4ALREADYINIT', true);
 
-	if(isset($_CONFIG) && isset($_CONFIG['requireLogin']) && $_CONFIG['requireLogin']) {
+	if(isset($_CONFIG['requireLogin']) && $_CONFIG['requireLogin']) {
 		if(!isset($_SESSION[SYSTEMID]) || !count($_SESSION[SYSTEMID]) || !$_SESSION[SYSTEMID]['userLogged']) {
 			die('{ "error": 1, "status": 401, "errMsg": "Acesso não autorizado" }');
 		}
@@ -10,7 +10,7 @@ if(!defined('R4ALREADYINIT')) {
 
 	if(isset($_CONFIG['requireReferer'])) {
 		if($_CONFIG['requireReferer']) {
-			if(strpos($_SERVER['HTTP_REFERER'], $_CONFIG['requireReferer']) !== 0) {
+			if(strpos($_SERVER['HTTP_REFERER'], $_CONFIG['requireReferer']) === false) {
 				header('HTTP/1.1 403 Forbidden');
 				exit();
 			}

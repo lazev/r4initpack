@@ -83,6 +83,7 @@ var FieldsDtPicker = {
 		}
 
 		let btnNext = document.createElement('button');
+		btnNext.setAttribute('type', 'button');
 		btnNext.setAttribute('class', 'col-2 col-xs-2');
 		btnNext.innerHTML = FieldsDtPicker.iconBtnNext;
 		btnNext.addEventListener('click', function(){
@@ -102,6 +103,7 @@ var FieldsDtPicker = {
 		});
 
 		let btnPrev = document.createElement('button');
+		btnPrev.setAttribute('type', 'button');
 		btnPrev.setAttribute('class', 'col-2 col-xs-2');
 		btnPrev.innerHTML = FieldsDtPicker.iconBtnPrev;
 		btnPrev.addEventListener('click', function(){
@@ -121,6 +123,7 @@ var FieldsDtPicker = {
 		});
 
 		let btnToday = document.createElement('button');
+		btnToday.setAttribute('type', 'button');
 		btnToday.setAttribute('class', 'col-4 col-xs-4 onRight');
 		btnToday.innerHTML = 'Hoje';
 		btnToday.addEventListener('click', function() {

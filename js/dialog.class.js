@@ -105,6 +105,7 @@ var Dialog = {
 					item = buttons[k];
 
 					btn = document.createElement('button');
+					btn.setAttribute('type', 'button');
 
 					classes = [];
 					classes.push((item.classes) || ['default']);
@@ -287,6 +288,7 @@ var Dialog = {
 			let elem = document.getElementById(idElem);
 			if(elem.getAttribute('changeMonitor') == 1 && elem.classList.contains('contentChanged')) {
 				let btn = document.createElement('button');
+				btn.setAttribute('type', 'button');
 				btn.setAttribute('class', 'R4');
 				btn.innerHTML = 'Recuperar';
 				btn.addEventListener('click', () => over.classList.remove('hidden'));
