@@ -388,7 +388,7 @@ class R4 {
 	public static function recursiveNumericCast($subject) {
 		return is_array($subject)
 			? array_map('R4::recursiveNumericCast', $subject)
-			: ((is_numeric($subject) && ($subject[0] != 0 || mb_strlen($subject) == 1 || mb_strlen($subject) <= 10)) ? $subject*1 : $subject);
+			: ((is_numeric($subject) && ($subject[0] != 0 || mb_strlen($subject) == 1 || $subject <= 2147483647)) ? $subject*1 : $subject);
 	}
 
 
