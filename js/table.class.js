@@ -191,7 +191,7 @@ var Table = {
 				let chkelem = document.createElement('input');
 				chkelem.setAttribute('type', 'checkbox');
 				chkelem.value = 'all';
-				chkelem.addEventListener('click', ev => {
+				chkelem.addEventListener('click', () => {
 					chkelem.closest('table').querySelector('tbody').querySelectorAll('input[type=checkbox]')
 					.forEach(elem => {
 						elem.checked = chkelem.checked;
@@ -211,7 +211,7 @@ var Table = {
 
 			if(cell.orderBy) {
 				span.setAttribute('orderBy', cell.orderBy);
-				span.addEventListener('click', function(event) {
+				span.addEventListener('click', function() {
 					if(typeof Table.dom[idDestiny].onOrderBy === 'function') {
 
 						let direction = '';
@@ -266,7 +266,7 @@ var Table = {
 		if(!footLine) {
 			if(typeof Table.dom[idDestiny].onLineClick === 'function') {
 				tr.classList.add('clickable');
-				tr.addEventListener('click', (event, elem) => {
+				tr.addEventListener('click', event => {
 					if(!event.target.classList.contains('nonClickCol')) {
 						Table.dom[idDestiny].onLineClick(
 							event.target.parentNode.getAttribute('value'),
@@ -329,7 +329,7 @@ var Table = {
 					let chkelem = document.createElement('input');
 					chkelem.setAttribute('type', 'checkbox');
 					chkelem.value = value;
-					chkelem.addEventListener('change', function(ev) {
+					chkelem.addEventListener('change', function() {
 						if(typeof Table.dom[idDestiny].onLineSel === 'function') {
 							setTimeout(Table.dom[idDestiny].onLineSel, 10);
 						}
@@ -463,7 +463,7 @@ var Table = {
 	},
 
 
-	createPagination: function(destiny) {
+	createPagination: function() {
 
 		let first = document.createElement('div');
 		let prev  = document.createElement('div');
@@ -650,7 +650,7 @@ var Table = {
 			preventDefault: true,
 			onOpen: () => {
 				Fields.create(fldsObj);
-				document.getElementById(idDestiny +'ColSelBtnSave').addEventListener('click', function(ev){
+				document.getElementById(idDestiny +'ColSelBtnSave').addEventListener('click', function(){
 					let ret = [];
 					document.getElementById(idDestiny +'ColSelOptBox').querySelectorAll('input').forEach(item => {
 						 if(item.checked) ret.push(item.value);
