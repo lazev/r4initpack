@@ -607,147 +607,150 @@ var Fields = {
 		var arrErrors = [];
 
 
-		if(elem.visible()) {
-			var val = Fields.getVal(elem);
-			if(elem.classList.contains('RequiredField')) {
+		if(elem.classList.contains('SkipValidate')) {
+			return [];
+		}
 
-				if(elem.tagName.toLowerCase() == 'select') {
-					if(!val.trim()) valid = false;
-				} else {
-					if(val == '' || val == '0000-00-00') valid = false;
-				}
+		var val = Fields.getVal(elem);
+		if(elem.classList.contains('RequiredField')) {
 
-				if(!valid) arrErrors.push('Campo obrigatório');
+			if(elem.tagName.toLowerCase() == 'select') {
+				if(!val.trim()) valid = false;
+			} else {
+				if(val == '' || val == '0000-00-00') valid = false;
 			}
 
-
-			if(elem.attr('minSize')) {
-				if((val.length < elem.attr('minSize')) && (val.length != 0)) {
-					valid = false;
-					arrErrors.push('Mínimo de '+ elem.attr('minSize') +' caracteres');
-				}
-			}
+			if(!valid) arrErrors.push('Campo obrigatório');
+		}
 
 
-			if(elem.attr('maxSize')) {
-				if(val.length > elem.attr('maxSize')) {
-					valid = false;
-					arrErrors.push('Máximo de '+ elem.attr('maxSize') +' caracteres');
-				}
-			}
-
-
-			if(elem.attr('exactSize')) {
-				if(val.length != 0) {
-					sizes = elem.attr('exactSize').split(',');
-					valid = false;
-					for(let k in sizes) {
-						if(val.length == sizes[k]) {
-							valid = true;
-							break;
-						}
-					}
-					if(!valid) {
-						arrErrors.push('Deve ter exatamente '+ elem.attr('exactSize') +' caracteres');
-					}
-				}
-			}
-
-
-			if((elem.attr('decimal')) && (val.length != 0)) {
-				let splits = elem.attr('decimal').split(',');
-				let decVal = parseInt(splits[1]);
-				let intVal = parseInt(splits[0])-decVal;
-				let regExp = null;
-
-				if(decVal > 0) {
-					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
-				} else {
-					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
-				}
-
-				valid = regExp.test(val);
-
-				if(!valid) {
-					arrErrors.push('Valor inválido');
-				}
-			}
-
-
-			if((elem.attr('regexRules')) && (val.length != 0)) {
-				var rules  = elem.attr('regexRules');
-				var regExp = new RegExp(rules, 'gi');
-
-				valid = regExp.test(val);
-				if(!valid) {
-					arrErrors.push('Conteúdo fora do padrão');
-				}
-			}
-
-			switch(elem.attr('R4Type')) {
-				case 'email':
-					if(val) {
-						if(!R4.checkMail(val)) {
-							valid = false;
-							arrErrors.push('Email inválido');
-						}
-					}
-				break;
-
-				case 'date':
-				case 'datetime':
-					if((val) && (val != '0000-00-00')) {
-						if(!R4.checkDate(val)) {
-							valid = false;
-							arrErrors.push('Data inválida');
-						}
-					}
-				break;
-				case 'autocomplete':
-					if((elem.val().trim() != '') && (!elem.classList.contains('AllowZero'))) {
-						//~ if(LazevAc.getVal(elem) == 0) {
-							//~ valid = false;
-							//~ arrErrors.push('Necessário selecionar uma opção');
-						//~ }
-					}
-				break;
-				case 'cep':
-					if(val) {
-						if(val.length < 8) {
-							valid = false;
-							arrErrors.push('CEP inválido');
-						}
-					}
-				break;
-				case 'cpfcnpj':
-				case 'cnpjcpf':
-					if(val) {
-						if(!R4.checkCPFCNPJ(val)) {
-							valid = false;
-							arrErrors.push('CPF/CNPJ inválido');
-						}
-					}
-				break;
-
-				case 'cpf':
-					if(val) {
-						if(!R4.checkCPF(val)) {
-							valid = false;
-							arrErrors.push('CPF inválido');
-						}
-					}
-				break;
-
-				case 'cnpj':
-					if(val) {
-						if(!R4.checkCNPJ(val)) {
-							valid = false;
-							arrErrors.push('CNPJ inválido');
-						}
-					}
-				break;
+		if(elem.attr('minSize')) {
+			if((val.length < elem.attr('minSize')) && (val.length != 0)) {
+				valid = false;
+				arrErrors.push('Mínimo de '+ elem.attr('minSize') +' caracteres');
 			}
 		}
+
+
+		if(elem.attr('maxSize')) {
+			if(val.length > elem.attr('maxSize')) {
+				valid = false;
+				arrErrors.push('Máximo de '+ elem.attr('maxSize') +' caracteres');
+			}
+		}
+
+
+		if(elem.attr('exactSize')) {
+			if(val.length != 0) {
+				sizes = elem.attr('exactSize').split(',');
+				valid = false;
+				for(let k in sizes) {
+					if(val.length == sizes[k]) {
+						valid = true;
+						break;
+					}
+				}
+				if(!valid) {
+					arrErrors.push('Deve ter exatamente '+ elem.attr('exactSize') +' caracteres');
+				}
+			}
+		}
+
+
+		if((elem.attr('decimal')) && (val.length != 0)) {
+			let splits = elem.attr('decimal').split(',');
+			let decVal = parseInt(splits[1]);
+			let intVal = parseInt(splits[0])-decVal;
+			let regExp = null;
+
+			if(decVal > 0) {
+				regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
+			} else {
+				regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
+			}
+
+			valid = regExp.test(val);
+
+			if(!valid) {
+				arrErrors.push('Valor inválido');
+			}
+		}
+
+
+		if((elem.attr('regexRules')) && (val.length != 0)) {
+			var rules  = elem.attr('regexRules');
+			var regExp = new RegExp(rules, 'gi');
+
+			valid = regExp.test(val);
+			if(!valid) {
+				arrErrors.push('Conteúdo fora do padrão');
+			}
+		}
+
+		switch(elem.attr('R4Type')) {
+			case 'email':
+				if(val) {
+					if(!R4.checkMail(val)) {
+						valid = false;
+						arrErrors.push('Email inválido');
+					}
+				}
+			break;
+
+			case 'date':
+			case 'datetime':
+				if((val) && (val != '0000-00-00')) {
+					if(!R4.checkDate(val)) {
+						valid = false;
+						arrErrors.push('Data inválida');
+					}
+				}
+			break;
+			case 'autocomplete':
+				if((elem.val().trim() != '') && (!elem.classList.contains('AllowZero'))) {
+					//~ if(LazevAc.getVal(elem) == 0) {
+						//~ valid = false;
+						//~ arrErrors.push('Necessário selecionar uma opção');
+					//~ }
+				}
+			break;
+			case 'cep':
+				if(val) {
+					if(val.length < 8) {
+						valid = false;
+						arrErrors.push('CEP inválido');
+					}
+				}
+			break;
+			case 'cpfcnpj':
+			case 'cnpjcpf':
+				if(val) {
+					if(!R4.checkCPFCNPJ(val)) {
+						valid = false;
+						arrErrors.push('CPF/CNPJ inválido');
+					}
+				}
+			break;
+
+			case 'cpf':
+				if(val) {
+					if(!R4.checkCPF(val)) {
+						valid = false;
+						arrErrors.push('CPF inválido');
+					}
+				}
+			break;
+
+			case 'cnpj':
+				if(val) {
+					if(!R4.checkCNPJ(val)) {
+						valid = false;
+						arrErrors.push('CNPJ inválido');
+					}
+				}
+			break;
+		}
+
 		return arrErrors;
 	},
 

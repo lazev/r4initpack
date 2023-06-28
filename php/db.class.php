@@ -200,6 +200,11 @@ class DB {
 	}
 
 
+	public function fetchArray($result) {
+		return $result->fetch_array(MYSQLI_ASSOC);
+	}
+
+
 	private function trySQL($sqlQuery, $errorAlert=true) {
 		try {
 
