@@ -79,6 +79,10 @@ var Tabs = {
 				item.style.backgroundColor = itemColor;
 				elem.style.borderColor = itemColor;
 
+				Tabs.removeErrFieldsMark(item);
+
+				Tabs.markTabsWithErrFields(elem);
+
 			});
 		});
 
@@ -104,6 +108,38 @@ var Tabs = {
 	reset: tabElem => {
 		let elId = tabElem.querySelector('.R4PrimaryTab').getAttribute('target');
 		Tabs.click(elId);
+	},
+
+
+	removeErrFieldsMark: tabItem => {
+		let withErrField = tabItem.querySelector('.tabWithErrField');
+		if(withErrField) withErrField.remove();
+	},
+
+
+	markTabsWithErrFields: tabElem => {
+		let targetArr = Tabs.getAllTargets(tabElem);
+
+		if(targetArr.length) {
+			let numErr = 0;
+			targetArr.forEach(item => {
+
+				let tabItem = document.querySelector('[target='+ item +']');
+				if(!tabItem.classList.contains('R4TabActive')) {
+					numErr = document.getElementById(item).querySelectorAll('.errField').length;
+
+					if(numErr > 0) {
+						let el = document.createElement('span');
+						el.setAttribute('class', 'small badge bgDanger tabWithErrField');
+						el.innerHTML = numErr;
+
+						Tabs.removeErrFieldsMark(tabItem);
+						tabItem.append(el);
+					}
+				}
+			});
+		}
+
 	},
 
 

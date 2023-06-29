@@ -960,6 +960,12 @@ var Fields = {
 	},
 
 
+	editable: function(elem, bool) {
+		if(bool || bool == undefined) elem.removeAttribute('readonly');
+		else elem.setAttribute('readonly', true);
+	},
+
+
 	objectize: function(elem, concatObj) {
 		let r = {};
 

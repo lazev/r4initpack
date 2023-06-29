@@ -17,7 +17,7 @@ class ValidFields {
 		'maxSize'    => 'O máximo permitido é de %2$s caracteres (tem %1$s agora)',
 		'exactSize'  => 'O tamanho exato deve ser de %2$s caracteres (tem %1$s agora)',
 		'pattern'    => 'O campo não está no padrão válido',
-		'hasErrors'  => 'Um ou mais erros de preenchimento encontrados'
+		'hasErrors'  => 'Há erro(s) de preenchimento'
 	);
 	private $prefix = ''; //usado para inserir um prefixo nos campos com erro
 	private $sufix  = ''; //usado para inserir um sufixo nos campos com erro
