@@ -71,7 +71,8 @@
 .R4Fields              > textarea:focus         ~ label,
 .R4Fields              > select:focus           ~ label,
 .R4Fields              > input:-webkit-autofill ~ label,
-.R4Fields:not(.switch).withContent > label {
+.R4Fields:not(.switch).withContent > label,
+.R4Fields > input[type=file] ~ label {
 	top: -13px;
 	font-size: 14px;
 	color: #337ab7;

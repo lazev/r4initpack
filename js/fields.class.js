@@ -286,6 +286,10 @@ var Fields = {
 					type = 'hidden';
 					break;
 
+				case 'file':
+					type = 'file';
+					break;
+
 				default:
 					type = 'text';
 			}
@@ -346,15 +350,15 @@ var Fields = {
 
 		for(let k in attrib) elem.setAttribute(k, attrib[k]);
 
-		if(item.label) {
-			label = document.createElement('label');
-			label.innerHTML = item.label;
-		}
-
 		let wrap = document.createElement('div');
 		wrap.setAttribute('class', 'R4Fields');
 		wrap.append(elem);
-		wrap.append(label);
+
+		if(item.label) {
+			label = document.createElement('label');
+			label.innerHTML = item.label;
+			wrap.append(label);
+		}
 
 		elem.addEventListener('blur', function(){
 			if(this.selectedIndex > -1 && this.options[this.selectedIndex].innerHTML) {
@@ -575,17 +579,20 @@ var Fields = {
 	setError: function(elem, errTxt) {
 		elem.parentNode.classList.add('errField');
 
-		let r = Pop.hint(elem, errTxt);
-
-		Fields.listActiveErrFields[r.id] = r.fn;
+		if(errTxt) {
+			let r = Pop.hint(elem, errTxt);
+			Fields.listActiveErrFields[r.id] = r.fn;
+		}
 	},
 
 
 	remError: function(elem) {
 		let id = elem.id;
 		elem.parentNode.classList.remove('errField');
-		elem.removeEventListener('mouseenter', Fields.listActiveErrFields[id]);
-		delete Fields.listActiveErrFields[id];
+		if(typeof Fields.listActiveErrFields[id] != 'undefined') {
+			elem.removeEventListener('mouseenter', Fields.listActiveErrFields[id]);
+			delete Fields.listActiveErrFields[id];
+		}
 	},
 
 

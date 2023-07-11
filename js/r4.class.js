@@ -585,6 +585,7 @@ var R4 = {
 
 
 	sendBlob: function(url, params) {
+		//Use: $('#arquivo').files[0];
 		return new Promise(function(resolve, reject) {
 			let fd = new FormData();
 			for(let k in params) fd.append(k, params[k]);
