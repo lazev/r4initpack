@@ -90,6 +90,11 @@ var Tabs = {
 	},
 
 
+	getAllTabs: tabElem => {
+		return tabElem.querySelectorAll('[target]');
+	},
+
+
 	getAllTargets: tabElem => {
 		let ret = [];
 		tabElem.querySelectorAll('[target]').forEach(item => {
@@ -106,6 +111,11 @@ var Tabs = {
 
 
 	reset: tabElem => {
+		let arr = Tabs.getAllTabs(tabElem);
+		if(arr.length) arr.forEach(item => {
+			Tabs.removeErrFieldsMark(item);
+		});
+
 		let elId = tabElem.querySelector('.R4PrimaryTab').getAttribute('target');
 		Tabs.click(elId);
 	},
