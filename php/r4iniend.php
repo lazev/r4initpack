@@ -23,9 +23,9 @@ if(!defined('R4ALREADYINIT')) {
 
 	$db = new DB();
 
-	if(defined('DBSERVER')) {
-		$dbtable = (defined('DBTABLE')) ? DBTABLE : '';
-		$db->connect(DBSERVER, $dbtable);
+	if(defined('DBHOST')) {
+		$dbtable = (defined('DBBASE')) ? DBBASE : '';
+		$db->connect(DBHOST, $dbtable);
 	}
 
 	spl_autoload_register(function($className) {
