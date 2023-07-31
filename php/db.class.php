@@ -147,31 +147,10 @@ class DB {
 
 
 	public function select($sqlQuery='', $dataFields=[], $errorAlert=true) {
-		if(is_null($this->DBCon)) {
-			$this->errCod = 400;
-			$this->errMsg = 'Sem conexão com o banco de dados';
-			$this->errCom = $sqlQuery;
-			return false;
-		}
 
 		$sqlQuery = trim($sqlQuery, " \n\r\t\v\x00;");
 
-		if($this->debug) {
-			echo '<p><b>Query antes:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p><b>Payload:</b><br>';
-			print_r($dataFields);
-		}
-
-		if(count($dataFields)) {
-			foreach($dataFields as $key => $val) {
-				$sqlQuery = str_replace(':'. $key, $this->real_escape_string($val), $sqlQuery);
-			}
-		}
-
-		if($this->debug) {
-			echo '<p><b>Query depois:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
-		}
-
-		$result = $this->trySQL($sqlQuery, $errorAlert);
+		$result = $this->pureSQL($sqlQuery, $dataFields, $errorAlert);
 		if($result === false) return false;
 
 		$response = [];
@@ -187,10 +166,33 @@ class DB {
 	}
 
 
-	public function pureSQL($sqlQuery, $errorAlert=true) {
+	public function pureSQL($sqlQuery, $dataFields=[], $errorAlert=true) {
+
+		$sqlQuery = trim($sqlQuery, " \n\r\t\v\x00;");
+
+		if(is_null($this->DBCon)) {
+			$this->errCod = 400;
+			$this->errMsg = 'Sem conexão com o banco de dados';
+			$this->errCom = $sqlQuery;
+			return false;
+		}
+
+		if(is_array($dataFields) && count($dataFields)) {
+
+			if($this->debug) {
+				echo '<p><b>Input query:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p><b>Payload:</b><br>';
+				print_r($dataFields);
+			}
+
+			if(count($dataFields)) {
+				foreach($dataFields as $key => $val) {
+					$sqlQuery = str_replace(':'. $key, $this->real_escape_string($val), $sqlQuery);
+				}
+			}
+		}
 
 		if($this->debug) {
-			echo '<p>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
+			echo '<p><b>Query:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
 		}
 
 		$result = $this->trySQL($sqlQuery, $errorAlert);
