@@ -295,7 +295,8 @@ var Fields = {
 			}
 		}
 
-		elem.setAttribute('type', type);
+		if(item.type != 'textarea')
+			elem.setAttribute('type', type);
 
 		wrap.append(elem);
 
