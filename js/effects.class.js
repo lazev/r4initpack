@@ -40,6 +40,7 @@ var Effects = {
 			window.setTimeout(function () {
 				elem.classList.remove('isVisible');
 				if(typeof callback == 'function') callback(elem);
+				elem.classList.add('hidden');
 			}, 100);
 		} else {
 			elem.classList.add('hidden');
