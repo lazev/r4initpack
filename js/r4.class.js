@@ -116,7 +116,7 @@ var R4 = {
 		});
 
 		document.addEventListener('click', function(ev) {
-			if(ev.target.tagName.toLowerCase() != 'button') {
+			if(ev.target.tagName.toLowerCase() != 'button' && ev.target.getAttribute('type') != 'button') {
 				Warning.hideAll();
 			}
 		});

@@ -431,7 +431,7 @@ var Fields = {
 		let elem;
 		let id      = (prefix)   ? prefix +'_'+ item.id : item.id;
 		let name    = item.name || item.id;
-		let type    = item.type;
+		let type    = item.type ?? 'button';
 		let classes = ['R4'];
 		let attr    = item.attr || {};
 

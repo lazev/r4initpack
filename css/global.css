@@ -73,6 +73,7 @@ svg.icon circle {
 .noscroll    { overflow: hidden;    }
 .nosel       { user-select: none;   }
 .btnAlignFix { padding-top: 10px;   }
+.bold        { font-weight: bold;   }
 
 .small {
 	color: gray;

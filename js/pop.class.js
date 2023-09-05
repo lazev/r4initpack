@@ -22,6 +22,10 @@ var Pop = {
 			Pop.destroyElem(popel);
 		});
 
+		el.addEventListener('click', function(){
+			Pop.destroyElem(popel);
+		});
+
 		return {
 			id: el.id,
 			fn: fn
