@@ -116,6 +116,7 @@ var Fields = {
 		if(item.value)       attrib.value       = item.value;
 		if(item.placeholder) attrib.placeholder = item.placeholder;
 		if(item.classes)     attrib.classes     = item.classes;
+		if(item.precision)   attrib.precision   = item.precision;
 
 		if(item.attr) {
 			for(let k in item.attr) attrib[k] = item.attr[k];
@@ -848,32 +849,51 @@ var Fields = {
 				if(!value || value == '0' || value == 'false') elem.checked = false;
 				else elem.checked = true;
 				break;
+
 			case 'money':
 			case 'money-':
 			case 'decimal':
 			case 'decimal-':
 				if(value == 0) elem.value = '';
-				else elem.value = R4.toEUNumber(value);
+				else {
+
+					let precision = elem.getAttribute('precision');
+
+					if(precision > 0)
+						elem.value = R4.numberMask(value, precision);
+
+					else if(type == 'money' || type == 'money-')
+						elem.value = R4.numberMask(value, 2);
+
+					else
+						elem.value = R4.toEUNumber(value);
+				}
 				break;
+
 			case 'cpf':
 			case 'cnpj':
 			case 'cpfcnpj':
 				elem.value = R4.cpfcnpjMask(value);
 				break;
+
 			case 'date':
 				elem.value = R4.dateMask(value);
 				break;
+
 			case 'phone':
 				elem.value = R4.phoneMask(value);
 				break;
+
 			case 'cep':
 				elem.value = R4.cepMask(value);
 				break;
+
 			case 'tags':
 			case 'emailtags':
 			case 'phonetags':
 				FieldsTags.setVal(elem, value, label);
 				break;
+
 			default:
 				if(typeof value === 'string' && value.indexOf('&') > -1)
 					value = Fields.htmlTagsEntitiesDecode(value);
