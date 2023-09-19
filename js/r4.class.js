@@ -896,8 +896,10 @@ var R4 = {
 		}
 
 		for(let key in payload) {
-			if((typeof payload[key] != 'object') || (!payload[key].length)) {
-				strCont = strCont.split('{{'+ key +'}}').join(payload[key]);
+			if(payload[key] !== null && payload[key] !== undefined) {
+				if((typeof payload[key] != 'object') || (!payload[key].length)) {
+					strCont = strCont.split('{{'+ key +'}}').join(payload[key]);
+				}
 			}
 		}
 
