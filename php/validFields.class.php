@@ -40,23 +40,23 @@ class ValidFields {
 		return $this->retErrors;
 	}
 
-	public function setValidateErrors($retErrors) {
-		$this->retErrors = $retErrors;
+	public function setError($field, $errorMsg) {
+		$this->retErrors[$this->prefix . $field . $this->sufix][] = $errorMsg;
 	}
 
-	public function setErrorFieldsParams($params = null) {
-		if($params) {
-			$list = explode('|', $params);
+	//~ public function setErrorFieldsParams($params = null) {
+		//~ if($params) {
+			//~ $list = explode('|', $params);
 
-			if(is_array($list) && (sizeof($list) == 2)) {
-				$this->prefix = $list[0];
-				$this->sufix  = $list[1];
-			}
-			else {
-				return 'Erro ao informar prefixo e sufixo no Validador.';
-			}
-		}
-	}
+			//~ if(is_array($list) && (sizeof($list) == 2)) {
+				//~ $this->prefix = $list[0];
+				//~ $this->sufix  = $list[1];
+			//~ }
+			//~ else {
+				//~ return 'Erro ao informar prefixo e sufixo no Validador.';
+			//~ }
+		//~ }
+	//~ }
 
 
 	public function addSchema($fieldsFile, $prefix='') {
@@ -119,13 +119,11 @@ class ValidFields {
 			case 'integer':
 			case 'integer-':
 				if($value != R4::onlyNumbers($value)) {
-					$this->retErrors[$this->prefix . $field . $this->sufix][] =
-						$this->getMsg('intValue', $value);
+					$this->setError($field, $this->getMsg('intValue', $value));
 					return false;
 				}
 				if(($type == 'integer') && ($value < 0)) {
-					$this->retErrors[$this->prefix . $field . $this->sufix][] =
-						$this->getMsg('noSubZero', $value);
+					$this->setError($field, $this->getMsg('noSubZero', $value));
 					return false;
 				}
 			break;
@@ -135,14 +133,12 @@ class ValidFields {
 			case 'money':
 			case 'money-':
 				if(!is_numeric($value)) {
-					$this->retErrors[$this->prefix . $field . $this->sufix][] =
-						$this->getMsg('invalidVal', $value);
+					$this->setError($field, $this->getMsg('invalidVal', $value));
 					return false;
 				}
 				if(($type == 'money') || ($type == 'decimal')) {
 					if($value < 0) {
-						$this->retErrors[$this->prefix . $field . $this->sufix][] =
-							$this->getMsg('noSubZero', $value);
+						$this->setError($field, $this->getMsg('noSubZero', $value));
 						return false;
 					}
 				}
@@ -152,8 +148,7 @@ class ValidFields {
 				if(!empty($value) && $value != '0000-00-00'
 				&& $value != '0000-00-00 00:00:00'
 				&& !R4::checkDate($value)) {
-					$this->retErrors[$this->prefix . $field . $this->sufix][] =
-						$this->getMsg('pattern', $value);
+					$this->setError($field, $this->getMsg('pattern', $value));
 					return false;
 				}
 			break;
@@ -162,8 +157,7 @@ class ValidFields {
 			case 'cnpj':
 			case 'cpfcnpj':
 				if(!empty($value) && !R4::checkCPFCNPJ($value)) {
-					$this->retErrors[$this->prefix . $field . $this->sufix][] =
-						$this->getMsg('pattern', $value);
+					$this->setError($field, $this->getMsg('pattern', $value));
 					return false;
 				}
 			break;
@@ -182,8 +176,7 @@ class ValidFields {
 					if((strtolower($attr) == 'require') || (strtolower($attr) == 'required')) {
 						if($limit == 'true') {
 							if($value == '') {
-								$this->retErrors[$this->prefix . $field . $this->sufix][] =
-									$this->getMsg('required', $value, $limit);
+								$this->setError($field, $this->getMsg('required', $value, $limit));
 							}
 						}
 					}
@@ -191,16 +184,14 @@ class ValidFields {
 					if(strtolower($attr) == 'minsize') {
 						if(strlen($value) < $limit) {
 							if(!empty($value)) {
-								$this->retErrors[$this->prefix . $field . $this->sufix][] =
-									$this->getMsg('minSize', strlen($value), $limit);
+								$this->setError($field, $this->getMsg('minSize', strlen($value), $limit));
 							}
 						}
 					}
 
 					if(strtolower($attr) == 'maxsize') {
 						if(strlen($value) > $limit) {
-							$this->retErrors[$this->prefix . $field . $this->sufix][] =
-								$this->getMsg('maxSize', strlen($value), $limit);
+							$this->setError($field, $this->getMsg('maxSize', strlen($value), $limit));
 						}
 					}
 
@@ -212,16 +203,14 @@ class ValidFields {
 								if(strlen($value) == $siz) $tmperr = false;
 							}
 							if($tmperr) {
-								$this->retErrors[$this->prefix . $field . $this->sufix][] =
-									$this->getMsg('exactSize', strlen($value), str_replace(',', ', ', $limit));
+								$this->setError($field, $this->getMsg('exactSize', strlen($value), str_replace(',', ', ', $limit)));
 							}
 						}
 					}
 
 					if(strtolower($attr) == 'regex') {
 						if(!preg_match("/$val/i", $value)) {
-							$this->retErrors[$this->prefix . $field . $this->sufix][] =
-								$this->getMsg('pattern', $value, $limit);
+							$this->setError($field, $this->getMsg('pattern', $value, $limit));
 						}
 					}
 				}
