@@ -17,6 +17,10 @@ switch($com){
 	case 'up':
 
 		if($param == 'monitor') $monitor = true;
+
+		$ret = (int)shell_exec("ps -u | grep 'r4 up monitor' | grep -v 'grep' | wc -l");
+		if($ret > 1) echoc('ATENTION: You already have '. ($ret-1) .' R4 monitor running.', 'red', 'bold', '', 2);
+
 		require $r4path .'utils/compiler.php';
 
 	break;
@@ -28,10 +32,47 @@ switch($com){
 
 	break;
 	default:
-		echoc('Infome um comando para continuar...', 'yellow');
+		echoc('Infome um comando para continuar...', 'yellow', '', '', 2);
 }
 
 
-function echoc($msg='', $color='white') {
-	echo $msg . PHP_EOL;
+function echoc($msg, $color='green', $style='normal', $bg='black', $enters=0) {
+	global $echoWithoutStyle;
+
+	$enter = '';
+	for($ii=0; $ii<$enters; $ii++) $enter .= PHP_EOL;
+
+	if($echoWithoutStyle) {
+		echo $msg . $enter;
+		return;
+	}
+
+	$tabColor = [
+		'black'  => 0,
+		'red'    => 1,
+		'green'  => 2,
+		'yellow' => 3,
+		'blue'   => 4,
+		'pink'   => 5,
+		'cian'   => 6,
+		'wite'   => 7
+	];
+
+	$tabStyle = [
+		'normal'      => 0,
+		'bold'        => 1,
+		'opaque'      => 2,
+		'italic'      => 3,
+		'underline'   => 4,
+		'blink'       => 5,
+		'reverse'     => 7,
+		'hide'        => 8,
+		'linethrough' => 9
+	];
+
+	$color = $tabColor[$color] ?: 7;
+	$style = $tabStyle[$style] ?: 0;
+	$bg    = $tabColor[$bg]    ?: 0;
+
+	echo "\033[0$style;3$color;4${bg}m$msg\033[00m$enter";
 }

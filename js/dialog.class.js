@@ -11,16 +11,17 @@ var Dialog = {
 
 			if(!opts) opts = {};
 
-			let elem          = opts.elem;
-			    id            = opts.id            ?? '',
-			    title         = opts.title         ?? '',
-			    html          = opts.html          ?? '',
-			    style         = opts.style         ?? {},
-			    openOnCreate  = opts.open          ?? false,
-			    ephemeral     = opts.ephemeral     ?? false,
-			    changeMonitor = opts.changeMonitor ?? false,
-			    buttons       = opts.buttons       ?? [],
-			    classes       = [];
+			let elem              = opts.elem;
+			    id                = opts.id                ?? '',
+			    title             = opts.title             ?? '',
+			    html              = opts.html              ?? '',
+			    style             = opts.style             ?? {},
+			    openOnCreate      = opts.open              ?? false,
+			    ephemeral         = opts.ephemeral         ?? false,
+			    changeMonitor     = opts.changeMonitor     ?? false,
+			    buttons           = opts.buttons           ?? [],
+			    clickOverlayClose = opts.clickOverlayClose ?? true,
+			    classes           = [];
 
 			let onOpen    = opts.onOpen      || function(){},
 			    onCreate  = opts.onCreate    || function(){},
@@ -93,10 +94,12 @@ var Dialog = {
 				head.appendChild(hTitle);
 			}
 
-			over.addEventListener('mousedown', function(event) {
-				if(event.target !== this) return;
-				Dialog.closeOverlay(this.id);
-			});
+			if(clickOverlayClose) {
+				over.addEventListener('mousedown', function(event) {
+					if(event.target !== this) return;
+					Dialog.closeOverlay(this.id);
+				});
+			}
 
 			if(buttons.length) {
 				let btn, item, strClasses;

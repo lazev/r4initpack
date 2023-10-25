@@ -112,7 +112,6 @@ var Fields = {
 		wrap.setAttribute('class', 'R4Fields');
 
 		if(type)             attrib.type        = type;
-		if(inputmode)        attrib.inputmode   = inputmode;
 		if(item.value)       attrib.value       = item.value;
 		if(item.placeholder) attrib.placeholder = item.placeholder;
 		if(item.classes)     attrib.classes     = item.classes;
@@ -264,6 +263,14 @@ var Fields = {
 					elem = Fields.setCalcEvents(elem);
 					elem.addEventListener('input', function(){ this.value = R4.decimalInputMask(this.value); });
 
+					if(item.type == 'money' || item.type == 'money-') {
+						elem.addEventListener('blur', function(){
+							if(this.value != '' && this.value.indexOf('.') === -1 && this.value.indexOf(',') === -1) {
+								this.val( this.val().toString() +'.00' );
+							}
+						});
+					}
+
 					break;
 
 				case 'cep':
@@ -295,6 +302,8 @@ var Fields = {
 					type = 'text';
 			}
 		}
+
+		if(inputmode) attrib.inputmode = inputmode;
 
 		if(item.type != 'textarea')
 			elem.setAttribute('type', type);
@@ -854,8 +863,8 @@ var Fields = {
 			case 'money-':
 			case 'decimal':
 			case 'decimal-':
-				if(value == 0) elem.value = '';
-				else {
+				//if(value == 0) elem.value = '';
+				//else {
 
 					let precision = elem.getAttribute('precision');
 
@@ -867,7 +876,7 @@ var Fields = {
 
 					else
 						elem.value = R4.toEUNumber(value);
-				}
+				//}
 				break;
 
 			case 'cpf':
