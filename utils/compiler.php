@@ -85,8 +85,8 @@ function compile() {
 	if(PHP_OS_FAMILY == 'Windows') {
 		shell_exec('rmdir /s /q ".\public"');
 		shell_exec('mkdir "./public"');
-		shell_exec('mkdir "./public/_assets/r4/php"');
-		shell_exec('mkdir "./public/_assets/vendor"');
+		shell_exec('mkdir "./public/_assets"');
+		shell_exec('mkdir "./public/_assets/r4"');
 		echo shell_exec('Xcopy  /r /s /e /c /q /y "./src" "./public"');
 		shell_exec('Xcopy /r /s /e /c /q /y "'. $r4path .'php" "./public/_assets/r4/php"');
 		shell_exec('Xcopy /r /s /e /c /q /y "./vendor/vendor" "./public/_assets/vendor"');
@@ -94,11 +94,13 @@ function compile() {
 		shell_exec('rm -rf ./public/*');
 		shell_exec('mkdir ./public/_assets');
 		shell_exec('mkdir ./public/_assets/r4');
-		shell_exec('mkdir ./public/_assets/vendor');
 		shell_exec('cp -r ./src/* ./public/');
 		shell_exec('cp -r '. $r4path .'php ./public/_assets/r4/');
-		shell_exec('cp -r ./vendor/vendor/* ./public/_assets/vendor/');
+		shell_exec('cp -r ./vendor/* ./public/_assets/');
 	}
+
+	unlink('./public/_assets/php/composer.json');
+	unlink('./public/_assets/php/composer.lock');
 
 	$output = [];
 	exec('php '. $r4path .'utils'. $sep .'templater.php', $output);

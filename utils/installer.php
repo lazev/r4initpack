@@ -119,7 +119,7 @@ $privfile = '#Arquivo deve estar em uma pasta segura, fora da public e src'. PHP
 
 file_put_contents($syspath .'.r4priv_'. $systemid, $privfile);
 
-chdir($syspath .'vendor');
+chdir($syspath .'vendor/php');
 
 shell_exec('php ../composer.phar install');
 
