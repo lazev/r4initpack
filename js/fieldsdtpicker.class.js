@@ -129,6 +129,7 @@ var FieldsDtPicker = {
 		btnToday.addEventListener('click', function() {
 			let timezoneOffset = (new Date()).getTimezoneOffset() * 60000;
 			FieldsDtPicker.setVal(elem, (new Date(Date.now() - timezoneOffset)).toISOString().substring(0, 10));
+			elem.trigger('change');
 		});
 
 		FieldsDtPicker.createCalendar(
