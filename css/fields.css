@@ -23,30 +23,30 @@
 	padding: 2px 0;
 }
 
-.R4Fields:not(.switch):not(.tags) > input:disabled,
-.R4Fields                         > textarea:disabled,
-.R4Fields                         > select:disabled {
+.R4Fields:not(.switch) > input:disabled,
+.R4Fields              > textarea:disabled,
+.R4Fields              > select:disabled {
 	background-color: lightgray;
 	cursor: not-allowed;
 }
 
-.R4Fields:not(.switch):not(.tags) > input:focus,
-.R4Fields                         > textarea:focus,
-.R4Fields                         > select:focus {
+.R4Fields:not(.switch) > input:focus,
+.R4Fields              > textarea:focus,
+.R4Fields              > select:focus {
 	outline: none;
 	background-color: #fffdeb;
 	border-bottom: 1px solid #337ab7;
 }
 
-.R4Fields.errField:not(.switch):not(.tags) > input,
-.R4Fields.errField                         > textarea,
-.R4Fields.errField                         > select {
+.R4Fields.errField:not(.switch) > input,
+.R4Fields.errField              > textarea,
+.R4Fields.errField              > select {
 	border-bottom: 1px solid red;
 }
 
-.R4Fields.errField:not(.switch):not(.tags) > input:focus,
-.R4Fields.errField                         > textarea:focus,
-.R4Fields.errField                         > select:focus {
+.R4Fields.errField:not(.switch) > input:focus,
+.R4Fields.errField              > textarea:focus,
+.R4Fields.errField              > select:focus {
 	outline: none;
 	border-bottom: 1px solid red;
 }

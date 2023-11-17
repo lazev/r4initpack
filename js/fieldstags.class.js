@@ -75,6 +75,7 @@ FieldsTags = {
 		} else {
 			elem.parentNode.classList.add('withContent');
 		}
+		elem.trigger('blur');
 	},
 
 
@@ -365,7 +366,12 @@ FieldsTags = {
 		value = value.toLowerCase();
 
 		let ret = source.filter((item) => {
-			return (item.label.toLowerCase().indexOf(value) > -1);
+			if(item.label) {
+				return (item.label.toLowerCase().indexOf(value) > -1);
+			}
+			else if(item.value) {
+				return (item.value.toLowerCase().indexOf(value) > -1);
+			}
 		});
 
 		return ret;
@@ -404,7 +410,7 @@ FieldsTags = {
 
 		let label = document.createElement('div');
 		label.classList.add('itemText');
-		label.innerHTML = item.label;
+		label.innerHTML = item.label ?? item.value;
 
 		if(item.extra) {
 			extra = document.createElement('div');

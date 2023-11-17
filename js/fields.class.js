@@ -114,7 +114,6 @@ var Fields = {
 		if(type)             attrib.type        = type;
 		if(item.value)       attrib.value       = item.value;
 		if(item.placeholder) attrib.placeholder = item.placeholder;
-		if(item.classes)     attrib.classes     = item.classes;
 		if(item.precision)   attrib.precision   = item.precision;
 
 		if(item.attr) {
@@ -320,6 +319,11 @@ var Fields = {
 
 		if(label) wrap.append(label);
 
+		if(item.classes) {
+			let cls = item.classes.split(' ');
+			for(let k in cls) elem.classList.add(cls[k]);
+		}
+
 		for(let k in attrib) elem.setAttribute(k, attrib[k]);
 
 		if(item.type != 'tags' && item.type != 'emailtags' && item.type != 'phonetags') {
@@ -352,7 +356,6 @@ var Fields = {
 
 		elem = document.createElement('select');
 
-		if(item.classes)  attrib.classes  = item.classes;
 		if(item.multiple) attrib.multiple = item.multiple;
 
 		if(item.attr) {
@@ -378,6 +381,11 @@ var Fields = {
 				wrap.classList.remove('withContent');
 			}
 		});
+
+		if(item.classes) {
+			let cls = item.classes.split(' ');
+			for(let k in cls) elem.classList.add(cls[k]);
+		}
 
 		if(item.options) {
 			Fields.setSelectOpts(elem, item.options, item.value);

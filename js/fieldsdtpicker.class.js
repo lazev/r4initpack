@@ -141,6 +141,7 @@ var FieldsDtPicker = {
 
 		tbl.addEventListener('click', function() {
 			elem.focus();
+			elem.trigger('change');
 		});
 
 		box.append(elMonth);
