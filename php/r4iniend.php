@@ -29,6 +29,7 @@ if(!defined('R4ALREADYINIT')) {
 	}
 
 	spl_autoload_register(function($className) {
+		error_log($className .' chamado por spl_autoload_register');
 		$className = strtolower($className);
 		require ROOT . $className .'/'. $className .'.class.php';
 	});
