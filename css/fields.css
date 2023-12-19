@@ -286,8 +286,9 @@
 	background-color: white;
 }
 
+
 .R4Fields.switch > input:disabled + label {
-	color: lightgray;
+	opacity: 0.5;
 	cursor: not-allowed;
 }
 
