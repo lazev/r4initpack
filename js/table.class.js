@@ -54,7 +54,8 @@ var Table = {
 			onLineSel:    opts.onLineSel,
 			onLineClick:  opts.onLineClick,
 			onRegPerPage: opts.onRegPerPage,
-			onPagination: opts.onPagination
+			onPagination: opts.onPagination,
+			colClasses:   {}
 		};
 
 		let arrInfo = opts.arrInfo;
@@ -187,6 +188,12 @@ var Table = {
 			th = document.createElement('th');
 			th.appendChild(span);
 
+			if(cell.classes) {
+				th.setAttribute('class', cell.classes);
+			}
+
+			if(cell.colClasses) Table.dom[idDestiny].colClasses[position] = cell.colClasses;
+
 			if((position == 0) && (Table.dom[idDestiny].withCheck)) {
 				let chkelem = document.createElement('input');
 				chkelem.setAttribute('type', 'checkbox');
@@ -281,16 +288,20 @@ var Table = {
 
 			td = document.createElement('td');
 
-			if(line.classes) {
-				if(line.classes[position]) {
-					if(line.classes[position].indexOf('R4KeepValue') > -1) {
-						td.setAttribute('value', value);
-					}
-					td.setAttribute('class', line.classes[position]);
-				}
-			}
-
 			if(Table.dom[idDestiny].head[position]) {
+
+				if(line.classes) {
+					if(line.classes[position]) {
+						if(line.classes[position].indexOf('R4KeepValue') > -1) {
+							td.setAttribute('value', value);
+						}
+						td.setAttribute('class', line.classes[position]);
+					}
+				}
+
+				if(Table.dom[idDestiny].colClasses && Table.dom[idDestiny].colClasses[position]) {
+					td.setAttribute('class', Table.dom[idDestiny].colClasses[position]);
+				}
 
 				let type = Table.dom[idDestiny].head[position].type;
 
