@@ -1,4 +1,4 @@
-FieldsTags = {
+var FieldsTags = {
 
 	timeoutTimer: null,
 
@@ -53,7 +53,8 @@ FieldsTags = {
 		});
 
 		elem.addEventListener('paste', function(event){
-			let paste = (event.clipboardData || window.clipboardData).getData('text');
+			let paste = event.clipboardData.getData('text');
+
 			if(paste.indexOf(',') > -1) {
 				setTimeout(() => {
 					FieldsTags.appendVal(elem, elem.value);

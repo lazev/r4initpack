@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-redeclare
 var Table = {
 
 	dom: {},
@@ -312,14 +313,16 @@ var Table = {
 				}
 				else if(type == 'decimal') {
 					if(value !== '') {
-						let precision = Table.dom[idDestiny].head[position].precision ?? 2;
+						let precision = Table.dom[idDestiny].head[position].precision ?
+							Table.dom[idDestiny].head[position].precision : 2;
 						value = R4.numberMask(value, precision);
 						td.classList.add('right');
 					}
 				}
 				else if(type == 'money') {
 					if(value !== '') {
-						let precision = Table.dom[idDestiny].head[position].precision ?? 2;
+						let precision = Table.dom[idDestiny].head[position].precision ?
+							Table.dom[idDestiny].head[position].precision : 2;
 						value = R4.moneyMask(value, precision);
 						td.classList.add('right');
 					}
@@ -654,7 +657,7 @@ var Table = {
 		}
 
 		html += '<button type="button" class="R4" id="'+ idDestiny +'ColSelBtnSave">Salvar</button>'+
-		        '</div>';
+			'</div>';
 
 		Pop.click(btnElem, {
 			html: html,
@@ -664,7 +667,7 @@ var Table = {
 				document.getElementById(idDestiny +'ColSelBtnSave').addEventListener('click', function(){
 					let ret = [];
 					document.getElementById(idDestiny +'ColSelOptBox').querySelectorAll('input').forEach(item => {
-						 if(item.checked) ret.push(item.value);
+						if(item.checked) ret.push(item.value);
 					});
 
 					let obj  = {};

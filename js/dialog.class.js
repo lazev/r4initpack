@@ -12,15 +12,15 @@ var Dialog = {
 			if(!opts) opts = {};
 
 			let elem              = opts.elem;
-			    id                = opts.id                ?? '',
-			    title             = opts.title             ?? '',
-			    html              = opts.html              ?? '',
-			    style             = opts.style             ?? {},
-			    openOnCreate      = opts.open              ?? false,
-			    ephemeral         = opts.ephemeral         ?? false,
-			    changeMonitor     = opts.changeMonitor     ?? false,
-			    buttons           = opts.buttons           ?? [],
-			    clickOverlayClose = opts.clickOverlayClose ?? true,
+			    id                = opts.id                ? opts.id                : '',
+			    title             = opts.title             ? opts.title             : '',
+			    html              = opts.html              ? opts.html              : '',
+			    style             = opts.style             ? opts.style             : {},
+			    openOnCreate      = opts.open              ? opts.open              : false,
+			    ephemeral         = opts.ephemeral         ? opts.ephemeral         : false,
+			    changeMonitor     = opts.changeMonitor     ? opts.changeMonitor     : false,
+			    buttons           = opts.buttons           ? opts.buttons           : [],
+			    clickOverlayClose = opts.clickOverlayClose ? opts.clickOverlayClose : true,
 			    classes           = [];
 
 			let onOpen    = opts.onOpen      || function(){},
@@ -181,7 +181,7 @@ var Dialog = {
 	},
 
 
-	open: async function(idElemOrOpts, opts) {
+	open: async (idElemOrOpts, opts) => {
 		let idElem;
 
 		if(typeof idElemOrOpts === 'object') { //idElemOrOpts instanceof HTMLElement;

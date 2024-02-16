@@ -450,7 +450,7 @@ var Fields = {
 		let elem;
 		let id      = (prefix)   ? prefix +'_'+ item.id : item.id;
 		let name    = item.name || item.id;
-		let type    = item.type ?? 'button';
+		let type    = item.type ? item.type : 'button';
 		let classes = ['R4'];
 		let attr    = item.attr || {};
 
@@ -628,8 +628,8 @@ var Fields = {
 
 		let elem;
 		wrap.querySelectorAll('.errField').forEach(item => {
-			 elem = item.querySelector('input, select, textarea');
-			 Fields.remError(elem);
+			elem = item.querySelector('input, select, textarea');
+			Fields.remError(elem);
 		});
 	},
 
@@ -675,7 +675,7 @@ var Fields = {
 
 		if(elem.attr('exactSize')) {
 			if(val.length != 0) {
-				sizes = elem.attr('exactSize').split(',');
+				let sizes = elem.attr('exactSize').split(',');
 				valid = false;
 				for(let k in sizes) {
 					if(val.length == sizes[k]) {
@@ -686,26 +686,6 @@ var Fields = {
 				if(!valid) {
 					arrErrors.push('Deve ter exatamente '+ elem.attr('exactSize') +' caracteres');
 				}
-			}
-		}
-
-
-		if((elem.attr('decimal')) && (val.length != 0)) {
-			let splits = elem.attr('decimal').split(',');
-			let decVal = parseInt(splits[1]);
-			let intVal = parseInt(splits[0])-decVal;
-			let regExp = null;
-
-			if(decVal > 0) {
-				regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
-			} else {
-				regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
-			}
-
-			valid = regExp.test(val);
-
-			if(!valid) {
-				arrErrors.push('Valor inválido');
 			}
 		}
 
@@ -782,6 +762,38 @@ var Fields = {
 					}
 				}
 			break;
+
+			case 'decimal':
+			case 'money':
+				let decVal, intVal;
+
+				if(elem.attr('decimal')) {
+					let splits = elem.attr('decimal').split(',');
+					decVal = parseInt(splits[1]);
+					intVal = parseInt(splits[0])-decVal;
+				}
+				else if(elem.attr('precision')) {
+					decVal = elem.attr('precision');
+					intVal = 11;
+				}
+				else if(elem.attr('R4Type') == 'money') {
+					decVal = 2;
+					intVal = 11;
+				}
+
+				let regExp = null;
+
+				if(decVal > 0) {
+					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
+				} else {
+					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
+				}
+
+				valid = regExp.test(val);
+
+				if(!valid) {
+					arrErrors.push('Valor inválido');
+				}
 		}
 
 		return arrErrors;
