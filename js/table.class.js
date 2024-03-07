@@ -23,6 +23,19 @@ var Table = {
 		let listExtraCols = opts.listExtraCols;
 		let selExtraCols  = opts.selExtraCols;
 
+		let arrArrHead = [];
+
+		if(typeof opts.arrHead[0].label != 'undefined') {
+			arrArrHead.push(opts.arrHead);
+		} else {
+			//Header with multiple lines
+			opts.arrHead.forEach(line => {
+				arrArrHead.push(line);
+			});
+		}
+
+		let headLastIndex = arrArrHead.length-1;
+
 		if(typeof listExtraCols == 'object') {
 
 			let listCols    = [];
@@ -33,7 +46,7 @@ var Table = {
 			if(typeof objstorage[idDestiny] == 'string')
 				selExtraCols = objstorage[idDestiny].split(',');
 
-			opts.arrHead.forEach(col => {
+			arrArrHead[headLastIndex].forEach(col => {
 				if(col.listExtraCols) {
 					if(selExtraCols.length) {
 						selExtraCols.forEach(item => {
@@ -45,11 +58,11 @@ var Table = {
 				}
 			});
 
-			opts.arrHead = listCols;
+			arrArrHead[headLastIndex] = listCols;
 		}
 
 		Table.dom[idDestiny] = {
-			head:         opts.arrHead,
+			head:         arrArrHead,
 			withCheck:    opts.withCheck,
 			onOrderBy:    opts.onOrderBy,
 			onLineSel:    opts.onLineSel,
@@ -65,7 +78,7 @@ var Table = {
 		let classes = ['R4'];
 		if(opts.classes) classes.push(opts.classes);
 
-		let head    = Table.createHead(opts.arrHead, idDestiny);
+		let head    = Table.createHead(arrArrHead, idDestiny);
 		let destiny = document.getElementById(idDestiny);
 		let table   = document.createElement('table');
 		let tfoot   = document.createElement('tfoot');
@@ -178,71 +191,96 @@ var Table = {
 		if(!head.length) return false;
 
 		let thead = document.createElement('thead');
-		let tr    = document.createElement('tr');
+		let tr;
 		let th;
 		let span;
+		let positionId = 0;
 
-		head.forEach(function(cell, position){
-			span = document.createElement('span');
-			span.innerHTML = ' '+ cell.label;
+		head.forEach(linha => {
 
-			th = document.createElement('th');
-			th.appendChild(span);
+			Table.dom[idDestiny].lastHead = [];
 
-			if(cell.classes) {
-				th.setAttribute('class', cell.classes);
-			}
+			tr = document.createElement('tr');
 
-			if(cell.colClasses) Table.dom[idDestiny].colClasses[position] = cell.colClasses;
+			positionId = 0;
 
-			if((position == 0) && (Table.dom[idDestiny].withCheck)) {
-				let chkelem = document.createElement('input');
-				chkelem.setAttribute('type', 'checkbox');
-				chkelem.value = 'all';
-				chkelem.addEventListener('click', () => {
-					chkelem.closest('table').querySelector('tbody').querySelectorAll('input[type=checkbox]')
-					.forEach(elem => {
-						elem.checked = chkelem.checked;
-						elem.dispatchEvent(new Event('change'));
-					});
-				});
-				th.prepend(chkelem);
-			}
+			for(let position in linha) {
+				if(Object.hasOwnProperty.call(linha, position)) {
 
-			if(cell.type == 'integer' || cell.type == 'date') {
-				th.classList.add('center');
-			}
+					let cell = linha[position];
 
-			else if(cell.type == 'decimal' || cell.type == 'money') {
-				th.classList.add('right');
-			}
+					Table.dom[idDestiny].lastHead.push(cell);
 
-			if(cell.orderBy) {
-				span.setAttribute('orderBy', cell.orderBy);
-				span.addEventListener('click', function() {
-					if(typeof Table.dom[idDestiny].onOrderBy === 'function') {
+					span = document.createElement('span');
+					span.innerHTML = ' '+ cell.label;
 
-						let direction = '';
+					th = document.createElement('th');
+					th.appendChild(span);
 
-						let arrow = this.querySelector('.R4OrderArrow');
-
-						if(arrow) direction = arrow.getAttribute('direction') || '';
-
-						let orderBy = this.getAttribute('orderBy') +' '+ direction;
-
-						let tblElem = document.getElementById(idDestiny);
-
-						Table.setInfo(tblElem, { orderBy: orderBy }, true );
-
-						Table.dom[idDestiny].onOrderBy(this.getAttribute('orderBy') +' '+ direction);
+					if(cell.classes) {
+						th.setAttribute('class', cell.classes);
 					}
-				});
+
+					if(cell.colspan) {
+						th.setAttribute('colspan', cell.colspan);
+					}
+
+					if(cell.colClasses) {
+						Table.dom[idDestiny].colClasses[positionId] = cell.colClasses;
+					}
+
+					if((positionId == 0) && (Table.dom[idDestiny].withCheck)) {
+						let chkelem = document.createElement('input');
+						chkelem.setAttribute('type', 'checkbox');
+						chkelem.value = 'all';
+						chkelem.addEventListener('click', () => {
+							chkelem.closest('table').querySelector('tbody').querySelectorAll('input[type=checkbox]')
+							.forEach(elem => {
+								elem.checked = chkelem.checked;
+								elem.dispatchEvent(new Event('change'));
+							});
+						});
+						th.prepend(chkelem);
+					}
+
+					if(cell.type == 'integer' || cell.type == 'date') {
+						th.classList.add('center');
+					}
+
+					else if(cell.type == 'decimal' || cell.type == 'money') {
+						th.classList.add('right');
+					}
+
+					if(cell.orderBy) {
+						span.setAttribute('orderBy', cell.orderBy);
+						span.addEventListener('click', function() {
+							if(typeof Table.dom[idDestiny].onOrderBy === 'function') {
+
+								let direction = '';
+
+								let arrow = this.querySelector('.R4OrderArrow');
+
+								if(arrow) direction = arrow.getAttribute('direction') || '';
+
+								let orderBy = this.getAttribute('orderBy') +' '+ direction;
+
+								let tblElem = document.getElementById(idDestiny);
+
+								Table.setInfo(tblElem, { orderBy: orderBy }, true );
+
+								Table.dom[idDestiny].onOrderBy(this.getAttribute('orderBy') +' '+ direction);
+							}
+						});
+					}
+
+					tr.appendChild(th);
+					positionId++;
+				}
 			}
 
-			tr.appendChild(th);
+			thead.appendChild(tr);
 		});
 
-		thead.appendChild(tr);
 		return thead;
 	},
 
@@ -289,7 +327,7 @@ var Table = {
 
 			td = document.createElement('td');
 
-			if(Table.dom[idDestiny].head[position]) {
+			if(Table.dom[idDestiny].lastHead[position]) {
 
 				if(line.classes) {
 					if(line.classes[position]) {
@@ -304,7 +342,7 @@ var Table = {
 					td.setAttribute('class', Table.dom[idDestiny].colClasses[position]);
 				}
 
-				let type = Table.dom[idDestiny].head[position].type;
+				let type = Table.dom[idDestiny].lastHead[position].type;
 
 				if(value === null || value === undefined) value = '';
 
@@ -313,21 +351,20 @@ var Table = {
 				}
 				else if(type == 'decimal') {
 					if(value !== '') {
-						let precision = Table.dom[idDestiny].head[position].precision ?
-							Table.dom[idDestiny].head[position].precision : 2;
+						let precision = Table.dom[idDestiny].lastHead[position].precision ?
+							Table.dom[idDestiny].lastHead[position].precision : 2;
 						value = R4.numberMask(value, precision);
 						td.classList.add('right');
 					}
 				}
 				else if(type == 'money') {
 					if(value !== '') {
-						let precision = Table.dom[idDestiny].head[position].precision ?
-							Table.dom[idDestiny].head[position].precision : 2;
+						let precision = Table.dom[idDestiny].lastHead[position].precision ?
+							Table.dom[idDestiny].lastHead[position].precision : 2;
 						value = R4.moneyMask(value, precision);
 						td.classList.add('right');
 					}
 				}
-
 				else if(type == 'date') {
 					value = R4.dateMask(value);
 					td.classList.add('center');
@@ -361,7 +398,7 @@ var Table = {
 					td.innerHTML = ' '+ value;
 				}
 
-				td.setAttribute('col-title', Table.dom[idDestiny].head[position].label +': ');
+				td.setAttribute('col-title', Table.dom[idDestiny].lastHead[position].label +': ');
 
 				tr.appendChild(td);
 			} else {

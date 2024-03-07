@@ -4,10 +4,15 @@ var Pop = {
 	listMouseOverHintFuncs: {},
 
 	//Pop.hint(elem, txt) - Cria hints ao posicionar o cursor do mouse
-	hint: function(el, txt) {
-		let popel;
+	hint: function(el, txt, opt) {
+		let popel, timeout, open;
 
-		let fn = function(ev){
+		if(opt) {
+			timeout = opt.timeout;
+			open    = opt.open;
+		}
+
+		let fn = function(){
 			popel = Pop.create({
 				html: txt,
 				destiny: el,
@@ -16,15 +21,28 @@ var Pop = {
 			});
 		};
 
-		el.addEventListener('mouseenter', fn);
+		if(open) {
 
-		el.addEventListener('mouseleave', function(){
-			Pop.destroyElem(popel);
-		});
+			fn();
+			if(timeout) {
+				setTimeout( () => {
+					Pop.destroyElem(popel);
+				}, timeout);
+			}
 
-		el.addEventListener('click', function(){
-			Pop.destroyElem(popel);
-		});
+		} else {
+
+			el.addEventListener('mouseenter', fn);
+
+			el.addEventListener('mouseleave', function(){
+				Pop.destroyElem(popel);
+			});
+
+			el.addEventListener('click', function(){
+				Pop.destroyElem(popel);
+			});
+
+		}
 
 		return {
 			id: el.id,
@@ -58,7 +76,7 @@ var Pop = {
 		let classes  = [];
 		let onOpen   = opts.onOpen   || function(){};
 		let id       = opts.id       || destiny.id +'R4Pop';
-		let overlay = opts.overlay  || false;
+		let overlay  = opts.overlay  || false;
 
 		if(!overlay && destiny.getAttribute('R4PopTarget')) return false;
 

@@ -516,16 +516,19 @@ var R4 = {
 
 
 	onlyNumbers: function(v) {
+		if(typeof v == 'undefined') return '';
 		return v.toString().replace(/\D/g, '');
 	},
 
 
 	integerMask: function(v) {
+		if(typeof v == 'undefined') return '';
 		return v.toString().replace(/([^0-9-])/g, '');
 	},
 
 
 	cepMask: function(v) {
+		if(typeof v == 'undefined') return '';
 		return v.toString()
 			.replace(/\D/g, '')
 			.replace(/^(\d{5})(\d)/, '$1-$2');
@@ -533,6 +536,7 @@ var R4 = {
 
 
 	phoneMask: function(v) {
+		if(typeof v == 'undefined') return '';
 		return v.toString()
 			.replace(/\D/g, '')
 			.replace(/^(\d\d)(\d)/g, '($1) $2')
@@ -541,6 +545,7 @@ var R4 = {
 
 
 	cpfcnpjMask: function(v) {
+		if(typeof v == 'undefined') return '';
 		v = v.toString().replace(/\D/g, '');
 		if(v.length < 12) return R4.cpfMask(v);
 		else return R4.cnpjMask(v);
@@ -548,6 +553,7 @@ var R4 = {
 
 
 	cpfMask: function(v){
+		if(typeof v == 'undefined') return '';
 		return v.toString()
 			.replace(/\D/g, '')
 			.replace(/(\d{3})(\d)/, '$1.$2')
@@ -557,6 +563,7 @@ var R4 = {
 
 
 	cnpjMask: function(v){
+		if(typeof v == 'undefined') return '';
 		return v.toString()
 			.replace(/\D/g, '')
 			.replace(/(\d{2})(\d)/, '$1.$2')
@@ -567,6 +574,7 @@ var R4 = {
 
 
 	decimalInputMask: function(v) {
+		if(typeof v == 'undefined') return '';
 		return v.toString().replace(/([^0-9-.,=+*\/\(\)])/g, '');
 	},
 
@@ -630,9 +638,9 @@ var R4 = {
 		return new Promise(function(resolve, reject) {
 
 			let arr = [],
-			    strParams = '',
-			    xhr = new XMLHttpRequest(),
-			    method = opts.method || 'POST';
+				strParams = '',
+				xhr = new XMLHttpRequest(),
+				method = opts.method || 'POST';
 
 			if(typeof params !== 'object') strParams = params;
 			else {
@@ -918,8 +926,8 @@ var R4 = {
 		loopElem.removeAttribute('loop');
 
 		let crude = loopElem.outerHTML,
-		    processed = '',
-		    content = '';
+			processed = '',
+			content = '';
 
 		payload.forEach(row => {
 			content = crude;
@@ -936,7 +944,7 @@ var R4 = {
 
 
 	newBrowserTab: url => {
- 		let formelem = document.createElement('form');
+		let formelem = document.createElement('form');
 		formelem.setAttribute('action', url);
 		formelem.setAttribute('target', '_blank');
 		document.body.append(formelem);

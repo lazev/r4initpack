@@ -411,7 +411,7 @@ var FieldsTags = {
 
 		let label = document.createElement('div');
 		label.classList.add('itemText');
-		label.innerHTML = item.label ?? item.value;
+		label.innerHTML = (item.label) ? item.label : item.value;
 
 		if(item.extra) {
 			extra = document.createElement('div');

@@ -700,100 +700,86 @@ var Fields = {
 			}
 		}
 
-		switch(elem.attr('R4Type')) {
-			case 'email':
-				if(val) {
+		if(val) {
+			switch(elem.attr('R4Type')) {
+				case 'email':
 					if(!R4.checkMail(val)) {
 						valid = false;
 						arrErrors.push('Email inválido');
 					}
-				}
-			break;
+				break;
 
-			case 'date':
-			case 'datetime':
-				if((val) && (val != '0000-00-00')) {
-					if(!R4.checkDate(val)) {
-						valid = false;
-						arrErrors.push('Data inválida');
+				case 'date':
+				case 'datetime':
+					if(val != '0000-00-00') {
+						if(!R4.checkDate(val)) {
+							valid = false;
+							arrErrors.push('Data inválida');
+						}
 					}
-				}
-			break;
-			case 'autocomplete':
-				if((elem.val().trim() != '') && (!elem.classList.contains('AllowZero'))) {
-					//~ if(LazevAc.getVal(elem) == 0) {
-						//~ valid = false;
-						//~ arrErrors.push('Necessário selecionar uma opção');
-					//~ }
-				}
-			break;
-			case 'cep':
-				if(val) {
+				break;
+				case 'cep':
 					if(val.length < 8) {
 						valid = false;
 						arrErrors.push('CEP inválido');
 					}
-				}
-			break;
-			case 'cpfcnpj':
-			case 'cnpjcpf':
-				if(val) {
+				break;
+				case 'cpfcnpj':
+				case 'cnpjcpf':
 					if(!R4.checkCPFCNPJ(val)) {
 						valid = false;
 						arrErrors.push('CPF/CNPJ inválido');
 					}
-				}
-			break;
+				break;
 
-			case 'cpf':
-				if(val) {
+				case 'cpf':
 					if(!R4.checkCPF(val)) {
 						valid = false;
 						arrErrors.push('CPF inválido');
 					}
-				}
-			break;
+				break;
 
-			case 'cnpj':
-				if(val) {
+				case 'cnpj':
 					if(!R4.checkCNPJ(val)) {
 						valid = false;
 						arrErrors.push('CNPJ inválido');
 					}
-				}
-			break;
+				break;
 
-			case 'decimal':
-			case 'money':
-				let decVal, intVal;
+				case 'decimal':
+				case 'money':
 
-				if(elem.attr('decimal')) {
-					let splits = elem.attr('decimal').split(',');
-					decVal = parseInt(splits[1]);
-					intVal = parseInt(splits[0])-decVal;
-				}
-				else if(elem.attr('precision')) {
-					decVal = elem.attr('precision');
-					intVal = 11;
-				}
-				else if(elem.attr('R4Type') == 'money') {
-					decVal = 2;
-					intVal = 11;
-				}
+					let decVal, intVal;
 
-				let regExp = null;
+					if(elem.attr('decimal')) {
+						let splits = elem.attr('decimal').split(',');
+						decVal = parseInt(splits[1]);
+						intVal = parseInt(splits[0])-decVal;
+					}
+					else if(elem.attr('precision')) {
+						decVal = elem.attr('precision');
+						intVal = 11;
+					}
+					else if(elem.attr('R4Type') == 'money') {
+						decVal = 2;
+						intVal = 11;
+					}
 
-				if(decVal > 0) {
-					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
-				} else {
-					regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
-				}
+					let regExp = null;
 
-				valid = regExp.test(val);
+					if(decVal > 0) {
+						regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})(\.([0-9]{1,'+ decVal +'})|$)$', 'gi');
+					} else {
+						regExp = new RegExp('^(-|)([0-9]{1,'+ intVal +'})$', 'gi');
+					}
 
-				if(!valid) {
-					arrErrors.push('Valor inválido');
-				}
+					valid = regExp.test(val);
+
+					if(!valid) {
+						arrErrors.push('Valor inválido');
+					}
+				break;
+			}
 		}
 
 		return arrErrors;
