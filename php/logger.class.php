@@ -13,7 +13,7 @@ class Logger {
 
 
 	public function __construct() {
-		$this->dirPath = '/var/log/r4/'. SESSIONKEY .'/';
+		$this->dirPath = '/var/log/r4/'. SYSTEMID .'/';
 	}
 
 
@@ -40,8 +40,8 @@ class Logger {
 
 	public function logStart() {
 
-		if(!defined('SESSIONKEY') || !SESSIONKEY) {
-			$this->errMsg = 'Erro ao iniciar o Logger. Defina o SESSIONKEY no config.inc.php';
+		if(!defined('SYSTEMID') || !SYSTEMID) {
+			$this->errMsg = 'Erro ao iniciar o Logger. Defina o SYSTEMID no config.inc.php';
 		}
 		else {
 
