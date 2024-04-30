@@ -78,6 +78,14 @@ var Fields = {
 
 				if(!elem) continue;
 
+				if(typeof item.atts == 'object') {
+					for(let attName in item.atts) {
+						if(Object.hasOwnProperty.call(item.atts, attName)) {
+							elem.firstElementChild.setAttribute(attName, item.atts[attName]);
+						}
+					}
+				}
+
 				rcpt.id += '_rcpt';
 
 				if(item.type == 'hidden') rcpt.classList.add('hidden');

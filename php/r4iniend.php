@@ -24,8 +24,8 @@ if(!defined('R4ALREADYINIT')) {
 	$db = new DB();
 
 	if(defined('DBHOST')) {
-		$dbtable = (defined('DBBASE')) ? DBBASE : '';
-		$db->connect(DBHOST, $dbtable);
+		$dbbase = (defined('DBBASE')) ? DBBASE : '';
+		$db->connect(DBHOST, $dbbase);
 	}
 
 	spl_autoload_register(function($className) {
