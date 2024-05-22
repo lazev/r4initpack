@@ -20,7 +20,7 @@ var Dialog = {
 			    ephemeral         = opts.ephemeral         ? opts.ephemeral         : false,
 			    changeMonitor     = opts.changeMonitor     ? opts.changeMonitor     : false,
 			    buttons           = opts.buttons           ? opts.buttons           : [],
-			    clickOverlayClose = opts.clickOverlayClose ? opts.clickOverlayClose : true,
+			    clickOverlayClose = (opts.clickOverlayClose !== undefined) ? opts.clickOverlayClose : true,
 			    classes           = [];
 
 			let onOpen    = opts.onOpen      || function(){},
