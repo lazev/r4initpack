@@ -537,10 +537,20 @@ var R4 = {
 
 	phoneMask: function(v) {
 		if(typeof v == 'undefined') return '';
-		return v.toString()
+		v = v.toString();
+
+		if(R4.onlyNumbers(v).length <= 10) {
+			return v
+				.replace(/\D/g, '')
+				.replace(/^(\d\d)(\d)/g, '($1) $2')
+				.replace(/(\d{4})(\d)/, '$1-$2');
+		}
+		else {
+			return v
 			.replace(/\D/g, '')
 			.replace(/^(\d\d)(\d)/g, '($1) $2')
-			.replace(/(\d{4})(\d)/, '$1-$2');
+			.replace(/(\d)(\d{4})(\d)/, '$1 $2-$3');
+		}
 	},
 
 
