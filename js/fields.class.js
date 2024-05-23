@@ -263,6 +263,8 @@ var Fields = {
 
 				case 'money':
 				case 'money-':
+				case 'percent':
+				case 'percent-':
 				case 'decimal':
 				case 'decimal-':
 					type = 'text';
@@ -271,7 +273,12 @@ var Fields = {
 					elem = Fields.setCalcEvents(elem);
 					elem.addEventListener('input', function(){ this.value = R4.decimalInputMask(this.value); });
 
-					if(item.type == 'money' || item.type == 'money-') {
+					if(
+						item.type == 'money'   ||
+						item.type == 'money-'  ||
+						item.type == 'percent' ||
+						item.type == 'percent-'
+					) {
 						elem.addEventListener('blur', function(){
 							if(this.value != '' && this.value.indexOf('.') === -1 && this.value.indexOf(',') === -1) {
 								this.val( this.val().toString() +'.00' );
@@ -755,7 +762,11 @@ var Fields = {
 				break;
 
 				case 'decimal':
+				case 'decimal-':
 				case 'money':
+				case 'money-':
+				case 'percent':
+				case 'percent-':
 
 					let decVal, intVal;
 
@@ -768,7 +779,13 @@ var Fields = {
 						decVal = elem.attr('precision');
 						intVal = 11;
 					}
-					else if(elem.attr('R4Type') == 'money') {
+					else if(
+						elem.attr('R4Type') == 'decimal'  ||
+						elem.attr('R4Type') == 'decimal-' ||
+						elem.attr('R4Type') == 'money'    ||
+						elem.attr('R4Type') == 'money-'   ||
+						elem.attr('R4Type') == 'percent'  ||
+						elem.attr('R4Type') == 'percent-') {
 						decVal = 2;
 						intVal = 11;
 					}
@@ -842,7 +859,9 @@ var Fields = {
 				case 'decimal':
 				case 'decimal-':
 				case 'money':
-				case 'money-':    return R4.toUSNumber(elem.value);
+				case 'money-':
+				case 'percent':
+				case 'percent-':  return R4.toUSNumber(elem.value);
 				case 'date':      return R4.dateUnmask(elem.value, '0000-00-00');
 				case 'tags':
 				case 'emailtags':
@@ -896,23 +915,27 @@ var Fields = {
 
 			case 'money':
 			case 'money-':
+			case 'percent':
+			case 'percent-':
 			case 'decimal':
 			case 'decimal-':
-				//if(value == 0) elem.value = '';
-				//else {
+				let precision = elem.getAttribute('precision');
 
-					let precision = elem.getAttribute('precision');
+				if(precision > 0)
+					elem.value = R4.numberMask(value, precision);
 
-					if(precision > 0)
-						elem.value = R4.numberMask(value, precision);
+				else if(
+					type == 'money'   ||
+					type == 'money-'  ||
+					type == 'percent' ||
+					type == 'percent-'
+				)
+					elem.value = R4.numberMask(value, 2);
 
-					else if(type == 'money' || type == 'money-')
-						elem.value = R4.numberMask(value, 2);
+				else
+					elem.value = R4.toEUNumber(value);
 
-					else
-						elem.value = R4.toEUNumber(value);
-				//}
-				break;
+					break;
 
 			case 'cpf':
 			case 'cnpj':
