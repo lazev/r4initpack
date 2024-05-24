@@ -46,11 +46,14 @@ var Table = {
 			if(typeof objstorage[idDestiny] == 'string')
 				selExtraCols = objstorage[idDestiny].split(',');
 
+			//Verificar se as colunas estão dentro da lista de possíveis colunas
 			arrArrHead[headLastIndex].forEach(col => {
-				if(col.listExtraCols) {
+				if(col.listExtraCols) {listExtraCols
 					if(selExtraCols.length) {
 						selExtraCols.forEach(item => {
-							if(item) listCols.push(listExtraCols[item]);
+							if(item && listExtraCols[item]) {
+								listCols.push(listExtraCols[item]);
+							}
 						});
 					}
 				} else {
