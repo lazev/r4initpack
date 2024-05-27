@@ -48,7 +48,7 @@ var Table = {
 
 			//Verificar se as colunas estão dentro da lista de possíveis colunas
 			arrArrHead[headLastIndex].forEach(col => {
-				if(col.listExtraCols) {listExtraCols
+				if(col.listExtraCols) {
 					if(selExtraCols.length) {
 						selExtraCols.forEach(item => {
 							if(item && listExtraCols[item]) {

@@ -26,15 +26,14 @@
 			<nav class="panel bgWhite corner clearfix hiddenPrint">
 				<h2>Usuários</h2>
 
-				<div class="col-4">
-					<button id="usersBtnAdd" class="R4 bgSuccess white bold"> NOVO </button>
-					<button id="usersBtnDel" class="R4 bgDanger white bold"> ✘ </button>
-				</div>
+				<button id="usersBtnAdd" class="R4 bgSuccess white bold"> Novo </button>
+				<button id="usersBtnDel" class="R4 bgWarning white bold">
+					<!--R4TEMPLATE-icon-trash-->
+				</button>
 
-				<form id="formFiltro" class="right col-8">
-					<div id="filtro_busca" class="col-10 col-xs-10">Busca</div>
-					<div id="filtro_btn"   class="col-2 col-xs-2 btnAlignFix">🔍</div>
-				</form>
+				<!--R4TEMPLATE-formFilterAvancado-->
+
+				<div id="descrFilter"></div>
 			</nav>
 
 			<div id="listaUsers" class="panel bgWhite corner"></div>
@@ -50,6 +49,7 @@
 		desse arquivo forçando atualização do navegador sempre que
 		o arquivo seja editado e alterado. O mesmo vale para CSS.
 		-->
+		<link rel="stylesheet" type="text/css" href="R4Cache::users/style.css" />
 		<script defer src="R4Cache::users/users.class.js"></script>
 
 		<!--
@@ -57,11 +57,19 @@
 			chamadas assim que terminar de carregar
 		-->
 		<script>
-			const R4Init = function(){
+			const R4Init = () => {
 				Users.init();
 			};
 		</script>
 
 		<!--R4TEMPLATE-endBody-->
 	</body>
+
+	<form id="formFilter" class="hidden">
+		<div class="row">
+			<div id="filtro_busca"  class="col-6 col-xs-12">Busca</div>
+			<div id="filtro_fone"   class="col-6 col-xs-12">Telefone</div>
+			<div id="filtro_tipo"   class="col-6 col-xs-12">Tipo</div>
+		</div>
+	</form>
 </html>

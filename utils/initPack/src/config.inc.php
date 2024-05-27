@@ -32,12 +32,12 @@ define('DEVMODE',    true);
 
 define('SECRETKEY',  $priv['secretkey']);
 
-define('INDEXTABLE', '{systemid}');
-define('INDEXDB',    'localhost');
+define('DBBASEINDEX', '{systemid}');
+define('DBHOSTINDEX', 'localhost');
 
 define('DBUSER',     '{dbuser}');
 define('DBPASS',     $priv['dbpass']);
-define('DBSERVER',   INDEXDB);
-define('DBTABLE',    (isset($_SESSION[SYSTEMID]['SELTABLE']))
-                     ? $_SESSION[SYSTEMID]['SELTABLE']
-                     : INDEXTABLE);
+define('DBHOST',     DBHOSTINDEX);
+define('DBBASE',     (isset($_SESSION[SYSTEMID]['DBBASE']))
+                     ? $_SESSION[SYSTEMID]['DBBASE']
+                     : DBBASEINDEX);

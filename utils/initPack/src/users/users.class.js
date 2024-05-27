@@ -13,6 +13,14 @@ var Users = {
 	idUser: 0,
 
 
+	listExtraCols: {
+		tipo:       { label: 'Tipo',       type: 'text',    orderBy: 'tipo'      },
+		email:      { label: 'E-mails',    type: 'email',   orderBy: 'email'     },
+		dtNasc:     { label: 'Dt nasc.',   type: 'date',    orderBy: 'dtNasc'    }
+	},
+
+	selExtraCols: [ 'tipo' ], //Padrão das colunas extras
+
 	//Variáveis e listas específicas do módulo
 	listaTipos: [
 		{ key: 0,  value: ''            },
@@ -57,33 +65,81 @@ var Users = {
 
 		.catch(err => {
 			Warning.show('Erro ao buscar dados iniciais', err);
+			console.log(err);
 		});
 	},
 
 
-	//Inicializa o filtro do módulo. Neste caso aqui
-	//o filtro é apenas a busca simples, sem a chamada
-	//do filtro avançado.
+	//Inicializa o filtro do módulo. O filtro possui uma
+	//busca rápida direto na tela, e também o botão que
+	//abre o filtro avançado
 	initFilter: function() {
 
-		Fields.create([
-			{ id: 'busca', type: 'text' },
-		], 'filtro');
+		let formFilter = $('#formFilter');
 
-		$('#formFilter').on('submit', function(ev) {
-			ev.preventDefault();
-
-			Table.setInfo($('#listaProdTipos'), { currentPage: 1 });
-
-			Users.filter();
+		//Formulário do filtro avançado
+		Dialog.create({
+			elem: formFilter,
+			title: 'Filtro avançado',
+			classes: 'narrow', //Classe que deixa o formulário menor
+			buttons: [
+				{
+					label: Icons.search + '<span>Filtrar</span>',
+					classes: 'R4DialogSaver bgPrimary white',
+					onClick: function() {
+						formFilter.trigger('submit');
+					}
+				},
+				{
+					label: Icons.close + '<span>Fechar</span>',
+					classes: 'R4DialogCloser bgLight'
+				}
+			]
 		});
 
-		Pop.hint($('#filtro_btnFiltrar'), 'Busca rápida');
+		//Campos da busca rápida e também do filtro avançado
+		Fields.create([
+			{ id: 'buscaRapida', type: 'text'    },
+			{ id: 'busca',       type: 'text'    },
+			{ id: 'telefone',    type: 'integer' },
+			{ id: 'tipo',        type: 'select', options: Users.listaTipos }
+		], 'filtro');
+
+		//Hint são mensagens que aparecem ao colocar o mouse em cima do elem.
+		Pop.hint($('#filtro_btnFiltrar'),  'Busca rápida'   );
+		Pop.hint($('#filtro_btnAvancado'), 'Filtro avançado');
+
+		//Evento que abre o filtro avançado
+		$('#filtro_btnAvancado').on('click', function() {
+			Dialog.open(formFilter);
+		});
+
+		//Campo de busca rápida. Monitora as teclas apertas. Se
+		//for ENTER (keyCode == 13) dispara a busca
+		$('#filtro_buscaRapida').on('keydown', function(ev) {
+			if(ev.keyCode == 13) {
+				$('#filtro_busca').val( $('#filtro_buscaRapida').val() );
+				formFilter.trigger('submit');
+			}
+		});
+
+		//Botão de filtrar dentro da busca rápida também dispara a busca
+		$('#filtro_btnFiltrar').on('click', function() {
+			$('#filtro_busca').val( $('#filtro_buscaRapida').val() );
+			formFilter.trigger('submit');
+		});
+
+		//Disparar a busca significa dar submit no form de filtro avançado
+		formFilter.on('submit', function(ev) {
+			ev.preventDefault();
+			Table.setInfo($('#listaUsers'), { currentPage: 1 });
+			Users.filter();
+		});
 	},
 
 
 	//Inicia o elemento da listagem. Neste ponto apenas a matriz
-	//do cabeçalho é definida. Os dados da lista são gerados por
+	//do cabeçalho é definida. Os dados da lista são gerados porc
 	//ajax ao carregar a página
 	initList: () => {
 
@@ -98,6 +154,7 @@ var Users = {
 				{ label: 'Nome',   orderBy: 'nome'  },
 				{ label: 'Fones',  orderBy: 'tags'  },
 				{ label: 'Tags',   orderBy: 'tags', type: 'tags' },
+				{ label: 'Tipo',   orderBy: 'tipo' },
 				{ label: 'Ativo?', orderBy: 'ativo' }
 			],
 			withCheck:    true,
