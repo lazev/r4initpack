@@ -48,8 +48,6 @@ class R4 {
 	public static function getSession($index) {
 		if(defined('APION') && APION) {
 			global $_CONFIG;
-
-			//error_log(print_r($_CONFIG['R4SID'], 1));
 			if(!isset($_CONFIG['R4SID'][$index])) return null;
 			return $_CONFIG['R4SID'][$index];
 		}
