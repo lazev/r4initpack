@@ -2,14 +2,16 @@
 
 class DB {
 
-	private $DBCon   = '';
-	private $debug   = false;
+	private $DBCon;
+	private $debug = false;
 	private $currentHost = '';
 	private $currentBase = '';
 
 	public $errCod = 0;
 	public $errMsg = '';
 	public $errCom = '';
+
+	public $affectedRows = 0;
 
 	public function connect($host='', $dbname='', $user='', $pass='', $errAlert=true) {
 
@@ -123,7 +125,11 @@ class DB {
 		}
 
 		if($this->debug) {
-			echo '<p>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
+			if($this->debug == 'log') {
+				error_log(PHP_EOL . $sqlQuery . PHP_EOL);
+			} else {
+				echo '<p>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
+			}
 		}
 
 		$result = $this->trySQL($sqlQuery, $errorAlert);
@@ -180,8 +186,13 @@ class DB {
 		if(is_array($dataFields) && count($dataFields)) {
 
 			if($this->debug) {
-				echo '<p><b>Input query:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p><b>Payload:</b><br>';
-				print_r($dataFields);
+				if($this->debug == 'log') {
+					error_log('Input query: '. PHP_EOL . $sqlQuery . PHP_EOL);
+					error_log('Payload: '. print_r($dataFields, 1));
+				} else {
+					echo '<p><b>Input query:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p><b>Payload:</b><br>';
+					print_r($dataFields);
+				}
 			}
 
 			if(count($dataFields)) {
@@ -192,7 +203,11 @@ class DB {
 		}
 
 		if($this->debug) {
-			echo '<p><b>Query:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
+			if($this->debug == 'log') {
+				error_log('Query: '. PHP_EOL . $sqlQuery . PHP_EOL);
+			} else {
+				echo '<p><b>Query:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
+			}
 		}
 
 		$result = $this->trySQL($sqlQuery, $errorAlert);
@@ -259,8 +274,8 @@ class DB {
 
 
 	public function close() {
-		if(is_resource($this->DBCon)) {
-			mysqli_close($this->DBCon);
+		if(is_object($this->DBCon)) {
+			$this->DBCon->close();
 		}
 	}
 
@@ -308,7 +323,7 @@ class DB {
 
 
 	public function setDebug($bol) {
-		$this->debug = (($bol) ? true : false);
+		$this->debug = $bol;
 	}
 
 
