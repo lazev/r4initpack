@@ -225,7 +225,15 @@ class DB {
 	private function trySQL($sqlQuery, $errorAlert=true) {
 		try {
 
+			if($this->debug) $mtimeini = microtime(true);
+
 			$result = $this->DBCon->query($sqlQuery);
+
+			if($this->debug) {
+				$queryTime = round(microtime(true) - $mtimeini, 5);
+				if($this->debug == 'log') error_log('Query time: '. $queryTime .'s'. PHP_EOL.PHP_EOL);
+				else echo '<p><b>Query time:</b> '. $queryTime .'s.</p>';
+			}
 
 		} catch (Exception $e) {
 
