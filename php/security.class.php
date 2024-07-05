@@ -7,6 +7,10 @@ class Security {
 	public $errMsg = '';
 	public $errObs = '';
 
+	public function setPassKey($passKey) {
+		$this->passKey = $passKey;
+	}
+
 	//Output Example: 00.1134.48ae.1b8f.c24
 	public function generateKey($cod, $id, $passkey='') {
 		$id = (int)$id;
