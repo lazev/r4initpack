@@ -378,6 +378,10 @@ var Table = {
 						value = box + value.replaceAll(',', '</span>'+ box) +'</span>';
 					}
 				}
+				else if(type == 'button') {
+					let label = Table.dom[idDestiny].lastHead[position].label;
+					value = '<button class="R4" value="'+ value +'">'+ label +'</button>'
+				}
 
 				if((!footLine) && (position == 0) && (Table.dom[idDestiny].withCheck)) {
 					let chkelem = document.createElement('input');
