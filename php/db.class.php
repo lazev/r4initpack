@@ -13,22 +13,29 @@ class DB {
 
 	public $affectedRows = 0;
 
-	public function connect($host='', $dbname='', $user='', $pass='', $errAlert=true) {
+	public function connect($host='', $dbname='', $user='', $pass='', $errAlert=true, $ssl=false) {
 
 		if(empty($user) && defined('DBUSER')) $user = DBUSER;
 		if(empty($pass) && defined('DBPASS')) $pass = DBPASS;
+		if(empty($ssl)  && defined('DBSSL') ) $ssl  = DBSSL;
 
 		if(!empty($host)) {
 			if($this->currentHost != $host) {
 
 				try {
-
-					$this->DBCon = new mysqli($host, $user, $pass);
+					if($ssl) {
+						$this->DBCon = mysqli_init();
+						// $this->DBCon->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+						// $this->DBCon->ssl_set(null, null, '/etc/my.cnf.d/certs/server-cert.pem', null, null);
+						$this->DBCon->real_connect($host, $user, $pass, null, null, null, MYSQLI_CLIENT_SSL);
+					} else {
+						$this->DBCon = new mysqli($host, $user, $pass);
+					}
 
 				} catch (Exception $e) {
 
 					$this->errCod = $e->getCode();
-               $this->errMsg = $this->errCod .' - '. $e->getMessage();
+					$this->errMsg = $this->errCod .' - '. $e->getMessage();
 
 					if($errAlert) $this->errorMonitor('Server '. $host .' connection error: '. $this->errMsg);
 
