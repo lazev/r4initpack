@@ -135,6 +135,12 @@ var R4 = {
 	},
 
 
+	ifNull: function(valGiven, valIfNull) {
+		let _a;
+		return (_a = valGiven) !== null && _a !== void 0 ? _a : valIfNull;
+	},
+
+
 	typeEffect: function(el, txt, speed) {
 
 		let newTxt = '';
