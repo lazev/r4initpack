@@ -31,10 +31,13 @@ class R4 {
 	}
 
 
-	public static function log($msg, $module=null, $idModule=null, $type=null) {
+	public static function log($msg, $module=null, $idModule=null, $type=null, $logFile='') {
 		require_once dirname(__FILE__) . '/logger.class.php';
 
 		$log = new Logger;
+
+		if(!empty($logFile)) $log->logFile = $logFile;
+
 		$log->log($msg, $module, $idModule, $type);
 	}
 

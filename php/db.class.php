@@ -325,7 +325,7 @@ class DB {
 
 
 	private function errorMonitor($msg, $subject='...') {
-		R4::log($msg, 'DB', $this->currentBase, 'ERRO');
+		R4::log($msg, 'DB', $this->currentBase, 'ERRO', 'sql.error.log');
 	}
 
 
