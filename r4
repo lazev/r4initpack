@@ -18,8 +18,7 @@ switch($com){
 
 		if($param == 'monitor') $monitor = true;
 
-		$ret = (int)shell_exec("ps -u | grep 'r4 up monitor' | grep -v 'grep' | wc -l");
-		if($ret > 1) echoc('ATENTION: You already have '. ($ret-1) .' R4 monitor running.', 'red', 'bold', '', 2);
+		$testMonitorInstance = (int)shell_exec("ps -u | grep 'r4 up monitor' | grep -v 'grep' | wc -l");
 
 		require $r4path .'utils/compiler.php';
 
