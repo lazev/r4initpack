@@ -297,7 +297,15 @@ var Fields = {
 				case 'cnpj':
 				case 'cpfcnpj':
 					type = 'tel';
-					elem.addEventListener('input', function(){ this.value = R4.cpfcnpjMask(this.value); });
+
+					let sizeLimit = (item.type == 'cpf') ? 11 : 14;
+
+					elem.addEventListener('input', function(){
+						let fieldVal = this.val();
+						if(fieldVal.length > sizeLimit) this.value = fieldVal.substring(0, sizeLimit);
+
+						this.value = R4.cpfcnpjMask(this.value);
+					});
 					break;
 
 				case 'phone':
