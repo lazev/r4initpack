@@ -35,7 +35,7 @@ switch($com){
 }
 
 
-function echoc($msg, $color='green', $style='normal', $bg='black', $enters=0) {
+function echoc($msg='', $color='green', $style='normal', $bg='black', $enters=1) {
 	global $echoWithoutStyle;
 
 	$enter = '';
