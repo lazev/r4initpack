@@ -300,8 +300,18 @@ class DB {
 	}
 
 
-	public function getBaseNow() {
+	public function getCurrentHost() {
+		return $this->currentHost;
+	}
+
+
+	public function getCurrentBase() {
 		return $this->currentBase;
+	}
+
+
+	public function getBaseNow() { //deprecated
+		return $this->getCurrentBase();
 	}
 
 
