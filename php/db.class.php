@@ -234,11 +234,11 @@ class DB {
 
 			if($this->debug) $mtimeini = microtime(true);
 
-			$statment = $this->DBCon->prepare($sqlQuery);
-			$statment->execute();
-			$result = $statment->get_result();
+			// $statment = $this->DBCon->prepare($sqlQuery);
+			// $statment->execute();
+			// $result = $statment->get_result();
 
-			// $result = $this->DBCon->query($sqlQuery);
+			$result = $this->DBCon->query($sqlQuery);
 
 			if($this->debug) {
 				$queryTime = round(microtime(true) - $mtimeini, 5);
