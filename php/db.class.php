@@ -66,7 +66,7 @@ class DB {
 				} catch (Exception $e) {
 
 					$this->errCod = $e->getCode();
-               $this->errMsg = $this->errCod .' - '. $e->getMessage();
+					$this->errMsg = $this->errCod .' - '. $e->getMessage();
 					//$this->errCom = $e->getTrace();
 
 					if($errAlert) {
@@ -234,7 +234,11 @@ class DB {
 
 			if($this->debug) $mtimeini = microtime(true);
 
-			$result = $this->DBCon->query($sqlQuery);
+			$statment = $this->DBCon->prepare($sqlQuery);
+			$statment->execute();
+			$result = $statment->get_result();
+
+			// $result = $this->DBCon->query($sqlQuery);
 
 			if($this->debug) {
 				$queryTime = round(microtime(true) - $mtimeini, 5);
