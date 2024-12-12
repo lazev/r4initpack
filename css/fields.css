@@ -191,6 +191,27 @@
 	font-size: 12px;
 }
 
+.R4Disabled > .R4Fields > .tagList {
+	background-color: lightgray;
+	width: 100%;
+}
+
+.R4Disabled > .R4Fields > .tagList > .tagItem {
+	box-shadow: none;
+}
+
+.R4Disabled > .R4Fields > .tagList > .tagItem > .closer {
+	display: none;
+}
+
+.R4Disabled > .R4Fields.tags > input {
+	display: none;
+}
+
+.R4Disabled > .R4Fields.tags {
+	padding-top: 4px;
+}
+
 
 /* BOTTOM BARS ================================= */
 .R4Fields > .bar {

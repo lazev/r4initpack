@@ -1054,11 +1054,12 @@ var Fields = {
 		if(bool || bool == undefined) {
 			elem.removeAttribute('readonly');
 			elem.removeAttribute('disabled');
+			$('#'+ elem.id +'_rcpt').classList.remove('R4Disabled');
 		}
 		else {
 			elem.setAttribute('readonly', true);
 			elem.setAttribute('disabled', true);
-			//if(elem.getAttribute('R4Type') == 'switch') elem.val(0);
+			$('#'+ elem.id +'_rcpt').classList.add('R4Disabled');
 		}
 	},
 
