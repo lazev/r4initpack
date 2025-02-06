@@ -362,10 +362,14 @@ var Table = {
 				}
 				else if(type == 'money') {
 					if(value !== '') {
-						let precision = Table.dom[idDestiny].lastHead[position].precision ?
-							Table.dom[idDestiny].lastHead[position].precision : 2;
-						value = R4.moneyMask(value, precision);
-						td.classList.add('right');
+						if(!isNaN(value)) {
+							let precision = Table.dom[idDestiny].lastHead[position].precision ?
+								Table.dom[idDestiny].lastHead[position].precision : 2;
+							value = R4.moneyMask(value, precision);
+							td.classList.add('right');
+						} else {
+							console.log(value, 'nan');
+						}
 					}
 				}
 				else if(type == 'date') {
