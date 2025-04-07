@@ -6,6 +6,7 @@ class DB {
 	private $debug = false;
 	private $currentHost = '';
 	private $currentBase = '';
+	private $currentUser = '';
 
 	public $errCod = 0;
 	public $errMsg = '';
@@ -20,7 +21,7 @@ class DB {
 		if(empty($ssl)  && defined('DBSSL') ) $ssl  = DBSSL;
 
 		if(!empty($host)) {
-			if($this->currentHost != $host) {
+			if($this->currentHost != $host || $this->currentUser != $user) {
 
 				try {
 					if($ssl) {
@@ -52,6 +53,7 @@ class DB {
 				}
 				$this->DBCon->query("SET time_zone='". date('P') ."'");
 				$this->currentHost = $host;
+				$this->currentUser = $user;
 				$this->currentBase = '';
 			}
 		}
