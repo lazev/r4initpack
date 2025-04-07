@@ -306,6 +306,11 @@ class DB {
 	}
 
 
+	public function getCurrentUser() {
+		return $this->currentUser;
+	}
+
+
 	public function getCurrentHost() {
 		return $this->currentHost;
 	}
@@ -348,7 +353,8 @@ class DB {
 	public function getCurrentConfig() {
 		return [
 			'host'   => $this->currentHost,
-			'dbname' => $this->currentBase
+			'dbname' => $this->currentBase,
+			'user'   => $this->currentUser
 		];
 	}
 
