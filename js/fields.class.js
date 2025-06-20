@@ -1054,12 +1054,14 @@ var Fields = {
 		if(bool || bool == undefined) {
 			elem.removeAttribute('readonly');
 			elem.removeAttribute('disabled');
-			$('#'+ elem.id +'_rcpt').classList.remove('R4Disabled');
+			let e = $('#'+ elem.id +'_rcpt');
+			if(e) e.classList.remove('R4Disabled');
 		}
 		else {
 			elem.setAttribute('readonly', true);
 			elem.setAttribute('disabled', true);
-			$('#'+ elem.id +'_rcpt').classList.add('R4Disabled');
+			let e = $('#'+ elem.id +'_rcpt');
+			if(e) e.classList.add('R4Disabled');
 		}
 	},
 
