@@ -185,6 +185,7 @@ var R4 = {
 
 
 	checkCPF: function(CPF) {
+		CPF = R4.onlyNumbers(CPF);
 		var invalid = false;
 		if(CPF=='') {
 			invalid = true;
@@ -212,6 +213,7 @@ var R4 = {
 
 
 	checkCNPJ: function(CNPJ) {
+		CNPJ = R4.onlyNumbers(CNPJ);
 		var invalid = false;
 		if(CNPJ.length == 15) {
 			CNPJ = CNPJ.substr(1,14);
@@ -237,7 +239,7 @@ var R4 = {
 
 
 	checkCPFCNPJ: function(cpfcnpj) {
-		if(cpfcnpj.length < 13) {
+		if(R4.onlyNumbers(cpfcnpj).length < 13) {
 			return R4.checkCPF(cpfcnpj);
 		} else {
 			return R4.checkCNPJ(cpfcnpj);
