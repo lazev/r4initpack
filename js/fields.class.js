@@ -426,8 +426,9 @@ var Fields = {
 		elem.innerHTML = '';
 
 		if(typeof options === 'string') {
-			if(typeof eval(options) === 'object') {
-				options = eval(options);
+			let resolved = R4.resolveFunc(options) || window[options];
+			if(typeof resolved === 'object') {
+				options = resolved;
 			}
 		}
 
@@ -1022,9 +1023,30 @@ var Fields = {
 		let form = formula.replaceAll(',', '.');
 		let result;
 
+		// Valida: aceita apenas dígitos, operadores, parênteses e %
+		if(!/^[0-9+\-*/().e% ]+$/i.test(form)) {
+			Warning.show('Fórmula inválida', 'Caracteres não permitidos na expressão');
+			return formula;
+		}
+
+		// Pré-processa percentual estilo calculadora:
+		// A+B% → (A+(A*B/100))   ex: 8+50%  = 12
+		// A-B% → (A-(A*B/100))   ex: 100-20% = 80
+		form = form.replace(
+			/(\d+(?:\.\d+)?)\s*([+\-])\s*(\d+(?:\.\d+)?)%/g,
+			function(match, a, op, b) {
+				return '(' + a + op + a + '*' + b + '/100)';
+			}
+		);
+
+		// % restante (após * ou / ou sozinho) vira /100
+		// ex: 5*50% = 5*(50/100) = 2.5
+		form = form.replace(/(\d+(?:\.\d+)?)%/g, '($1/100)');
+
 		try {
-			result = eval(form);
-		} catch (e) {
+			// Function() isola o escopo (sem acesso a variáveis locais), mais seguro que eval()
+			result = Function('"use strict"; return (' + form + ')')();
+		} catch(e) {
 			Warning.show('Erro na fórmula', e);
 			console.warn(e);
 			return formula;

@@ -14,8 +14,10 @@ var FieldsTags = {
 		if(info.onAddTag)          elem.setAttribute('onAddTag',          info.onAddTag  );
 		if(info.typeahead)         elem.setAttribute('typeahead',         info.typeahead );
 		if(info.source)            elem.setAttribute('source',            info.source    );
+		if(info.minLength)         elem.setAttribute('minLength',         info.minLength );
 		if(info.allowFreeText)     elem.setAttribute('allowFreeText',     true           );
 		if(info.hideInputOnMaxSel) elem.setAttribute('hideInputOnMaxSel', true           );
+		if(info.autoSelectFirst)   elem.setAttribute('autoSelectFirst',   true           );
 
 		elem.addEventListener('keydown', ev => {
 
@@ -140,9 +142,8 @@ var FieldsTags = {
 		elem.parentNode.querySelector('.tagList').append(el);
 		elem.value = '';
 
-		if(typeof eval(onAddTag) === 'function') {
-			eval(onAddTag +'("'+ val +'", "'+ label +'", el)');
-		}
+		let fn = R4.resolveFunc(onAddTag);
+		if(fn) fn(val, label, el);
 
 		if(hideInputOnMaxSel) {
 			vals = FieldsTags.getVal(elem, true);
@@ -173,9 +174,8 @@ var FieldsTags = {
 
 		let onDel = elem.getAttribute('onDel');
 
-		if(typeof eval(onDel) === 'function') {
-			eval(onDel +'("'+ FieldsTags.getVal(elem) +'")');
-		}
+		let fn = R4.resolveFunc(onDel);
+		if(fn) fn(FieldsTags.getVal(elem));
 	},
 
 
@@ -251,8 +251,9 @@ var FieldsTags = {
 				if(ev.keyCode == 38)      FieldsTags.typeAheadMarkItem(this, -1);
 				else if(ev.keyCode == 40) FieldsTags.typeAheadMarkItem(this,  1);
 				else if(ev.keyCode == 13) {
-					FieldsTags.typeAheadSelItem(this);
-					FieldsTags.typeAheadValidValue(this);
+					if(FieldsTags.typeAheadSelItem(this)) {
+						FieldsTags.typeAheadValidValue(this);
+					}
 				}
 				else FieldsTags.typeAheadShowList(this);
 			} else FieldsTags.typeAheadShowList(this);
@@ -292,7 +293,7 @@ var FieldsTags = {
 		if(typeahead == 'json') {
 
 			if(typeof source == 'string')
-				list = FieldsTags.typeAheadFilterList(eval(source), value);
+				list = FieldsTags.typeAheadFilterList(R4.resolveFunc(source) || window[source], value);
 
 			else if(typeof source == 'object')
 				list = FieldsTags.typeAheadFilterList(source, value);
@@ -301,24 +302,33 @@ var FieldsTags = {
 
 			listElem.innerHTML = '';
 			listElem.append(listItens);
+			// A ideia é permitir que os eventos como mouseenter só rodem
+			// depois da lista criada em tela. Sem isso o mouseenter roda
+			// no mesmo instante que a lista recebe os itens.
+			setTimeout(()=>{ elem.selItemEventsLocked = false; }, 50);
 		}
 
 		else if(typeahead == 'function') {
-			if(typeof eval(source) === 'function') {
+			let fn = R4.resolveFunc(source);
+			if(typeof fn === 'function') {
 
 				clearTimeout(FieldsTags.timeoutTimer);
 				FieldsTags.timeoutTimer = setTimeout(function(){
 
-					eval(source +'("'+ value +'")' )
+					fn(value)
 
 					.then(list => {
 						listItens = FieldsTags.typeAheadFormatList(elem, list);
 
 						listElem.innerHTML = '';
 						listElem.append(listItens);
+						// A ideia é permitir que os eventos como mouseenter só rodem
+						// depois da lista criada em tela. Sem isso o mouseenter roda
+						// no mesmo instante que a lista recebe os itens.
+						setTimeout(()=>{ elem.selItemEventsLocked = false; }, 50);
 					});
 
-				}, 300);
+				}, 500);
 			}
 		}
 	},
@@ -383,24 +393,38 @@ var FieldsTags = {
 
 		let ul = document.createElement('ul');
 
+		if(!list.length) return ul;
+
 		list.forEach(function(item) {
 			ul.append(FieldsTags.typeAheadFormatListItem(item));
 		});
 
+		elem.selItemEventsLocked = true;
+
 		ul.querySelectorAll('li').forEach(li => {
 
 			li.addEventListener('mouseenter', ev => {
-				ev.target.parentNode.querySelectorAll('li').forEach(item => {
-					item.classList.remove('marked');
-				});
-				ev.target.classList.add('marked');
+				if(!elem.selItemEventsLocked) {
+					ev.target.parentNode.querySelectorAll('li').forEach(item => {
+						item.classList.remove('marked');
+					});
+					ev.target.classList.add('marked');
+				}
 			});
 
 			li.addEventListener('click', function(ev) {
-				FieldsTags.typeAheadSelItem(elem);
-				elem.focus();
+				if(!elem.selItemEventsLocked) {
+					FieldsTags.typeAheadSelItem(elem, ev.target);
+					elem.focus();
+				}
 			});
 		});
+
+		if(elem.getAttribute('autoSelectFirst')) {
+			let item = ul.querySelector('li');
+			item.classList.add('marked');
+			elem.focus();
+		}
 
 		return ul;
 	},
@@ -429,22 +453,21 @@ var FieldsTags = {
 	},
 
 
-	typeAheadSelItem: elem => {
+	typeAheadSelItem: (elem, li) => {
 
 		let onSel = elem.getAttribute('onSel');
 
 		let listElem = document.getElementById(elem.id +'_typeAheadList');
 
-		let marked = listElem.querySelector('.marked');
+		let marked = (li) ? li : listElem.querySelector('.marked');
 
 		if(marked) {
 
 			let val = marked.getAttribute('value');
 			let lab = marked.querySelector('div').innerHTML;
 
-			if(typeof eval(onSel) === 'function') {
-				eval(onSel +'("'+ val +'", "'+ lab +'")');
-			}
+			let fn = R4.resolveFunc(onSel);
+			if(fn) fn(val, lab);
 
 			FieldsTags.addTag(elem, val, lab);
 			FieldsTags.typeAheadDestroyList(elem);

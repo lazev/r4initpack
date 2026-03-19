@@ -38,7 +38,7 @@ button.R4::before {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background-color: rgb(255, 255, 255);
+	background-color: white;
 	opacity: 0;
 	transition: opacity 0.2s;
 }
@@ -53,7 +53,7 @@ button.R4::after {
 	padding: 50%;
 	width: 32px; /* Safari */
 	height: 32px; /* Safari */
-	background-color: rgb(255, 255, 255);
+	background-color: white;
 	opacity: 0;
 	transform: translate(-50%, -50%) scale(1);
 	transition: opacity 1s, transform 0.2s;

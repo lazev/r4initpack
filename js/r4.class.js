@@ -44,10 +44,7 @@ var $ = function(el) {
 
 	let elem = (typeof el === 'object') ? el : document.querySelector(el);
 
-	let k;
-	if(elem)
-		for(k in methods)
-			elem.__proto__[k] = methods[k];
+	if(elem) Object.assign(elem, methods);
 
 	return elem;
 };
@@ -1035,5 +1032,16 @@ var R4 = {
 				}
 			}
 		});
+	},
+
+
+	// Resolve uma função pelo nome em notação de ponto a partir do escopo global.
+	// Suporta funções simples ("minhaFuncao") e métodos em objetos ("Obj.metodo").
+	// Retorna a função se encontrada, ou undefined.
+	// Essa função serve para substituir o uso do eval() em funções do R4
+	resolveFunc: function(name) {
+		if(!name) return undefined;
+		let fn = name.split('.').reduce((obj, part) => obj?.[part], window);
+		return (typeof fn === 'function') ? fn : undefined;
 	}
 };

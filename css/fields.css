@@ -61,8 +61,6 @@
 	left: 5px;
 	top: 10px;
 	transition: 0.1s ease all;
-	-o-transition: 0.1s ease all;
-	-moz-transition: 0.1s ease all;
 	white-space: nowrap;
 	overflow: hidden;
 }
@@ -90,7 +88,7 @@
 /* DATE PICKER ================================= */
 
 .R4FieldsDtPicker .selDay {
-	border: 1px solid blue;
+	border: 1px solid #009688;
 	border-radius: 2px;
 }
 
@@ -184,6 +182,10 @@
 
 .R4TypeAheadList > ul > li.marked {
 	background-color: #F1F164;
+}
+
+.R4TypeAheadList > ul > li > * {
+	pointer-events: none;
 }
 
 .R4TypeAheadList > ul > li > .itemExtra {

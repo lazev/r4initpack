@@ -47,7 +47,7 @@ table.R4 > tbody > tr > td.nonClickCol {
 
 table.R4 > tbody > tr:hover,
 table.R4.striped > tbody > tr:hover {
-	background-color:: #f0e68c !important;
+	background-color: #f0e68c !important;
 }
 
 .R4TablePgntn {
