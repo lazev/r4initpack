@@ -1040,8 +1040,11 @@ var R4 = {
 	// Retorna a função se encontrada, ou undefined.
 	// Essa função serve para substituir o uso do eval() em funções do R4
 	resolveFunc: function(name) {
-		if(!name) return undefined;
-		let fn = name.split('.').reduce((obj, part) => obj?.[part], window);
-		return (typeof fn === 'function') ? fn : undefined;
+		if (!name) return undefined;
+		let result = name.split('.').reduce((obj, part) => obj?.[part], window);
+		if (result !== null && (typeof result === 'function' || typeof result === 'object')) {
+			return result;
+		}
+		return undefined;
 	}
 };
