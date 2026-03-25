@@ -115,11 +115,13 @@ file_put_contents($syspath .'.r4priv_'. $systemid, $privfile);
 
 chdir($syspath .'vendor/php');
 
-shell_exec('php ../composer.phar install');
+shell_exec('php ../../composer.phar install');
 
 chdir($syspath);
 
 echoc();
+
+mkdir($syspath .'public');
 
 if(PHP_OS_FAMILY == 'Windows') {
 	echoc('Coloque o arquivo .r4priv_'. $systemid .' em uma pasta segura e mude o caminho em src'. $sep .'config.inc.php');
