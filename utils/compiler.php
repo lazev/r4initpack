@@ -52,9 +52,12 @@ function getFilesState(array $folders): array {
 	foreach ($folders as $folder) {
 		if (!is_dir($folder)) continue;
 
-		$iter = new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS)
-		);
+		$dirIter = new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS);
+		$filtered = new RecursiveCallbackFilterIterator($dirIter, function($current) {
+			if ($current->isDir() && str_starts_with($current->getFilename(), '.')) return false;
+			return true;
+		});
+		$iter = new RecursiveIteratorIterator($filtered);
 
 		foreach ($iter as $file) {
 			if (!$file->isFile()) continue;
