@@ -427,9 +427,8 @@ var Fields = {
 
 		if(typeof options === 'string') {
 			let resolved = R4.resolveFunc(options) || window[options];
-			if(typeof resolved === 'object') {
-				options = resolved;
-			}
+			if(typeof resolved === 'object')        options = resolved;
+			else if(typeof resolved === 'function') options = resolved();
 		}
 
 		let opt;

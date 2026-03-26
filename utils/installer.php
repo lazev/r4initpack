@@ -119,6 +119,8 @@ shell_exec('php ../../composer.phar install');
 
 chdir($syspath);
 
+mkdir($syspath .'public');
+
 echoc();
 
 mkdir($syspath .'public');

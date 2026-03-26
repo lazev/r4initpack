@@ -30,24 +30,16 @@ if(isset($testMonitorInstance) && $testMonitorInstance > 1)
 	echoc('ATENTION: You already have '. ($testMonitorInstance-1) .' R4 monitor running.', 'red', 'bold', '', 2);
 
 
-$past = '';
 if((count($argv) > 1 && $argv[1] == 'monitor') || (isset($monitor) && $monitor)) {
+
+	$lockFile = sys_get_temp_dir() . '/r4_monitor_' . md5(getcwd()) . '.pid';
+	checkAndRegisterInstance($lockFile);
 
 	escreve('Monitoring...');
 
-	while(true) {
-		$ls = getLsHash();
-		if($past != $ls) {
-			escreve('Changes detected...');
-			sleep(1);
-			compile();
-			escreve('Monitoring...');
-			$past = getLsHash();
-		} else {
-			$past = $ls;
-		}
-		sleep(2);
-	}
+	monitorLoop($monitorFolders, function() {
+		compile();
+	}, pollMs: 500, debounceMs: 300);
 
 } else {
 	escreve('Single project update...');
@@ -55,25 +47,120 @@ if((count($argv) > 1 && $argv[1] == 'monitor') || (isset($monitor) && $monitor))
 }
 
 
-function getLsHash() {
-	global $monitorFolders;
+function getFilesState(array $folders): array {
+	$state = [];
+	foreach ($folders as $folder) {
+		if (!is_dir($folder)) continue;
 
-	if(PHP_OS_FAMILY == 'Windows') {
-		foreach($monitorFolders as $folder) {
-			$folder = str_replace('/', '\\', $folder);
-			$contDIR = trim(shell_exec('forfiles /P "'. $folder . '" /S /M * /C "cmd /c echo @fdate @ftime @file"'));
-			// https://docs.microsoft.com/pt-br/windows-server/administration/windows-commands/forfiles
-			$lsarr[] = md5($contDIR);
+		$iter = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator($folder, RecursiveDirectoryIterator::SKIP_DOTS)
+		);
+
+		foreach ($iter as $file) {
+			if (!$file->isFile()) continue;
+			if (isTempFile($file->getFilename())) continue;
+			$path = $file->getPathname();
+			$state[$path] = $file->getMTime() . ':' . $file->getSize();
 		}
 
-	} else {
-		foreach($monitorFolders as $folder) {
-			$lsarr[] = trim(shell_exec('ls -Rtral '. $folder .' | md5sum'));
+	}
+	ksort($state);
+	return $state;
+}
+
+
+function diffState(array $prev, array $curr): array {
+	$changes = [];
+	foreach ($curr as $path => $sig) {
+		if (!isset($prev[$path]))          $changes[] = "[+] $path";
+		elseif ($prev[$path] !== $sig)     $changes[] = "[~] $path";
+	}
+	foreach ($prev as $path => $_) {
+		if (!isset($curr[$path]))          $changes[] = "[-] $path";
+	}
+	return $changes;
+}
+
+
+function monitorLoop(array $folders, callable $onCompile, int $pollMs = 500, int $debounceMs = 300): void {
+	$prevState    = getFilesState($folders);
+	$pendingSince = null;
+
+	while (true) {
+		usleep($pollMs * 1000);
+		clearstatcache();
+
+		$currState = getFilesState($folders);
+
+		if ($currState !== $prevState) {
+			if ($pendingSince === null) {
+				$pendingSince = hrtime(true);
+			}
+
+			$elapsedMs = (hrtime(true) - $pendingSince) / 1e6;
+
+			if ($elapsedMs >= $debounceMs) {
+				$changes = diffState($prevState, $currState);
+				foreach ($changes as $change) escreve('  ' . $change);
+
+				$onCompile();
+
+				$prevState    = getFilesState($folders);
+				$pendingSince = null;
+				escreve('Monitorando...');
+			}
+		} else {
+			$pendingSince = null;
+		}
+	}
+}
+
+
+function checkAndRegisterInstance(string $lockFile): void {
+
+	if (file_exists($lockFile)) {
+		$existingPid = (int)trim(file_get_contents($lockFile));
+
+		if ($existingPid > 0 && isProcessRunning($existingPid)) {
+			echoc('ATENÇÃO: Já existe um monitor R4 ativo (PID ' . $existingPid . ').', 'red', 'bold', '', 2);
 		}
 	}
 
-	return implode('', $lsarr);
+	file_put_contents($lockFile, getmypid());
+
+	register_shutdown_function(fn() => @unlink($lockFile));
 }
+
+
+function isProcessRunning(int $pid): bool {
+	if (PHP_OS_FAMILY === 'Windows') {
+		$out = shell_exec("tasklist /FI \"PID eq $pid\" 2>NUL");
+		return str_contains($out ?? '', (string)$pid);
+	}
+	// Linux: /proc/{pid} existe enquanto o processo estiver vivo
+	return file_exists("/proc/$pid");
+}
+
+
+function isTempFile(string $filename): bool {
+	$patterns = [
+		'/^\.giosave/',     // SFTP via GIO/Nautilus
+		'/^\.~/',           // LibreOffice, WPS
+		'/~$/',             // editores em geral
+		'/\.swp$/',         // Vim
+		'/\.swx$/',         // Vim
+		'/^#.*#$/',         // Emacs
+		'/^\.\#/',          // Emacs lock
+		'/\.tmp$/',         // genérico
+		'/^\.___jb_/',      // JetBrains (PHPStorm, etc.)
+	];
+
+	foreach ($patterns as $pattern) {
+		if (preg_match($pattern, $filename)) return true;
+	}
+	return false;
+}
+
 
 
 function compile() {
@@ -122,6 +209,7 @@ function compile() {
 
 	escreve('Ok'. PHP_EOL);
 }
+
 
 function escreve($msg) {
 	echo PHP_EOL . date('H:i:s ') . $msg;
