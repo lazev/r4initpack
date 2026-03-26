@@ -9,16 +9,18 @@ let methods = {
 
 	on: function(ev, func) {
 		this.addEventListener(ev, func);
+		return this;
 	},
 
-	trigger: function(ev) {
-		let event = new Event(ev);
+	trigger: function(ev, data) {
+		let event = data ? new CustomEvent(ev, { detail: data }) : new Event(ev);
 		this.dispatchEvent(event);
+		return this;
 	},
 
 	val: function(val, label) {
 		if(arguments.length === 0) return Fields.getVal(this);
-		else return Fields.setVal(this, val, label);
+		else { Fields.setVal(this, val, label); return this; }
 	},
 
 	attr: function(name, value) {
@@ -26,11 +28,25 @@ let methods = {
 			return this.getAttribute(name);
 		} else {
 			this.setAttribute(name, value);
+			return this;
 		}
 	},
 
+	querySelector: function(selector) {
+		return $(Element.prototype.querySelector.call(this, selector));
+	},
+
+	querySelectorAll: function(selector) {
+		let list = Element.prototype.querySelectorAll.call(this, selector);
+		list.forEach(item => $(item));
+		return list;
+	},
+
 	find: function(selector) {
-		return this.querySelectorAll(selector);
+		let list = Element.prototype.querySelectorAll.call(this, selector);
+		if(!list.length) console.warn('R4 find(): nenhum elemento encontrado para "' + selector + '"');
+		list.forEach(item => $(item));
+		return list;
 	},
 
 	visible: function() {
@@ -54,11 +70,10 @@ var $ = function(el) {
 var $each = function(el, func) {
 	let list = document.querySelectorAll(el);
 
-	if(typeof func === 'function') {
-		list.forEach((item, key) => {
-			func( $(item), key );
-		});
-	}
+	list.forEach((item, key) => {
+		$(item);
+		if(typeof func === 'function') func(item, key);
+	});
 
 	return list;
 };
@@ -121,14 +136,7 @@ var R4 = {
 
 
 	uniqid: function() {
-		return (
-			Math.random()
-				.toString()
-				.substr(-5) +
-			Math.random()
-				.toString()
-				.substr(-5)
-		);
+		return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
 	},
 
 
