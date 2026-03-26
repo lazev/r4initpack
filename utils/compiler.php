@@ -26,7 +26,7 @@ $monitorFolders = $cfg['foldersToMonitor'];
 
 escreve('Running on ' . PHP_OS_FAMILY);
 
-if($testMonitorInstance > 1)
+if(isset($testMonitorInstance) && $testMonitorInstance > 1)
 	echoc('ATENTION: You already have '. ($testMonitorInstance-1) .' R4 monitor running.', 'red', 'bold', '', 2);
 
 
