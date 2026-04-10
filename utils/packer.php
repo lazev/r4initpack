@@ -2,7 +2,8 @@
 
 $r4path = dirname(__FILE__);
 
-require $r4path .'/vendor/JSPacker.class.php';
+// require $r4path .'/vendor/JSPacker.class.php'; // old
+require $r4path .'/lazevJSPacker.class.php'; // new beta
 
 $cfgfile = $argv[1] ?? '';
 
@@ -39,8 +40,10 @@ $content = array_merge($content, $content2);
 $result = '';
 foreach($content as $cont) {
 	if($R4JSPacker) {
-		$packer = new JavaScriptPacker($cont, 'Normal', true, false);
-		$result .= $packer->pack();
+		// $packer = new JavaScriptPacker($cont, 'Normal', true, false);
+		// $result .= $packer->pack();
+		$packer = new LazevJSPacker($cont);
+		$result .= $packer->pack() .';';
 	} else {
 		$result .= $cont;
 	}
@@ -56,8 +59,10 @@ if($JSPacker) {
 
 	foreach($content as $file => $cont) {
 		if(substr($file, -7) == '.min.js') continue;
-		$packer = new JavaScriptPacker($cont, 'Normal', true, false);
-		file_put_contents($file, $packer->pack());
+		// $packer = new JavaScriptPacker($cont, 'Normal', true, false);
+		// file_put_contents($file, $packer->pack());
+		$packer = new LazevJSPacker($cont);
+		file_put_contents($file, $packer->pack() .';');
 	}
 }
 
