@@ -1,5 +1,5 @@
 <?php
-session_name('R4SID'. substr(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), 0, 5));
+session_name('R4SID');
 session_start();
 
 if(isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
