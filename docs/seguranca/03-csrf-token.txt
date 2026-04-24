@@ -1,0 +1,27 @@
+PROBLEMA: Sem protecao CSRF + referer fraco
+SEVERIDADE: ALTO
+ARQUIVOS: php/r4iniend.php, utils/initPack/src/gatekeeper.js.php, js/r4.class.js
+STATUS: CORRIGIDO
+
+------------------------------------------------------------------------
+
+O QUE FOI CORRIGIDO:
+
+1. requireReferer agora aceita true para usar ROOT_URL automaticamente
+   (antes aceitava apenas 'https' que qualquer site HTTPS passava)
+
+2. CSRF token implementado:
+   - r4iniend.php gera token na sessao e valida em requisicoes POST
+   - gatekeeper.js.php envia o token ao frontend via _CONFIG.csrfToken
+   - R4.getJSON() e R4.sendBlob() enviam header X-CSRF-Token automaticamente
+
+3. Para desativar rapidamente a validacao CSRF, comentar o bloco
+   no r4iniend.php (linhas 18-24):
+
+    if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if($token !== $_SESSION[SYSTEMID]['_csrfToken']) {
+            header('HTTP/1.1 403 Forbidden');
+            die('{"error":1,"status":403,"errMsg":"Token CSRF inválido"}');
+        }
+    }

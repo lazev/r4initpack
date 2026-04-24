@@ -1,0 +1,59 @@
+PROBLEMA: $_REQUEST usado ao inves de $_POST para operacoes de mutacao
+SEVERIDADE: BAIXO
+ARQUIVO: php/r4.class.php, linha 6
+STATUS: Nao corrigido
+
+------------------------------------------------------------------------
+
+O QUE ACONTECE:
+
+O metodo R4::getRequest() usa $_REQUEST:
+
+    if($cont==='') $cont = $_REQUEST;
+
+$_REQUEST inclui $_GET + $_POST + $_COOKIE. Isso significa que
+operacoes como save e delete podem ser executadas via GET:
+
+    <img src="ajax.php?com=delete&ids=1,2,3">
+
+Problemas:
+- Links em e-mails ou sites podem executar acoes destrutivas
+- Dados sensiveis (senhas, tokens) aparecem na URL, ficando em logs
+  do servidor, historico do navegador e headers Referer
+- Facilita ataques CSRF via GET (embora o token CSRF ja mitigue isso)
+
+------------------------------------------------------------------------
+
+COMO CORRIGIR:
+
+Opcao A - Trocar no R4::getRequest():
+
+    if($cont==='') $cont = $_POST;
+
+    Simples mas pode quebrar sistemas que usam GET legitimamente
+    para enviar parametros (ex: filtros de busca via URL).
+
+Opcao B - Criar metodo separado:
+
+    public static function getPost() {
+        return is_array($_POST) ? $_POST : [];
+    }
+
+    E usar R4::getPost() nos ajax.php para operacoes de mutacao,
+    mantendo R4::getRequest() para leitura.
+
+Opcao C - Validar o metodo HTTP no ajax.php:
+
+    No switch do ajax.php, antes de processar save/delete:
+
+    if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        R4::dieAPI(0, 'Metodo nao permitido');
+    }
+
+------------------------------------------------------------------------
+
+RECOMENDACAO:
+
+A opcao B e a mais segura sem quebrar nada. Atualizar os exemplos
+do initPack para usar R4::getPost() em save/delete, e manter
+R4::getRequest() para listagens e leitura.

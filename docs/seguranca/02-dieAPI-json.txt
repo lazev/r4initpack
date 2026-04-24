@@ -1,0 +1,19 @@
+PROBLEMA: dieAPI montava JSON por concatenacao de strings
+SEVERIDADE: MEDIO
+ARQUIVO: php/r4.class.php, linha 26-31
+STATUS: CORRIGIDO
+
+------------------------------------------------------------------------
+
+O QUE FOI CORRIGIDO:
+
+Antes:
+    echo '{"error": 1, "status": "'. $stat .'", "errMsg": "'. $msg .'"}';
+
+Depois:
+    $params = ['error' => 1, 'status' => $stat, 'errMsg' => $msg, 'errObs' => $obs];
+    if(count($fields)) $params['errFields'] = $fields;
+    echo json_encode($params);
+
+Agora usa json_encode() igual ao retOkAPI, escapando caracteres
+especiais corretamente.

@@ -1,137 +1,172 @@
-# R4 Framework com initPack
+# R4 Framework
 
-PHP, JS e CSS de um framework leve e pequeno que pode ajudar no seu projeto
+Framework fullstack leve e modular para desenvolvimento web com **PHP**, **JavaScript** e **CSS**.
 
-## Pré instalação (no Windows)
+O R4 oferece uma base completa para criar aplicacoes web com formularios inteligentes, tabelas dinamicas, dialogos modais, validacao em dupla camada (frontend + backend), e um sistema de build que minifica, ofusca e injeta templates automaticamente.
 
-Antes de instalar, é importante que o comando **php** seja acessável a partir de qualquer pasta. Para isto, coloque a pasta do executável do PHP dentro do PATH do Windows (google it). Caso seja do interesse usar o banco de dados (MariaDB ou MySQL), o comando **mysql** também precisa estar no PATH.
+---
 
-## Instalação
+## Caracteristicas
 
-Dentro da pasta raíz dos projetos do apache/nginx
+- **Fullstack** - Classes PHP e JS que trabalham juntas com o mesmo padrao
+- **Formularios inteligentes** - Campos tipados com validacao automatica, mascaras e JSON Schema compartilhado
+- **Tabelas dinamicas** - Ordenacao, paginacao, selecao multipla e colunas configuraveis
+- **Dialogos modais** - Sistema completo com monitoramento de alteracoes e botoes customizaveis
+- **Compilador** - Minifica JS/CSS, ofusca codigo, injeta templates e monitora alteracoes em tempo real
+- **Modular** - Cada funcionalidade do sistema vive em seu proprio modulo com estrutura padronizada
+- **Leve** - Zero dependencias externas no frontend, vanilla JS puro
+- **PWA Ready** - Service Worker e manifest incluidos no init pack
+- **Validacao brasileira** - CPF, CNPJ, CEP, telefone, moeda (R$) nativos em PHP e JS
 
-```
+---
+
+## Instalacao rapida
+
+### Pre-requisitos
+
+- PHP acessivel via linha de comando
+- Apache ou Nginx configurado
+- MariaDB ou MySQL (opcional)
+
+### Clonar o framework
+
+Na pasta raiz dos projetos do servidor web:
+
+```bash
 git clone https://github.com/lazev/r4initpack r4
 ```
 
-### No Linux ou Windows
+### Criar um novo projeto
 
-Crie a pasta do seu projeto:
-
-```
-mkdir novoProjeto
-cd novoProjeto
-```
-
-Rode o inicializador do framework dentro do novo projeto:
-```
+```bash
+mkdir meuProjeto
+cd meuProjeto
 ../r4/r4 init
 ```
 
-O instalador irá perguntar:
-* O nome do projeto (a sugestão é o próprio nome da pasta)
-* O usuário do banco de dados
-* A senha do banco de dados
-* Se deseja instalar as bases modelo no banco de dados
-* Se deseja instalar o Composer
+O instalador ira perguntar o nome do projeto, credenciais do banco e opcoes de configuracao.
 
-No Linux vai pedir a senha de root para mudar o arquivo que contém a senha do banco de dados para a pasta /etc/
+### Compilar
 
-No Windows vai sugerir colocar este arquivo em alguma pasta segura
-
-Por fim, o instalador faz uma "_compilação_" do código modelo.
-
-
-## Estrutura básica
-
-A estrutura básica de um projeto do sistema é formado por 3 pastas e 1 arquivo:
-```
-r4.json - Arquivo que determina o que o compilador vai executar.
-src/    - Pasta onde o programador vai trabalhar. O código-fonte vai aqui.
-public/ - Pasta onde o "compilador" vai colocar o código depois de processado.
-vendor/ - Scripts de terceiros são instalados e organizados aqui via Composer.
+```bash
+../r4/r4 up            # compilacao unica
+../r4/r4 up monitor    # monitora alteracoes e compila automaticamente
 ```
 
-## Estrutura operacional
+### Criar um modulo
 
-### src/
-
-A estrutura sugerida é por módulos. Ou seja, cada módulo do sistema terá sua própria pasta dentro de src/.
-
-#### Exemplo
-
-Um sistema com cadastro de produtos, clientes, tela de vendas e configurações poderia ser estruturado assim:
-
-```
-src/
-» clientes/
-» config/
-» produtos/
-» vendas/
-» _assets/
+```bash
+../r4/r4 initmodule produtos
 ```
 
-O Init Pack provê uma pasta chamada **users/** com a estrutura sugerida dos arquivos.
+---
 
-### _assets/
+## Estrutura de um projeto
 
-Dentro da pasta **src/** há também a pasta **_assets/**.
-Esta pasta serve pra receber arquivos auxiliares do projeto (css/, js/, php/, templates/).
-Esta pasta também recebe os arquivos do próprio framework na "_compilação_".
-
-As pastas **css/** e **js/** possuem uma subpasta chamada global/. Os arquivos colocados dentro desta pasta não precisam ser incluídos no HTML porque serão agrupados dentro do script minimizado do framework.
-
-
-## Compilador
-
-O Framework é formado por scripts PHP, JS, CSS e HTML. Nada disso é compilável, eu sei. Então, como assim compilador?
-
-O framework chama de _compilar_ o ato de:
-* Minimizar, unir e ofuscar (no caso de javascript) os arquivos, diminuindo assim o número de requisições (handshakes) e o tamanho dos arquivos acessados.
-* Espalhar os templates definidos no arquivo **src/_assets/templates/templates.html** em todo o sistema nos arquivos .html que possuem o comentário que vincula o respectivo template.
-* _Validar a estrutura dos arquivos JS e PHP_ **(a fazer)**
-* Limpar e recriar toda a pasta **public/** com os arquivos prontos.
-
-Para rodar o _compilador_ basta executar o seguinte comando na pasta raíz do projeto
 ```
-../r4/r4 up
+meuProjeto/
+  r4.json          Configuracao do compilador
+  src/              Codigo-fonte
+    _assets/        Arquivos auxiliares (css/, js/, php/, templates/)
+    users/          Modulo de exemplo (CRUD completo)
+    ...             Seus modulos aqui
+  public/           Codigo compilado (gerado automaticamente)
+  vendor/           Dependencias do Composer
 ```
 
-Mas não precisa digitar o comando cada vez que altera um arquivo. Isto pode ser feito de forma automática com o seguinte comando:
+### Estrutura de um modulo
+
 ```
-../r4/r4 up monitor
-```
-
-Este comando irá monitorar a alteração de arquivos dentro das pastas definidas em **r4.json**.
-
-## Templates
-
-Uma das características do framework é dispensar a necessidade de colocar HTML e PHP no mesmo arquivo. Um grande empecilho a isto é a quantidade de códigos que precisariam ser replicados em diversos módulos. Pra resolver esta questão, o framework possui uma ferramenta de templates. Funciona assim:
-
-Dentro de **src/_assets/templates/templates.html** pode conter diversos templates separados neste formato:
-```html
-<!--R4TEMPLATE-head-->
-<meta charset="utf-8">
-<meta http-equiv="Content-Language" content="pt-br">
-<!--/R4TEMPLATE-->
+src/users/
+  users.class.php            Modelo (backend)
+  users.class.js             Controller (frontend)
+  fields.json                Definicao dos campos do formulario
+  ajax.php                   Endpoint AJAX
+  index.html                 Pagina principal
+  templates/
+    formUsers.html           Template do formulario
 ```
 
-Já nos arquivos .html basta adicionar o seguinte comentário: `<!--R4TEMPLATE-head-->`. No momento que rodar o compilador, este comentário será transformado no bloco de código que está dentro dos templates.html.
+---
 
-## Concat Files
+## Exemplo rapido
 
-Dentro do arquivo de leitura do _compilador_ há um parâmetro chamado concatFiles. Ele tem a função de unir 2 ou mais arquivos dentro de um único ao _compilar_. Serve pra qualquer tipo de arquivo e segue o exemplo:
+### Definindo campos (fields.json)
 
 ```json
-"concatFiles": {
-	"./caminho/arquivo/destino.js": [
-		"./caminho/arquivos/origem/*.js",
-		"./caminho/diferente/origem.js"
-	]
+[
+  {"id": "name",  "type": "text",  "label": "Nome",  "required": true, "maxSize": 100},
+  {"id": "email", "type": "email", "label": "E-mail", "required": true},
+  {"id": "phone", "type": "phone", "label": "Telefone"},
+  {"id": "birth", "type": "date",  "label": "Nascimento"}
+]
+```
+
+### Criando campos no frontend (JS)
+
+```javascript
+Fields.createFromFile('fields.json').then(() => {
+    // campos criados no DOM
+});
+```
+
+### Validando e enviando
+
+```javascript
+let data = Fields.validateForm($('#myForm'));
+if (data) {
+    R4.getJSON('ajax.php', { action: 'save', ...data }).then(ret => {
+        if (ret.ok) Warning.show('Salvo com sucesso!');
+    });
 }
 ```
 
+### Validando no backend (PHP)
 
-## Exemplos
+```php
+$valid = new ValidFields;
+$valid->addSchema('fields.json');
 
-Há um guia de consulta rápida chamado **example.html** dentro da pasta **src/** com algumas das principais ferramentas do framework.
+if (!$valid->valid($_REQUEST)) {
+    R4::dieAPI(0, $valid->errMsg, $valid->errObs, $valid->errFields);
+}
+
+$db->sql("INSERT INTO users SET name = :name, email = :email", $_REQUEST);
+R4::retOkAPI();
+```
+
+---
+
+## Componentes
+
+| Componente | JS | PHP | CSS | Descricao |
+|---|---|---|---|---|
+| **R4** | `R4` | `R4` | - | Classe utilitaria principal |
+| **Fields** | `Fields` | `ValidFields` | `fields.css` | Formularios e validacao |
+| **Table** | `Table` | - | `table.css` | Tabelas dinamicas |
+| **Dialog** | `Dialog` | - | `dialog.css` | Dialogos modais |
+| **Tabs** | `Tabs` | - | `tabs.css` | Abas |
+| **Warning** | `Warning` | - | `warning.css` | Notificacoes toast |
+| **Pop** | `Pop` | - | - | Popups e tooltips |
+| **Sbar** | `Sbar` | - | - | Sidebar com gestos touch |
+| **Effects** | `Effects` | - | - | Animacoes (fade, slide) |
+| **DB** | - | `DB` | - | Acesso ao banco de dados |
+| **Security** | - | `Security` | - | Chaves criptograficas |
+| **Logger** | - | `Logger` | - | Sistema de logs |
+
+---
+
+## Documentacao completa
+
+- **[Guia Rapido](docs/guia-rapido.md)** - Instalacao, primeiro projeto e primeiros passos
+- **[Arquitetura](docs/arquitetura.md)** - Como o framework funciona por dentro
+- **[Referencia PHP](docs/php-referencia.md)** - API completa das classes PHP
+- **[Referencia JavaScript](docs/js-referencia.md)** - API completa das classes JS
+- **[Componentes UI](docs/componentes.md)** - Guia de uso dos componentes visuais
+- **[Compilador](docs/compilador.md)** - Sistema de build, packer e templates
+
+---
+
+## Licenca
+
+MIT

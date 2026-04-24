@@ -1,0 +1,57 @@
+PROBLEMA: Session fixation - sem regeneracao de ID apos login
+SEVERIDADE: MEDIO
+ARQUIVO: utils/initPack/src/config.inc.php, linha 2
+STATUS: Nao corrigido
+
+------------------------------------------------------------------------
+
+O QUE ACONTECE:
+
+O nome da sessao e gerado assim:
+
+    session_name('R4SID'. substr(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), 0, 5));
+
+Problemas:
+- O nome da sessao e previsivel (baseado em IP + User Agent, ambos
+  conhecidos pelo atacante)
+- Nao existe session_regenerate_id(true) apos o login
+- Um atacante pode fixar o session ID antes do login da vitima e
+  depois reutilizar essa sessao ja autenticada
+
+------------------------------------------------------------------------
+
+COMO CORRIGIR:
+
+1. Adicionar session_regenerate_id(true) no momento do login, logo
+   apos autenticar o usuario com sucesso. Isso invalida o ID antigo
+   e gera um novo.
+
+   Exemplo no fluxo de login:
+
+    if($loginValido) {
+        session_regenerate_id(true);
+        R4::setSession('userLogged', true);
+        R4::setSession('userId', $userId);
+        // ...
+    }
+
+2. Considerar remover o IP do nome da sessao. Se o usuario trocar
+   de rede (wifi para 4G), o nome da sessao muda e ele perde a
+   sessao. Isso causa confusao sem ganho real de seguranca.
+
+   Alternativa mais simples:
+    session_name('R4SID');
+
+   Ou se quiser diferenciar por projeto:
+    session_name('R4_'. SYSTEMID);
+
+------------------------------------------------------------------------
+
+ONDE APLICAR:
+
+A correcao do session_regenerate_id depende do sistema cliente, pois
+o fluxo de login nao faz parte do framework base. Mas o initPack pode
+incluir isso no modulo de login como exemplo.
+
+A mudanca do session_name pode ser feita diretamente no config.inc.php
+do initPack.
