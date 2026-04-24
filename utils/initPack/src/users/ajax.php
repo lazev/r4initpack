@@ -1,7 +1,7 @@
 <?php
 $_CONFIG = [
 	'requireLogin' => true,
-	'requireReferer' => 'https'
+	'requireReferer' => true
 ];
 
 require '../config.inc.php';

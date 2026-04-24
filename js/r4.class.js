@@ -623,6 +623,7 @@ var R4 = {
 
 			let xhr = new XMLHttpRequest();
 			xhr.open('POST', url, true);
+			if(typeof _CONFIG !== 'undefined' && _CONFIG.csrfToken) xhr.setRequestHeader('X-CSRF-Token', _CONFIG.csrfToken);
 			xhr.onreadystatechange = function() {
 				if(xhr.readyState === 4) {
 					if(xhr.status === 200) {
@@ -679,6 +680,7 @@ var R4 = {
 
 			xhr.open(method, url, true);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			if(typeof _CONFIG !== 'undefined' && _CONFIG.csrfToken) xhr.setRequestHeader('X-CSRF-Token', _CONFIG.csrfToken);
 			xhr.onreadystatechange = function() {
 				if(xhr.readyState === 4) {
 					if(xhr.status === 200) {

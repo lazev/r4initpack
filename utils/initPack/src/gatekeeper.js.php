@@ -10,5 +10,11 @@ if(!isset($_SESSION[SYSTEMID]) || !count($_SESSION[SYSTEMID]) || !$_SESSION[SYST
 
 //Se tudo ok, segue adiante
 else {
+	if(!isset($_SESSION[SYSTEMID]['_csrfToken'])) {
+		$_SESSION[SYSTEMID]['_csrfToken'] = bin2hex(random_bytes(32));
+	}
+
 	require_once 'freeway.js.php';
+
+	echo ";\n_CONFIG.csrfToken = '". $_SESSION[SYSTEMID]['_csrfToken'] ."';";
 }

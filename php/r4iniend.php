@@ -8,12 +8,23 @@ if(!defined('R4ALREADYINIT')) {
 		}
 	}
 
-	if(isset($_CONFIG['requireReferer'])) {
-		if($_CONFIG['requireReferer']) {
-			if(strpos($_SERVER['HTTP_REFERER'], $_CONFIG['requireReferer']) === false) {
-				header('HTTP/1.1 403 Forbidden');
-				exit();
-			}
+	if(isset($_CONFIG['requireReferer']) && $_CONFIG['requireReferer']) {
+		$referer = ($_CONFIG['requireReferer'] === true && defined('ROOT_URL')) ? ROOT_URL : $_CONFIG['requireReferer'];
+		if(empty($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], $referer) === false) {
+			header('HTTP/1.1 403 Forbidden');
+			exit();
+		}
+	}
+
+	if(!isset($_SESSION[SYSTEMID]['_csrfToken'])) {
+		$_SESSION[SYSTEMID]['_csrfToken'] = bin2hex(random_bytes(32));
+	}
+
+	if($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+		if($token !== $_SESSION[SYSTEMID]['_csrfToken']) {
+			header('HTTP/1.1 403 Forbidden');
+			die('{"error":1,"status":403,"errMsg":"Token CSRF inválido"}');
 		}
 	}
 

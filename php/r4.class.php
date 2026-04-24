@@ -24,8 +24,14 @@ class R4 {
 
 
 	public static function dieAPI($stat=0, $msg='', $obs='', $fields=[]) {
-		$jsonfields = (count($fields)) ? $jsonfields = ', "errFields":'. json_encode($fields) : '';
-		echo '{"error": 1, "status": "'. $stat .'", "errMsg": "'. $msg .'", "errObs": "'. $obs .'"'. $jsonfields .'}';
+		$params = [
+			'error'  => 1,
+			'status' => $stat,
+			'errMsg' => $msg,
+			'errObs' => $obs
+		];
+		if(count($fields)) $params['errFields'] = $fields;
+		echo json_encode($params);
 		require 'r4iniend.php';
 		die();
 	}
