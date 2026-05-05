@@ -364,7 +364,10 @@ class LazevJSPacker
         $escapedPacked = self::escapeForJS($packed);
         $escapedDict = self::escapeForJS(implode('|', $dictionary));
 
-        $bootstrap = "eval(function(p,a,c,k,e,d)"
+        // Script injection instead of eval() so that top-level let/const
+        // declarations end up in the global declarative scope (accessible
+        // to other scripts), not trapped in an eval block scope.
+        $bootstrap = "(function(c){var s=document.createElement('script');s.textContent=c;document.head.appendChild(s);document.head.removeChild(s)}(function(p,a,c,k,e,d)"
             . "{e=function(c){return(c<a?'':e(parseInt(c/a)))"
             . "+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};"
             . "if(!''.replace(/^/,String))"
@@ -375,7 +378,7 @@ class LazevJSPacker
             . "while(c--){if(k[c])"
             . "{p=p.replace(new RegExp('\\\\b'+e(c)+'\\\\b','g'),k[c])}}"
             . "return p}"
-            . "('{$escapedPacked}',62,{$count},'{$escapedDict}'.split('|'),0,{}))";
+            . "('{$escapedPacked}',62,{$count},'{$escapedDict}'.split('|'),0,{})))";
 
         return $bootstrap;
     }

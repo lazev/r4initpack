@@ -67,7 +67,7 @@ class R4 {
 
 
 	public static function clearSession() {
-		$_SESSION[SYSTEMID] = [];
+		$_SESSION[SYSTEMID] = [ '_csrfToken' => bin2hex(random_bytes(32)) ];
 		return true;
 	}
 

@@ -1088,8 +1088,16 @@ var Fields = {
 
 
 	editable: function(elem, bool) {
-		if(bool || bool == undefined) elem.removeAttribute('readonly');
-		else elem.setAttribute('readonly', true);
+
+		if(elem.getAttribute('type') == 'checkbox') {
+			if(bool || bool == undefined) elem.removeAttribute('onclick');
+			else elem.setAttribute('onclick', 'return false;');
+		}
+		else {
+			if(bool || bool == undefined) elem.removeAttribute('readonly');
+			else elem.setAttribute('readonly', true);
+		}
+
 	},
 
 
