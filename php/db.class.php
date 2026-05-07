@@ -23,22 +23,21 @@ class DB {
 		if(!empty($host)) {
 			if($this->currentHost != $host || $this->currentUser != $user) {
 
+				$dsn = "mysql:host=$host;charset=utf8mb4";
+				if(!empty($dbname)) $dsn .= ";dbname=$dbname";
+
+				$options = [
+					PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+					PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+				];
+
+				if($ssl) {
+					// $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/my.cnf.d/certs/server-cert.pem';
+					$options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+				}
+
 				try {
-					$dsn = "mysql:host=$host;charset=utf8mb4";
-
-					$options = [
-						PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-						PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-					];
-
-					if($ssl) {
-						// $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/my.cnf.d/certs/server-cert.pem';
-						$options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
-					}
-
 					$this->DBCon = new PDO($dsn, $user, $pass, $options);
-					$this->DBCon->exec("SET time_zone='". date('P') ."'");
-
 				} catch (Exception $e) {
 
 					$this->errCod = $e->getCode();
@@ -49,9 +48,15 @@ class DB {
 					return false;
 				}
 
+				try {
+					$this->DBCon->exec("SET time_zone='". date('P') ."'");
+				} catch (Exception $e) {
+					if($errAlert) $this->errorMonitor('Timezone set error on '. $host .': '. $e->getMessage());
+				}
+
 				$this->currentHost = $host;
 				$this->currentUser = $user;
-				$this->currentBase = '';
+				$this->currentBase = !empty($dbname) ? $dbname : '';
 			}
 		}
 
