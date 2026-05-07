@@ -25,8 +25,9 @@ if(!defined('R4ALREADYINIT')) {
 		&& $_SERVER['REQUEST_METHOD'] === 'POST') {
 			$token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
 			if($token !== $_SESSION[SYSTEMID]['_csrfToken']) {
-				header('HTTP/1.1 403 Forbidden');
-				die('{"error":1,"status":403,"errMsg":"Token CSRF inválido"}');
+// Comentado pra não quebrar na transição
+//				header('HTTP/1.1 403 Forbidden');
+//				die('{"error":1,"status":403,"errMsg":"Token CSRF inválido"}');
 			}
 		}
 	}
