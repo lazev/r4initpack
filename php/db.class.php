@@ -33,6 +33,7 @@ class DB {
 
 				if($ssl) {
 					// $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/my.cnf.d/certs/server-cert.pem';
+					$options[PDO::MYSQL_ATTR_SSL_CA]                 = '/etc/pki/tls/certs/ca-bundle.crt';
 					$options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
 				}
 
