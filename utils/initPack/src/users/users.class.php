@@ -18,12 +18,12 @@ class Users {
 		}
 
 		//O uso de variáveis como :id e a matriz com valores
-		//passado no segundo parâmetro da função select serve
-		//para evitar o uso de SQL Injections. Uso opcional.
-		$dados = $db->select("
+		//passado no segundo parâmetro da função sql ajuda a
+		//evitar o uso de SQL Injections. Uso opcional.
+		$dados = $db->sql("
 			select *
 			from `users`
-			where id = ':id'
+			where id = :id
 			limit 1
 		", [
 			'id' => $id
@@ -109,7 +109,7 @@ class Users {
 
 		$id = (int)$id;
 
-		$old = $db->select("
+		$old = $db->sql("
 			select *
 			from `users`
 			where id = $id
@@ -167,7 +167,7 @@ class Users {
 
 		$strId = implode(', ', $listId);
 
-		$users = $db->select("
+		$users = $db->sql("
 			select id, excluido
 			from `users`
 			where id in ($strId)
@@ -187,7 +187,7 @@ class Users {
 				continue;
 			}
 
-			if($item['excluido'] == 1) {
+			if($list[$id]['excluido'] == 1) {
 				$alert[$id] = 'Item já excluído antes';
 				continue;
 			}
@@ -224,7 +224,7 @@ class Users {
 
 		$strId = implode(', ', $listId);
 
-		$users = $db->select("
+		$users = $db->sql("
 			select id, excluido
 			from `users`
 			where id in ($strId)
@@ -244,7 +244,7 @@ class Users {
 				continue;
 			}
 
-			if($item['excluido'] != 1) {
+			if($list[$id]['excluido'] != 1) {
 				$alert[$id] = 'Item não estava excluído';
 				continue;
 			}
@@ -284,23 +284,24 @@ class Users {
 		$strFilter   = $params['strFilter'];
 		$descrFilter = $params['descrFilter'];
 
-		$bindFilter            = $params['bindFilter'];
-		$bindFilter['limit']   = $params['limit'];
-		$bindFilter['orderBy'] = $params['orderBy'];
+		$bindFilter  = $params['bindFilter'];
+
+		$limit       = $params['limit'];
+		$orderBy     = $params['orderBy'];
 
 		//$db->setDebug(1); //mostra o SQL na tela
 
-		$list = $db->select("
+		$list = $db->sql("
 			select id, user, nome, fones, tags, ativo
 			from `users`
 			where excluido = 0
 			$strFilter
-			order by :orderBy
-			limit :limit
+			order by $orderBy
+			limit $limit
 		", $bindFilter);
 
 
-		$count = $db->select("
+		$count = $db->sql("
 			select count(*) as 'total'
 			from `users`
 			where excluido = 0
@@ -310,7 +311,7 @@ class Users {
 
 
 		$info = [
-			'orderBy'     => $params['orderBy'],
+			'orderBy'     => $orderBy,
 			'currentPage' => $currentPage,
 			'regPerPage'  => $regPerPage,
 			'totalReg'    => (int)$count['total'],
@@ -329,10 +330,10 @@ class Users {
 		if(!is_array($listParams)) $listParams = [];
 		if(!is_array($listFilter)) $listFilter = [];
 
-		$orderBy     = @$listParams['orderBy']     ?: 'nome';
 		$currentPage = @$listParams['currentPage'] ?: 1;
 		$regPerPage  = @$listParams['regPerPage']  ?: 15;
-		$limit = $regPerPage*($currentPage-1) .','. $regPerPage;
+		$limit       = R4::getLimit($currentPage, $regPerPage);
+		$orderBy     = R4::getOrderBy($listParams['orderBy'], 'nome');
 		$arrFilter   = [];
 		$bindFilter  = [];
 		$descrFilter = [];
@@ -342,15 +343,17 @@ class Users {
 		if($filter) {
 
 			$arrFilter[] = "and (
-				id = ':busca'
-				or nome like '%:busca%'
-				or user like '%:busca%'
-				or concat(',', tags, ',') like '%,:busca,%'
-				or fones like '%:busca%'
-				or emails like '%:busca%'
+				id = :buscaExata
+				or nome like :buscaLike
+				or user like :buscaLike
+				or concat(',', tags, ',') like :buscaTags
+				or fones like :buscaLike
+				or emails like :buscaLike
 			)";
 
-			$bindFilter['busca']  = $filter;
+			$bindFilter['buscaExata']  = $filter;
+			$bindFilter['buscaLike']   = '%'.  $filter .'%';
+			$bindFilter['buscaTags']   = '%,'. $filter .',%';
 			$descrFilter['Busca'] = $filter;
 		}
 

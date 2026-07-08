@@ -666,7 +666,7 @@ var Table = {
 		btnSel.innerHTML = 'reg/pag';
 		btnSel.id = idDestiny +'BtnRegPerPage';
 
-		Pop.click(btnSel, { html: ul });
+		Pop.click(btnSel, { html: ul, classes: 'R4RegPerPagePop' });
 
 		let rcpt = document.createElement('div');
 		rcpt.setAttribute('class', 'col-4 onLeft R4TableRegPerPage hiddenPrint');

@@ -10,13 +10,15 @@ if(!defined('R4ALREADYINIT')) {
 
 	if(isset($_CONFIG['requireReferer']) && $_CONFIG['requireReferer']) {
 		$referer = ($_CONFIG['requireReferer'] === true && defined('ROOT_URL')) ? ROOT_URL : $_CONFIG['requireReferer'];
-		if(empty($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], $referer) === false) {
+		// requireReferer = true sem ROOT_URL definido: não valida (evita comparar contra "1")
+		if(is_string($referer) && $referer !== ''
+		&& (empty($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], $referer) === false)) {
 			header('HTTP/1.1 403 Forbidden');
 			exit();
 		}
 	}
 
-	if(session_status() === PHP_SESSION_ACTIVE) {
+	if(session_status() === PHP_SESSION_ACTIVE && (!defined('APION') || !APION)) {
 		if(!isset($_SESSION[SYSTEMID]['_csrfToken'])) {
 			$_SESSION[SYSTEMID]['_csrfToken'] = bin2hex(random_bytes(32));
 		}
@@ -24,10 +26,10 @@ if(!defined('R4ALREADYINIT')) {
 		if((!isset($_CONFIG['requireCsrf']) || $_CONFIG['requireCsrf'] !== false)
 		&& $_SERVER['REQUEST_METHOD'] === 'POST') {
 			$token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-			if($token !== $_SESSION[SYSTEMID]['_csrfToken']) {
+			if(!hash_equals($_SESSION[SYSTEMID]['_csrfToken'], (string)$token)) {
 // Comentado pra não quebrar na transição
 //				header('HTTP/1.1 403 Forbidden');
-//				die('{"error":1,"status":403,"errMsg":"Token CSRF inválido"}');
+//				die('{"error":1,"status":403,"errMsg":"Sessão expirada","errObs":"Recarregue a página para continuar"}');
 			}
 		}
 	}

@@ -28,7 +28,12 @@ define('ROOT',       pathinfo(__FILE__)['dirname'] .'/');
 define('R4PHP',      ROOT .'_assets/r4/php/');
 
 define('SYSTEMID',   '{systemid}');
-define('DEVMODE',    true);
+
+if($devOrProdEnvironment === 'prod') {
+	define('DEVMODE', false);
+} else {
+	define('DEVMODE', true);
+}
 
 define('SECRETKEY',  $priv['secretkey']);
 

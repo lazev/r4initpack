@@ -101,7 +101,7 @@ var Users = {
 		Fields.create([
 			{ id: 'buscaRapida', type: 'text'    },
 			{ id: 'busca',       type: 'text'    },
-			{ id: 'telefone',    type: 'integer' },
+			{ id: 'fone',        type: 'integer' },
 			{ id: 'tipo',        type: 'select', options: Users.listaTipos }
 		], 'filtro');
 
@@ -231,7 +231,7 @@ var Users = {
 	filter: function() {
 		Users.list({
 			listParams: Table.getInfo($('#listaUsers')),
-			listFilter: Fields.objectize($('#formFiltro'))
+			listFilter: Fields.objectize($('#formFilter'))
 		});
 	},
 

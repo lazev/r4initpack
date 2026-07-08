@@ -15,6 +15,8 @@ class DB {
 	public $affectedRows = 0;
 
 	public function connect($host='', $dbname='', $user='', $pass='', $errAlert=true, $ssl=false) {
+		$this->errCod = 0;
+		$this->errMsg = '';
 
 		if(empty($user) && defined('DBUSER')) $user = DBUSER;
 		if(empty($pass) && defined('DBPASS')) $pass = DBPASS;
@@ -23,22 +25,14 @@ class DB {
 		if(!empty($host)) {
 			if($this->currentHost != $host || $this->currentUser != $user) {
 
-				$dsn = "mysql:host=$host;charset=utf8mb4";
-				if(!empty($dbname)) $dsn .= ";dbname=$dbname";
-
-				$options = [
-					PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-					PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-				];
-
-				if($ssl) {
-					// $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/my.cnf.d/certs/server-cert.pem';
-					$options[PDO::MYSQL_ATTR_SSL_CA]                 = '/etc/pki/tls/certs/ca-bundle.crt';
-					$options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
-				}
-
 				try {
-					$this->DBCon = new PDO($dsn, $user, $pass, $options);
+					if($ssl) {
+						$this->DBCon = mysqli_init();
+						$this->DBCon->real_connect($host, $user, $pass, null, null, null, MYSQLI_CLIENT_SSL);
+					} else {
+						$this->DBCon = new mysqli($host, $user, $pass);
+					}
+
 				} catch (Exception $e) {
 
 					$this->errCod = $e->getCode();
@@ -49,15 +43,18 @@ class DB {
 					return false;
 				}
 
-				try {
-					$this->DBCon->exec("SET time_zone='". date('P') ."'");
-				} catch (Exception $e) {
-					if($errAlert) $this->errorMonitor('Timezone set error on '. $host .': '. $e->getMessage());
+				if(!$this->DBCon->set_charset('utf8mb4')) {
+					if($errAlert) {
+						$this->errorMonitor(
+							'Error loading character set utf8mb4: '
+							. $this->DBCon->error
+						);
+					}
 				}
-
+				$this->DBCon->query("SET time_zone='". date('P') ."'");
 				$this->currentHost = $host;
 				$this->currentUser = $user;
-				$this->currentBase = !empty($dbname) ? $dbname : '';
+				$this->currentBase = '';
 			}
 		}
 
@@ -65,7 +62,9 @@ class DB {
 			if($this->currentBase != $dbname) {
 
 				try {
-					$this->DBCon->exec("USE `$dbname`");
+
+					$this->DBCon->select_db($dbname);
+
 				} catch (Exception $e) {
 
 					$this->errCod = $e->getCode();
@@ -98,76 +97,60 @@ class DB {
 			return false;
 		}
 
-		$sqlQuery   = trim($sqlQuery, " \n\r\t\v\x00;");
-		$bindValues = [];
+		$sqlQuery  = trim($sqlQuery, " \n\r\t\v\x00;");
+		preg_match('/^\s*(?:--[^\n]*(?:\n|$)|#[^\n]*(?:\n|$)|\/\*.*?\*\/\s*)*(\w+)/is', $sqlQuery, $m);
+		$queryType = strtolower($m[1] ?? '');
 
-		if(!empty($dataFields) && is_array($dataFields)) {
-
-			$fieldNames = [];
-			$fieldVals  = [];
+		if(!empty($dataFields) && is_array($dataFields) && in_array($queryType, ['insert', 'update'])) {
+			$fields = [];
+			$values = [];
 
 			foreach($dataFields as $field => $value) {
 				if(empty($field)) continue;
-				$fieldNames[] = $field;
-				$fieldVals[]  = $value;
+
+				$fields[] = implode('.', array_map(
+					fn($p) => '`' . str_replace('`', '', $p) . '`',
+					explode('.', $field)
+				));
+
+				if($value === 'now()')
+					$values[] = 'now()';
+				elseif($value === null)
+					$values[] = 'NULL';
+				elseif(is_numeric($value))
+					$values[] = "'$value'";
+				else
+					$values[] = "'". $this->real_escape_string($value) ."'";
 			}
 
-			$queryType = strtolower(substr($sqlQuery, 0, 6));
-
 			if($queryType == 'insert') {
-
-				$cols  = [];
-				$marks = [];
-
-				foreach($fieldNames as $i => $field) {
-					$cols[] = $field;
-					if($fieldVals[$i] === 'now()') {
-						$marks[] = 'now()';
-					} else {
-						$marks[]      = '?';
-						$bindValues[] = $fieldVals[$i];
-					}
-				}
-
-				$sqlQuery .= ' ('. implode(', ', $cols) .') values ('. implode(', ', $marks) .')';
-
-			} elseif($queryType == 'update') {
-
-				$setParts = [];
-
-				foreach($fieldNames as $i => $field) {
-					if($fieldVals[$i] === 'now()') {
-						$setParts[] = "$field=now()";
-					} else {
-						$setParts[]   = "$field=?";
-						$bindValues[] = $fieldVals[$i];
-					}
-				}
-
-				$sqlQuery = str_replace('[fields]', implode(', ', $setParts), $sqlQuery);
+				$sqlQuery .= ' ('. implode(', ', $fields) .') values ('. implode(', ', $values) .')';
+			} else {
+				$pairs    = array_map(fn($f, $v) => "$f=$v", $fields, $values);
+				$sqlQuery = str_replace('[fields]', implode(', ', $pairs), $sqlQuery);
 			}
 		}
 
 		if($this->debug) {
 			if($this->debug == 'log') {
 				error_log(PHP_EOL . $sqlQuery . PHP_EOL);
-				if(!empty($bindValues)) error_log('Bind: '. print_r($bindValues, 1));
 			} else {
 				echo '<p>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
-				if(!empty($bindValues)) { echo '<b>Bind:</b><br>'; print_r($bindValues); }
 			}
 		}
 
-		$result = $this->trySQL($sqlQuery, $bindValues, $errorAlert);
+		$bindParams = ($queryType == 'select' && is_array($dataFields)) ? $dataFields : [];
+
+		$result = $this->trySQL($sqlQuery, $bindParams, $errorAlert);
 		if($result === false) return false;
 
-		if(strtolower(substr($sqlQuery, 0, 6)) != 'select') return true;
+		if($queryType != 'select') return true;
 
-		if(strtolower(substr($sqlQuery, -7)) == 'limit 1') {
-			return $result->fetch(PDO::FETCH_ASSOC);
+		if(preg_match('/\blimit\s+1\s*(?:--[^\n]*|#[^\n]*|\/\*.*?\*\/)?\s*$/is', $sqlQuery)) {
+			return $result->fetch_array(MYSQLI_ASSOC);
 		}
 
-		return $result->fetchAll(PDO::FETCH_ASSOC);
+		return $result->fetch_all(MYSQLI_ASSOC);
 	}
 
 
@@ -179,10 +162,10 @@ class DB {
 		if($result === false) return false;
 
 		if(strtolower(substr($sqlQuery, -7)) == 'limit 1') {
-			return $result->fetch(PDO::FETCH_ASSOC);
+			return $result->fetch_array(MYSQLI_ASSOC);
 		}
 
-		return $result->fetchAll(PDO::FETCH_ASSOC);
+		return $result->fetch_all(MYSQLI_ASSOC);
 	}
 
 
@@ -209,6 +192,16 @@ class DB {
 				}
 			}
 
+			if(isset($dataFields['orderBy'])) {
+				$sqlQuery = str_replace(':orderBy', $this->getOrderBy($dataFields['orderBy']), $sqlQuery);
+				unset($dataFields['orderBy']);
+			}
+
+			if(isset($dataFields['limit'])) {
+				$sqlQuery = str_replace(':limit', preg_replace('/[^0-9,\s]/', '', $dataFields['limit']), $sqlQuery);
+				unset($dataFields['limit']);
+			}
+
 			foreach($dataFields as $key => $val) {
 				$sqlQuery = str_replace(':'. $key, $this->real_escape_string($val), $sqlQuery);
 			}
@@ -229,43 +222,9 @@ class DB {
 	}
 
 
-	public function safeBind($sqlQuery, $dataFields=[], $errorAlert=true) {
-
-		$sqlQuery = trim($sqlQuery, " \n\r\t\v\x00;");
-
-		if(is_null($this->DBCon)) {
-			$this->errCod = 400;
-			$this->errMsg = 'Sem conexão com o banco de dados';
-			$this->errCom = $sqlQuery;
-			return false;
-		}
-
-		if($this->debug) {
-			if($this->debug == 'log') {
-				error_log('Input query: '. PHP_EOL . $sqlQuery . PHP_EOL);
-				if(!empty($dataFields)) error_log('Payload: '. print_r($dataFields, 1));
-			} else {
-				echo '<p><b>Input query:</b><br>'. PHP_EOL . $sqlQuery . PHP_EOL .'</p>';
-				if(!empty($dataFields)) { echo '<b>Payload:</b><br>'; print_r($dataFields); }
-			}
-		}
-
-		$result = $this->trySQL($sqlQuery, $dataFields, $errorAlert);
-		if($result === false) return false;
-
-		if(strtolower(substr($sqlQuery, 0, 6)) != 'select') return true;
-
-		if(strtolower(substr($sqlQuery, -7)) == 'limit 1') {
-			return $result->fetch(PDO::FETCH_ASSOC);
-		}
-
-		return $result->fetchAll(PDO::FETCH_ASSOC);
-	}
-
-
 	public function fetchArray($result) {
 		if(!$result) return false;
-		return $result->fetch(PDO::FETCH_ASSOC);
+		return $result->fetch_array(MYSQLI_ASSOC);
 	}
 
 
@@ -274,12 +233,46 @@ class DB {
 
 			if($this->debug) $mtimeini = microtime(true);
 
+			$orderedValues = [];
+			$parsedQuery   = $sqlQuery;
+
 			if(!empty($bindValues)) {
-				$stmt = $this->DBCon->prepare($sqlQuery);
-				$stmt->execute($bindValues);
-				$result = $stmt;
-			} else {
+				$parsedQuery = preg_replace_callback(
+					'/:([a-zA-Z0-9_]+)/',
+					function($matches) use ($bindValues, &$orderedValues) {
+						$orderedValues[] = $bindValues[$matches[1]] ?? '';
+						return '?';
+					},
+					$sqlQuery
+				);
+			}
+
+			// Sem :placeholders na query (mesmo com array informado), roda direto —
+			// bind_param('') lançaria ValueError e chamadas antigas embutiam os valores na query.
+			if(empty($orderedValues)) {
 				$result = $this->DBCon->query($sqlQuery);
+			}
+
+			else {
+				if($this->debug) {
+					if($this->debug == 'log') error_log('Query: '. PHP_EOL . $parsedQuery . PHP_EOL);
+					else echo '<p><b>Query:</b><br>'. PHP_EOL . $parsedQuery . PHP_EOL .'</p>';
+				}
+
+				$paramCount = substr_count($parsedQuery, '?');
+				if($paramCount !== count($orderedValues)) {
+					$this->errCod = 400;
+					$this->errMsg = 'Bind mismatch: '. count($orderedValues) .' valor(es) fornecido(s), '. $paramCount .' parâmetro(s) na query. Verifique se algum :param está entre apóstrofos.';
+					$this->errCom = $sqlQuery;
+					if($errorAlert) $this->errorMonitor('MySQL bind mismatch: '. $this->errMsg .': ['. $sqlQuery .']');
+					return false;
+				}
+
+				$stmt = $this->DBCon->prepare($parsedQuery);
+				$types = str_repeat('s', count($orderedValues));
+				$stmt->bind_param($types, ...$orderedValues);
+				$stmt->execute();
+				$result = $stmt->get_result();
 			}
 
 			if($this->debug) {
@@ -288,7 +281,7 @@ class DB {
 				else echo '<p><b>Query time:</b> '. $queryTime .'s.</p>';
 			}
 
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 
 			$this->errCod = $e->getCode();
 			$this->errMsg = $this->errCod .' - '. $e->getMessage();
@@ -305,19 +298,19 @@ class DB {
 			return false;
 		}
 
-		$this->affectedRows = $result->rowCount();
+		$this->affectedRows = $this->DBCon->affected_rows;
 
 		return $result;
 	}
 
 
 	public function fetchFieldsName($result) {
-		$retArr   = [];
-		$colCount = $result->columnCount();
+		$retArr = [];
 
-		for($i = 0; $i < $colCount; $i++) {
-			$meta     = $result->getColumnMeta($i);
-			$retArr[] = $meta['name'];
+		$ret = $result->fetch_fields();
+
+		foreach($ret as $val) {
+			$retArr[] = $val->name;
 		}
 
 		return $retArr;
@@ -325,23 +318,24 @@ class DB {
 
 
 	public function countRows($result) {
-		return $result->rowCount();
+		return mysqli_num_rows($result);
 	}
 
 
 	public function real_escape_string($str) {
-		$quoted = $this->DBCon->quote($str);
-		return substr($quoted, 1, -1);
+		return $this->DBCon->real_escape_string($str);
 	}
 
 
 	public function close() {
-		$this->DBCon = null;
+		if(is_object($this->DBCon)) {
+			$this->DBCon->close();
+		}
 	}
 
 
 	public function getInsertId() {
-		return $this->DBCon->lastInsertId();
+		return $this->DBCon->insert_id;
 	}
 
 
@@ -374,7 +368,7 @@ class DB {
 	}
 
 
-	public function getOrderBy($orderBy, $default='id ASC') {
+	public function getOrderBy($orderBy, $default='codigo ASC') {
 
 		$safe = [];
 

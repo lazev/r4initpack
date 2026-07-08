@@ -218,33 +218,24 @@ var R4 = {
 
 
 	checkCNPJ: function(CNPJ) {
-		CNPJ = R4.onlyNumbers(CNPJ);
-		var invalid = false;
-		if(CNPJ.length == 15) {
-			CNPJ = CNPJ.substr(1,14);
-		}
-		if(CNPJ != '00000000000000') {
-			var c = CNPJ.substr(0,12);
-			var dv = CNPJ.substr(12,2);
-			var d1 = 0;
-			for (let i = 0; i < 12; i++) d1 += c.charAt(11-i)*(2+(i % 8));
-			if (d1 == 0) invalid = true;
-			d1 = 11 - (d1 % 11);
-			if (d1 > 9) d1 = 0;
-			if(dv.charAt(0) != d1) invalid = true;
-			d1 *= 2;
-			for (let i = 0; i < 12; i++) d1 += c.charAt(11-i)*(2+((i+1) % 8));
-			d1 = 11 - (d1 % 11);
-			if (d1 > 9) d1 = 0;
-			if (dv.charAt(1) != d1) invalid = true;
-		}
-		if(invalid) return false;
-		else return 'CNPJ';
+		CNPJ = CNPJ.toUpperCase().replace(/[^A-Z0-9]/g, '');
+		if(CNPJ.length == 15) CNPJ = CNPJ.substr(1, 14);
+		if(CNPJ.length != 14 || CNPJ == '00000000000000') return false;
+		var v = function(c) { return c.charCodeAt(0) - 48; };
+		var c = CNPJ.substr(0, 12), dv = CNPJ.substr(12, 2);
+		var d1 = 0;
+		for (var i = 0; i < 12; i++) d1 += v(c.charAt(11-i)) * (2 + (i % 8));
+		d1 = 11 - (d1 % 11); if(d1 > 9) d1 = 0;
+		if(parseInt(dv.charAt(0)) != d1) return false;
+		d1 *= 2;
+		for (var i = 0; i < 12; i++) d1 += v(c.charAt(11-i)) * (2 + ((i+1) % 8));
+		d1 = 11 - (d1 % 11); if(d1 > 9) d1 = 0;
+		return parseInt(dv.charAt(1)) == d1 ? 'CNPJ' : false;
 	},
 
 
 	checkCPFCNPJ: function(cpfcnpj) {
-		if(R4.onlyNumbers(cpfcnpj).length < 13) {
+		if(R4.cleanCPFCNPJ(cpfcnpj).length < 13) {
 			return R4.checkCPF(cpfcnpj);
 		} else {
 			return R4.checkCNPJ(cpfcnpj);
@@ -534,6 +525,12 @@ var R4 = {
 	},
 
 
+	cleanCPFCNPJ: function(v) {
+		if(typeof v == 'undefined') return '';
+		return v.toString().toUpperCase().replace(/[^A-Z0-9]/g, '')
+	},
+
+
 	integerMask: function(v) {
 		if(typeof v == 'undefined') return '';
 		return v.toString().replace(/([^0-9-])/g, '');
@@ -569,7 +566,7 @@ var R4 = {
 
 	cpfcnpjMask: function(v) {
 		if(typeof v == 'undefined') return '';
-		v = v.toString().replace(/\D/g, '');
+		v = v.toString().toUpperCase().replace(/[^A-Z0-9]/g, '')
 		if(v.length < 12) return R4.cpfMask(v);
 		else return R4.cnpjMask(v);
 	},
@@ -588,11 +585,12 @@ var R4 = {
 	cnpjMask: function(v){
 		if(typeof v == 'undefined') return '';
 		return v.toString()
-			.replace(/\D/g, '')
-			.replace(/(\d{2})(\d)/, '$1.$2')
-			.replace(/(\d{3})(\d)/, '$1.$2')
-			.replace(/(\d{3})(\d)/, '$1/$2')
-			.replace(/(\d{4})(\d)/, '$1-$2');
+			.toUpperCase()
+			.replace(/[^A-Z0-9]/g, '')
+			.replace(/([A-Z0-9]{2})([A-Z0-9])/, '$1.$2')
+			.replace(/([A-Z0-9]{3})([A-Z0-9])/, '$1.$2')
+			.replace(/([A-Z0-9]{3})([A-Z0-9])/, '$1/$2')
+			.replace(/([A-Z0-9]{4})(\d{1,2})$/, '$1-$2');
 	},
 
 
@@ -645,8 +643,19 @@ var R4 = {
 							reject(xhr.status);
 						}
 					} else {
-						Warning.show('Conexão com internet?');
-						reject(xhr.status);
+						let jErr = null;
+						try { jErr = JSON.parse(xhr.responseText); } catch(err) {}
+
+						if(jErr && jErr.error === 1) {
+							Warning.show(jErr.errMsg, jErr.errObs);
+							if(jErr.status == 401) {
+								window.location = _CONFIG.rootURL +'login/';
+							}
+							reject(jErr);
+						} else {
+							Warning.show('Conexão com internet?');
+							reject(xhr.status);
+						}
 					}
 				}
 			};
@@ -702,8 +711,19 @@ var R4 = {
 							reject(xhr.status);
 						}
 					} else {
-						Warning.show('Conexão com internet?');
-						reject(xhr.status);
+						let jErr = null;
+						try { jErr = JSON.parse(xhr.responseText); } catch(err) {}
+
+						if(jErr && jErr.error === 1) {
+							Warning.show(jErr.errMsg, jErr.errObs);
+							if(jErr.status == 401) {
+								window.location = _CONFIG.rootURL +'login/';
+							}
+							reject(jErr);
+						} else {
+							Warning.show('Conexão com internet?');
+							reject(xhr.status);
+						}
 					}
 				}
 			};

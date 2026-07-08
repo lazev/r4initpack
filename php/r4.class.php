@@ -11,6 +11,26 @@ class R4 {
 	}
 
 
+	public static function getPost($cont='') {
+
+		if($cont==='') $cont = $_POST;
+
+		if(!is_array($cont)) return [];
+
+		return $cont;
+	}
+
+
+	public static function getGet($cont='') {
+
+		if($cont==='') $cont = $_GET;
+
+		if(!is_array($cont)) return [];
+
+		return $cont;
+	}
+
+
 	public static function retOkAPI($params=[]) {
 
 		$params = R4::recursiveTagSymbolsReplace($params);
@@ -148,6 +168,11 @@ class R4 {
 	}
 
 
+	public static function cleanCPFCNPJ($cnpj) {
+		return strtoupper(preg_replace('/[^A-Z0-9]/i', '', $cnpj));
+	}
+
+
 	public static function friendChars($string, $allowStr='') {
 		return preg_replace('/[^A-Z0-9-_'. $allowStr .']/i', '', $string);
 	}
@@ -194,15 +219,16 @@ class R4 {
 
 
 	public static function CPForCNPJ($x) {
-		if(strlen(R4::onlyNumbers($x)) == 11)     return 'CPF';
-		elseif(strlen(R4::onlyNumbers($x)) == 14) return 'CNPJ';
-		elseif(strlen(R4::onlyNumbers($x)) == 15) return 'CNPJ';
+		$x = R4::cleanCPFCNPJ($x);
+		if(strlen($x) == 11)     return 'CPF';
+		elseif(strlen($x) == 14) return 'CNPJ';
+		elseif(strlen($x) == 15) return 'CNPJ';
 		return false;
 	}
 
 
 	public static function checkCPFCNPJ($cpfcnpj) {
-		$cpfcnpj = R4::onlyNumbers($cpfcnpj);
+		$cpfcnpj = R4::cleanCPFCNPJ($cpfcnpj);
 		if(strlen($cpfcnpj) <= 12) return R4::checkCPF($cpfcnpj);
 		else return R4::checkCNPJ($cpfcnpj);
 	}
@@ -229,22 +255,21 @@ class R4 {
 
 
 	public static function checkCNPJ($cnpj) {
-		$cnpj = R4::onlyNumbers($cnpj);
+		$cnpj = strtoupper(preg_replace('/[^A-Z0-9]/i', '', $cnpj));
 		if(strlen($cnpj) == 15) $cnpj = substr($cnpj, 1);
-		if(strlen($cnpj) <> 14) return false;
-		$soma = 0;
-		$soma += ($cnpj[0]*5)+($cnpj[1]*4)+($cnpj[2]*3)+($cnpj[3]*2)+($cnpj[4]*9)+($cnpj[5]*8);
-		$soma += ($cnpj[6]*7)+($cnpj[7]*6)+($cnpj[8]*5)+($cnpj[9]*4)+($cnpj[10]*3)+($cnpj[11]*2);
-		$d1 = $soma % 11;
-		$d1 = $d1 < 2 ? 0 : 11 - $d1;
-		$soma = 0;
-		$soma += ($cnpj[0]*6)+($cnpj[1]*5)+($cnpj[2]*4)+($cnpj[3]*3)+($cnpj[4]*2)+($cnpj[5]*9)+($cnpj[6]*8);
-		$soma += ($cnpj[7]*7)+($cnpj[8]*6)+($cnpj[9]*5)+($cnpj[10]*4)+($cnpj[11]*3)+($cnpj[12]*2);
-		$d2 = $soma % 11;
-		$d2 = $d2 < 2 ? 0 : 11 - $d2;
-		if($cnpj[12] == $d1 && $cnpj[13] == $d2) return true;
-		else return false;
+		if(strlen($cnpj) != 14 || $cnpj == '00000000000000') return false;
+		$v = function($c) { return ord($c) - 48; };
+		$c = substr($cnpj, 0, 12);
+		$d1 = 0;
+		for($i = 0; $i < 12; $i++) $d1 += $v($c[11-$i]) * (2 + ($i % 8));
+		$d1 = 11 - ($d1 % 11); if($d1 > 9) $d1 = 0;
+		if(intval($cnpj[12]) != $d1) return false;
+		$d1 *= 2;
+		for($i = 0; $i < 12; $i++) $d1 += $v($c[11-$i]) * (2 + (($i+1) % 8));
+		$d1 = 11 - ($d1 % 11); if($d1 > 9) $d1 = 0;
+		return intval($cnpj[13]) == $d1;
 	}
+
 
 
 	public static function numberMask($value, $mindec=2, $maxdec=0, $ifzero=null) {
@@ -328,7 +353,7 @@ class R4 {
 
 
 	public static function cpfCnpjMask($x) {
-		$x = R4::onlyNumbers($x);
+		$x = R4::cleanCPFCNPJ($x);
 		if(strlen($x) == 0) return '';
 		if(strlen($x) > 12) {
 			if(strlen($x) == 14) {
