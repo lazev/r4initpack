@@ -315,6 +315,72 @@
 	cursor: not-allowed;
 }
 
+/* RADIO ================================= */
+.R4Fields.radio > .R4RadioOpts {
+	padding: 14px 0 4px 0;
+	line-height: normal;
+	font-size: 16px;
+}
+.R4Fields.radio > .R4RadioOpts > input {
+	margin: 0 4px 0 0;
+	cursor: pointer;
+	accent-color: var(--r4FieldFocus);
+	vertical-align: middle;
+}
+.R4Fields.radio > .R4RadioOpts > label {
+	margin-right: 16px;
+	cursor: pointer;
+	user-select: none;
+	vertical-align: middle;
+}
+.R4Fields.radio > .R4RadioOpts > input:disabled,
+.R4Fields.radio > .R4RadioOpts > input:disabled + label {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+.R4Fields.radio > .R4RadioOpts.errField > label,
+.R4Fields.radio > .R4RadioOpts.errField ~ label {
+	color: red;
+}
+
+/* RADIO SEGMENTED (opcoes como botoes colados) */
+.R4Fields.radio.segmented > .R4RadioOpts {
+	display: inline-flex;
+	flex-wrap: wrap;
+}
+.R4Fields.radio.segmented > .R4RadioOpts > input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+.R4Fields.radio.segmented > .R4RadioOpts > label {
+	margin: 0;
+	padding: 5px 12px;
+	border: 1px solid var(--r4FieldFocus);
+	color: var(--r4FieldFocus);
+	background-color: var(--r4White);
+}
+.R4Fields.radio.segmented > .R4RadioOpts > label ~ label {
+	border-left: none;
+}
+.R4Fields.radio.segmented > .R4RadioOpts > label:first-of-type {
+	border-radius: 3px 0 0 3px;
+}
+.R4Fields.radio.segmented > .R4RadioOpts > label:last-of-type {
+	border-radius: 0 3px 3px 0;
+}
+.R4Fields.radio.segmented > .R4RadioOpts > input:checked + label {
+	background-color: var(--r4FieldFocus);
+	color: var(--r4White);
+}
+.R4Fields.radio.segmented > .R4RadioOpts > input:focus-visible + label {
+	outline: 2px solid var(--r4FieldFocus);
+	outline-offset: 1px;
+}
+.R4Fields.radio.segmented > .R4RadioOpts.errField > label {
+	border-color: red;
+}
+
 fieldset.R4,
 fieldset.R4Fields {
 	border-radius: 5px;

@@ -127,17 +127,20 @@ var Table = {
 
 
 	initLine: function() {
-		Table.lineCells = [];
-		Table.cellClass = [];
+		Table.lineCells   = [];
+		Table.cellClass   = [];
+		Table.cellColspan = [];
 	},
 
 
-	addCell: function(content, classes) {
+	addCell: function(content, classes, colspan) {
 		if(content === null || content === undefined) content = '';
 		if(!classes) classes = '';
+		if(!colspan) colspan = 1;
 
 		Table.lineCells.push(content);
 		Table.cellClass.push(classes);
+		Table.cellColspan.push(colspan);
 	},
 
 
@@ -148,6 +151,11 @@ var Table = {
 
 	getClasses: function() {
 		return Table.cellClass;
+	},
+
+
+	getColspans: function() {
+		return Table.cellColspan;
 	},
 
 
@@ -326,11 +334,20 @@ var Table = {
 			}
 		}
 
+		//col = coluna do cabeçalho; difere de position quando alguma célula anterior tem colspan
+		let col = 0;
+
 		line.cells.forEach(function(value, position){
 
 			td = document.createElement('td');
 
-			if(Table.dom[idDestiny].lastHead[position]) {
+			let colspan = (line.colspan && line.colspan[position] > 1) ? parseInt(line.colspan[position]) : 1;
+
+			if(Table.dom[idDestiny].lastHead[col]) {
+
+				if(colspan > 1) {
+					td.setAttribute('colspan', colspan);
+				}
 
 				if(line.classes) {
 					if(line.classes[position]) {
@@ -341,11 +358,11 @@ var Table = {
 					}
 				}
 
-				if(Table.dom[idDestiny].colClasses && Table.dom[idDestiny].colClasses[position]) {
-					td.setAttribute('class', Table.dom[idDestiny].colClasses[position]);
+				if(Table.dom[idDestiny].colClasses && Table.dom[idDestiny].colClasses[col]) {
+					td.setAttribute('class', Table.dom[idDestiny].colClasses[col]);
 				}
 
-				let type = Table.dom[idDestiny].lastHead[position].type;
+				let type = Table.dom[idDestiny].lastHead[col].type;
 
 				if(value === null || value === undefined) value = '';
 
@@ -354,8 +371,8 @@ var Table = {
 				}
 				else if(type == 'decimal') {
 					if(value !== '') {
-						let precision = Table.dom[idDestiny].lastHead[position].precision ?
-							Table.dom[idDestiny].lastHead[position].precision : 2;
+						let precision = Table.dom[idDestiny].lastHead[col].precision ?
+							Table.dom[idDestiny].lastHead[col].precision : 2;
 						value = R4.numberMask(value, precision);
 						td.classList.add('right');
 					}
@@ -363,8 +380,8 @@ var Table = {
 				else if(type == 'money') {
 					if(value !== '') {
 						if(!isNaN(value)) {
-							let precision = Table.dom[idDestiny].lastHead[position].precision ?
-								Table.dom[idDestiny].lastHead[position].precision : 2;
+							let precision = Table.dom[idDestiny].lastHead[col].precision ?
+								Table.dom[idDestiny].lastHead[col].precision : 2;
 							value = R4.moneyMask(value, precision);
 						}
 						td.classList.add('right');
@@ -381,7 +398,7 @@ var Table = {
 					}
 				}
 				else if(type == 'button') {
-					let label = Table.dom[idDestiny].lastHead[position].label;
+					let label = Table.dom[idDestiny].lastHead[col].label;
 					value = '<button class="R4" value="'+ value +'">'+ label +'</button>'
 				}
 
@@ -407,12 +424,14 @@ var Table = {
 					td.innerHTML = ' '+ value;
 				}
 
-				td.setAttribute('col-title', Table.dom[idDestiny].lastHead[position].label +': ');
+				td.setAttribute('col-title', Table.dom[idDestiny].lastHead[col].label +': ');
 
 				tr.appendChild(td);
 			} else {
 				console.warn('');
 			}
+
+			col += colspan;
 		});
 
 		return tr;

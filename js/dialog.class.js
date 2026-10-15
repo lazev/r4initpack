@@ -344,5 +344,55 @@ var Dialog = {
 	closeLastOpen: function() {
 		let arr = Dialog.getIdOpenOverlays();
 		if(arr.length > 0) Dialog.closeOverlay(arr.pop());
+	},
+
+
+	//Dialog.confirm(opts) - Pede confirmação. A Promise resolve true (confirmou) ou false (cancelou, fechou ou Esc)
+	confirm: function(opts) {
+		if(!opts) opts = {};
+
+		return new Promise(resolve => {
+
+			let idElem   = 'R4Confirm'+ R4.uniqid(),
+			    answered = false;
+
+			let answer = function(ret) {
+				if(answered) return;
+				answered = true;
+				resolve(ret);
+			};
+
+			Dialog.open({
+				id:        idElem,
+				title:     opts.title   || '',
+				html:      opts.html    || '',
+				classes:   opts.classes || 'narrow',
+				ephemeral: true,
+				onOpen: () => {
+					let btn = document.querySelector('#R4Dialog-'+ idElem +' .R4DialogConfirm');
+					if(btn) btn.focus();
+				},
+				onClose: () => {
+					delete Dialog.onOpenFuncs[idElem];
+					delete Dialog.beforeCloseFuncs[idElem];
+					delete Dialog.onCloseFuncs[idElem];
+					answer(false);
+				},
+				buttons: [
+					{
+						label:   opts.labelOk || 'Confirmar',
+						classes: (opts.classesOk || 'bgPrimary white') +' R4DialogConfirm',
+						onClick: () => {
+							answer(true);
+							Dialog.close(idElem);
+						}
+					},
+					{
+						label:   opts.labelCancel || 'Cancelar',
+						classes: (opts.classesCancel || '') +' R4DialogCloser'
+					}
+				]
+			});
+		});
 	}
 };

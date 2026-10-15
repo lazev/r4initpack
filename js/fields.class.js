@@ -71,6 +71,10 @@ var Fields = {
 						elem = Fields.createSwitch(item, prefix);
 						break;
 
+					case 'radio':
+						elem = Fields.createRadio(item, prefix);
+						break;
+
 					case 'button':
 					case 'submit':
 					case 'reset':
@@ -554,6 +558,87 @@ var Fields = {
 	},
 
 
+	//Grupo de radios. O primeiro radio recebe o id do campo; getVal/setVal/enable valem para o grupo todo
+	createRadio: function(item, prefix) {
+
+		let elem, elLabel, key, text;
+		let id      = (prefix) ? prefix +'_'+ item.id : item.id;
+		let name    = item.name    || item.id;
+		let attr    = item.attr    || {};
+		let options = item.options || [];
+		let num     = 0;
+
+		if(typeof options === 'string') {
+			let resolved = R4.resolveFunc(options) || window[options];
+			if(typeof resolved === 'object')        options = resolved;
+			else if(typeof resolved === 'function') options = resolved();
+		}
+
+		let opts = document.createElement('div');
+		opts.setAttribute('class', 'R4RadioOpts');
+
+		for(let k in options) {
+			if(typeof options[k] == 'string') {
+				key  = k;
+				text = options[k];
+			}
+			else if(typeof options[k] == 'object') {
+				key  = options[k].key;
+				text = options[k].value;
+			}
+			else continue;
+
+			elem = document.createElement('input');
+			elem.setAttribute('type',   'radio');
+			elem.setAttribute('id',     (num) ? id +'_'+ num : id);
+			elem.setAttribute('name',   name);
+			elem.setAttribute('value',  key);
+			elem.setAttribute('R4Type', 'radio');
+
+			if(item.value !== undefined && item.value == key)
+				elem.setAttribute('checked', 'checked');
+
+			for(let k in attr) elem.setAttribute(k, attr[k]);
+
+			elLabel = document.createElement('label');
+			elLabel.setAttribute('for', elem.id);
+			elLabel.innerHTML = text;
+
+			opts.append(elem);
+			opts.append(elLabel);
+			num++;
+		}
+
+		let wrap = document.createElement('div');
+		wrap.setAttribute('class', 'R4Fields radio withContent');
+
+		if(item.classes) {
+			let cls = item.classes.split(' ');
+			for(let k in cls) wrap.classList.add(cls[k]);
+		}
+
+		wrap.append(opts);
+
+		if(item.label) {
+			let label = document.createElement('label');
+			label.innerHTML = item.label;
+			wrap.append(label);
+		}
+
+		let first = opts.querySelector('input');
+
+		if(first) {
+			Fields.setValidateRules(first, item);
+
+			opts.addEventListener('change', function(){
+				if(opts.classList.contains('errField')) Fields.validate(first);
+			});
+		}
+
+		return wrap;
+	},
+
+
 	setValidateRules: function(elem, prop) {
 
 		if(prop.required) {
@@ -871,6 +956,9 @@ var Fields = {
 			switch(type) {
                 case 'multiselect': return FieldsMultiSelect.getVal(elem);
 				case 'switch':    return (elem.checked) ? elem.value : 0;
+				case 'radio':
+					let checked = elem.parentNode.querySelector('input[type=radio]:checked');
+					return (checked) ? checked.value : '';
 				case 'decimal':
 				case 'decimal-':
 				case 'money':
@@ -902,12 +990,18 @@ var Fields = {
 			case 'tags':
 			case 'emailtags':
 			case 'phonetags': return FieldsTags.getText(elem);
+			case 'radio':
+				let checked = elem.parentNode.querySelector('input[type=radio]:checked');
+				return (checked) ? elem.parentNode.querySelector('label[for="'+ checked.id +'"]').innerHTML : '';
 			default: return elem.value;
 		}
 	},
 
 
 	getLabel: elem => {
+		if(elem.getAttribute('R4Type') == 'radio')
+			return elem.closest('.R4Fields').querySelector(':scope > label').innerHTML;
+
 		return elem.parentNode.querySelector('label').innerHTML;
 	},
 
@@ -928,6 +1022,12 @@ var Fields = {
 			case 'switch':
 				if(!value || value == '0' || value == 'false') elem.checked = false;
 				else elem.checked = true;
+				break;
+
+			case 'radio':
+				elem.parentNode.querySelectorAll('input[type=radio]').forEach(el => {
+					el.checked = (el.value == value);
+				});
 				break;
 
 			case 'money':
@@ -1081,15 +1181,23 @@ var Fields = {
 
 
 	enable: function(elem, bool) {
+		let list = (elem.getAttribute('R4Type') == 'radio')
+			? elem.parentNode.querySelectorAll('input[type=radio]')
+			: [elem];
+
 		if(bool || bool == undefined) {
-			elem.removeAttribute('readonly');
-			elem.removeAttribute('disabled');
+			list.forEach(el => {
+				el.removeAttribute('readonly');
+				el.removeAttribute('disabled');
+			});
 			let e = $('#'+ elem.id +'_rcpt');
 			if(e) e.classList.remove('R4Disabled');
 		}
 		else {
-			elem.setAttribute('readonly', true);
-			elem.setAttribute('disabled', true);
+			list.forEach(el => {
+				el.setAttribute('readonly', true);
+				el.setAttribute('disabled', true);
+			});
 			let e = $('#'+ elem.id +'_rcpt');
 			if(e) e.classList.add('R4Disabled');
 		}
@@ -1098,9 +1206,15 @@ var Fields = {
 
 	editable: function(elem, bool) {
 
-		if(elem.getAttribute('type') == 'checkbox') {
-			if(bool || bool == undefined) elem.removeAttribute('onclick');
-			else elem.setAttribute('onclick', 'return false;');
+		if(elem.getAttribute('type') == 'checkbox' || elem.getAttribute('type') == 'radio') {
+			let list = (elem.getAttribute('type') == 'radio')
+				? elem.parentNode.querySelectorAll('input[type=radio]')
+				: [elem];
+
+			list.forEach(el => {
+				if(bool || bool == undefined) el.removeAttribute('onclick');
+				else el.setAttribute('onclick', 'return false;');
+			});
 		}
 		else {
 			if(bool || bool == undefined) elem.removeAttribute('readonly');
