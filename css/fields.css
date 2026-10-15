@@ -13,10 +13,10 @@
 	margin-top: 10px;
 	width: 100%;
 	border: none;
-	border-bottom: 1px solid #374957;
+	border-bottom: 1px solid var(--r4FieldBorder);
 	box-sizing: border-box;
 	background-color: inherit;
-	color: #555;
+	color: var(--r4FieldText);
 }
 
 .R4Fields > select {
@@ -34,8 +34,8 @@
 .R4Fields              > textarea:focus,
 .R4Fields              > select:focus {
 	outline: none;
-	background-color: #fffdeb;
-	border-bottom: 1px solid #337ab7;
+	background-color: var(--r4FieldFocusBackground);
+	border-bottom: 1px solid var(--r4FieldFocus);
 }
 
 .R4Fields.errField:not(.switch) > input,
@@ -53,7 +53,7 @@
 
 /*LABEL ======================================= */
 .R4Fields:not(.switch) > label {
-	color: #999;
+	color: var(--r4FieldLabel);
 	font-size: 18px;
 	font-weight: normal;
 	position: absolute;
@@ -73,7 +73,7 @@
 .R4Fields > input[type=file] ~ label {
 	top: -13px;
 	font-size: 14px;
-	color: #337ab7;
+	color: var(--r4FieldFocus);
 }
 
 .R4Fields.errField:not(.switch) > input:focus ~ label,
@@ -228,7 +228,7 @@
 	width: 0;
 	bottom: 1px;
 	position: absolute;
-	background: #337ab7;
+	background: var(--r4FieldFocus);
 	transition: 0.2s ease all;
 }
 .R4Fields.tags > .bar:before,
@@ -299,10 +299,10 @@
 	transition-property: left, background-color;
 }
 .R4Fields.switch > input:checked + label {
-	color: #337ab7;
+	color: var(--r4FieldFocus);
 }
 .R4Fields.switch > input:checked + label:before {
-	background-color: #2E6DB7;
+	background-color: var(--r4SwitchOn);
 }
 .R4Fields.switch > input:checked + label:after {
 	left: 16px;

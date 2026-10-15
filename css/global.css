@@ -1,5 +1,43 @@
 /*@import url(https://fonts.googleapis.com/css?family=Lato:400,300,300italic,400italic,700,700italic);
 */
+
+/* -----
+Cores do framework. O projeto troca a paleta redefinindo as variaveis no seu CSS global, ex.:
+:root { --r4Primary: #4470c4; }
+----- */
+:root {
+	--r4Primary:              #673ab7;
+	--r4Info:                 #2196f3;
+	--r4Danger:               #e81e62;
+	--r4Success:              #009688;
+	--r4SuccessText:          #008275;
+	--r4Warning:              #f37e21;
+	--r4Fancy:                #cddc39;
+	--r4Grey:                 #616161;
+	--r4Light:                #999999;
+	--r4White:                #ffffff;
+	--r4Black:                #000000;
+	--r4Smooth:               #fafafa;
+
+	--r4Background:           #fafdfb;
+	--r4Link:                 #2196f3;
+	--r4Line:                 #e0e0e0;
+	--r4Highlight:            #f0e68c;
+	--r4Overlay:              rgba(0, 0, 0, 0.5);
+	--r4DialogBackground:     #fafafa;
+
+	--r4FieldText:            #555555;
+	--r4FieldBorder:          #374957;
+	--r4FieldLabel:           #999999;
+	--r4FieldFocus:           #337ab7;
+	--r4FieldFocusBackground: #fffdeb;
+	--r4SwitchOn:             #2e6db7;
+
+	--r4TableBackground:      #ffffff;
+	--r4TableStriped:         #eaeaea;
+	--r4TableSelected:        #90ee90;
+}
+
 /* -----
 SVG Icons - svgicons.sparkk.fr
 ----- */
@@ -28,30 +66,30 @@ svg.icon circle {
 }
 */
 
-.bgPrimary { background-color: #673ab7 !important; }
-.bgInfo    { background-color: #2196f3 !important; }
-.bgDanger  { background-color: #e81e62 !important; }
-.bgSuccess { background-color: #009688 !important; }
-.bgWarning { background-color: #f37e21 !important; }
-.bgFancy   { background-color: #cddc39 !important; }
-.bgGrey    { background-color: #616161 !important; }
-.bgLight   { background-color: #999999 !important; }
-.bgWhite   { background-color: #ffffff !important; }
-.bgBlack   { background-color: #000000 !important; }
+.bgPrimary { background-color: var(--r4Primary) !important; }
+.bgInfo    { background-color: var(--r4Info) !important; }
+.bgDanger  { background-color: var(--r4Danger) !important; }
+.bgSuccess { background-color: var(--r4Success) !important; }
+.bgWarning { background-color: var(--r4Warning) !important; }
+.bgFancy   { background-color: var(--r4Fancy) !important; }
+.bgGrey    { background-color: var(--r4Grey) !important; }
+.bgLight   { background-color: var(--r4Light) !important; }
+.bgWhite   { background-color: var(--r4White) !important; }
+.bgBlack   { background-color: var(--r4Black) !important; }
 .bgInherit { background-color: inherit !important; }
-.bgSmooth  { background-color: #fafafa !important; }
+.bgSmooth  { background-color: var(--r4Smooth) !important; }
 
-.info    { color: #2196f3 !important; }
-.primary { color: #673ab7 !important; }
-.danger  { color: #e81e62 !important; }
-.success { color: #008275 !important; }
-.warning { color: #f37e21 !important; }
-.fancy   { color: #cddc39 !important; }
-.grey    { color: #616161 !important; }
-.light   { color: #999999 !important; }
-.white   { color: #ffffff !important; }
-.black   { color: #000000 !important; }
-.smooth  { color: #fafafa !important; }
+.info    { color: var(--r4Info) !important; }
+.primary { color: var(--r4Primary) !important; }
+.danger  { color: var(--r4Danger) !important; }
+.success { color: var(--r4SuccessText) !important; }
+.warning { color: var(--r4Warning) !important; }
+.fancy   { color: var(--r4Fancy) !important; }
+.grey    { color: var(--r4Grey) !important; }
+.light   { color: var(--r4Light) !important; }
+.white   { color: var(--r4White) !important; }
+.black   { color: var(--r4Black) !important; }
+.smooth  { color: var(--r4Smooth) !important; }
 
 .center   { text-align: center; }
 .right    { text-align: right;  }
@@ -83,7 +121,7 @@ svg.icon circle {
 .badge {
 	border-radius: 3px;
 	padding: 3px 5px;
-	background-color: #2196f3;
+	background-color: var(--r4Info);
 	color: white;
 	margin-left: 1px;
 	margin-right: 1px;
@@ -114,7 +152,7 @@ svg.icon circle {
 }
 
 @keyframes highlight-bg {
-	0% { background: #f0e68c !important; }
+	0% { background: var(--r4Highlight) !important; }
 	100% { background: transparent; }
 }
 
@@ -138,7 +176,7 @@ body, html {
 
 body {
 	font-weight: 400;
-	background: #FAFDFB;
+	background: var(--r4Background);
 }
 
 main {
@@ -146,7 +184,7 @@ main {
 }
 
 a {
-	color: #2196f3;
+	color: var(--r4Link);
 	text-decoration: none;
 }
 
@@ -163,7 +201,7 @@ hr {
 	margin: 10px 20px;
 	border: 0;
 	height: 1px !important;
-	background-color: #e0e0e0;
+	background-color: var(--r4Line);
 }
 
 hr.space {
@@ -176,7 +214,7 @@ strong {
 
 abbr[title] {
 	cursor: help;
-	text-decoration-color: #2196f3;
+	text-decoration-color: var(--r4Link);
 }
 
 h1, h2, h3 {
@@ -243,7 +281,7 @@ ul.R4 {
 	right: 0;
 	bottom: 0;
 	background-color: black;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: var(--r4Overlay);
 	z-index: 5000;
 	overflow: auto;
 }

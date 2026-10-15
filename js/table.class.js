@@ -420,6 +420,10 @@ var Table = {
 					labelem.prepend(chkelem);
 					td.appendChild(labelem);
 				}
+				else if(colspan > 1) {
+					//span permite manter o texto visivel na rolagem horizontal (stickyCol)
+					td.innerHTML = '<span class="R4ColspanContent"> '+ value +'</span>';
+				}
 				else {
 					td.innerHTML = ' '+ value;
 				}

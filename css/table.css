@@ -22,7 +22,7 @@ table.R4.compact > tbody > tr > td {
 }
 
 table.R4.striped > tbody > tr:nth-child(even) {
-  background-color: #eaeaea;
+  background-color: var(--r4TableStriped);
 }
 
 table.R4 th.right, table.R4 td.right {
@@ -38,7 +38,7 @@ table.R4 > thead > tr > th > span[orderBy] {
 }
 
 table.R4 > tbody > tr.R4SelRow {
-	background-color: #90EE90 !important;
+	background-color: var(--r4TableSelected) !important;
 }
 
 table.R4 > tbody > tr > td.nonClickCol {
@@ -47,7 +47,7 @@ table.R4 > tbody > tr > td.nonClickCol {
 
 table.R4 > tbody > tr:hover,
 table.R4.striped > tbody > tr:hover {
-	background-color: #f0e68c !important;
+	background-color: var(--r4Highlight) !important;
 }
 
 .R4TablePgntn {
@@ -70,9 +70,50 @@ table.R4 .badgeTags {
 	font-size: 0.6rem;
 }
 
+/* Primeira coluna fixa na rolagem horizontal (a tabela precisa estar num container com overflow-x: auto) */
+table.R4.stickyCol > thead > tr,
+table.R4.stickyCol > tbody > tr,
+table.R4.stickyCol > tfoot > tr {
+	background-color: var(--r4TableBackground);
+}
+
+table.R4.stickyCol > thead > tr > th:first-child,
+table.R4.stickyCol > tbody > tr > td:first-child,
+table.R4.stickyCol > tfoot > tr > td:first-child {
+	position: sticky;
+	left: 0;
+	z-index: 1;
+	background-color: inherit;
+	box-shadow: inset -1px 0 0 var(--r4Line);
+}
+
+table.R4.stickyCol > thead > tr > th:first-child {
+	z-index: 2;
+}
+
+/* Celula da primeira coluna com colspan (linha de grupo): a celula rola, o texto fica parado */
+table.R4.stickyCol > tbody > tr > td[colspan]:first-child,
+table.R4.stickyCol > tfoot > tr > td[colspan]:first-child {
+	position: static;
+	box-shadow: none;
+}
+
+table.R4.stickyCol > tbody > tr > td[colspan] > .R4ColspanContent,
+table.R4.stickyCol > tfoot > tr > td[colspan] > .R4ColspanContent {
+	position: sticky;
+	left: 5px;
+	display: inline-block;
+}
+
 
 /*Responsive table*/
 @media only screen and (max-width: 33.75em) {  /* 540px */
+
+	table.R4.stickyCol > tbody > tr > td:first-child,
+	table.R4.stickyCol > tfoot > tr > td:first-child {
+		position: static;
+		box-shadow: none;
+	}
 
 	table.R4 > thead {
 		display: none;

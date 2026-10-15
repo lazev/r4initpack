@@ -12,7 +12,7 @@ input[type=file]::file-selector-button {
 	text-align: center;
 	text-overflow: ellipsis;
 	color: white;
-	background-color: #616161;
+	background-color: var(--r4Grey);
 	box-shadow: 0 2px 2px 0 #D7D7D7, 0 3px 1px -2px #C8C8C8, 0 1px 5px 0 #DCDCDC;
 	font-size: 14px;
 	overflow: hidden;
