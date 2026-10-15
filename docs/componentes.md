@@ -41,6 +41,7 @@ Fields.create([
 | `textarea` | Texto longo | - |
 | `select` | Dropdown | - |
 | `switch` | Checkbox com label | - |
+| `radio` | Grupo de opcoes, so uma marcada | - |
 | `tags` | Tags com autocomplete | - |
 | `emailtags` | Tags de e-mail | - |
 | `phonetags` | Tags de telefone | - |
@@ -75,8 +76,8 @@ Fields.create([
     "classes": "col-6",
     "attr": "data-custom='valor'",
     "options": [
-        {"value": "1", "label": "Opcao 1"},
-        {"value": "2", "label": "Opcao 2"}
+        {"key": "1", "value": "Opcao 1"},
+        {"key": "2", "value": "Opcao 2"}
     ]
 }
 ```
@@ -140,13 +141,31 @@ Fields.reset($('#meuForm'));         // limpar formulario
 ```javascript
 // Popular opcoes de select
 Fields.setSelectOpts($('#status'), [
-    { value: 1, label: 'Ativo' },
-    { value: 0, label: 'Inativo' }
+    { key: 1, value: 'Ativo' },
+    { key: 0, value: 'Inativo' }
 ], 1);  // valor pre-selecionado
 
 // Opcoes podem vir de uma funcao
 { "id": "city", "type": "select", "options": "MeuModulo.getCities" }
 ```
+
+### Radio
+
+Grupo de opcoes em que so uma fica marcada. As opcoes usam o mesmo formato do select (`{ key, value }`), em array ou vindas de uma funcao.
+
+```json
+{ "id": "modo", "type": "radio", "value": "normal", "classes": "segmented",
+  "options": [
+      { "key": "normal", "value": "Preco" },
+      { "key": "multa",  "value": "Multa" },
+      { "key": "boost",  "value": "Boost" }
+  ] }
+```
+
+- O primeiro radio recebe o id do campo (`modulo_modo`); os outros ficam `modulo_modo_1`, `modulo_modo_2`...
+- `Fields.getVal`, `setVal`, `getText`, `enable` e `editable` chamados no primeiro radio valem para o grupo todo; `objectize` devolve o valor marcado.
+- `classes` vai no wrapper do campo. A classe `segmented` mostra as opcoes como botoes colados.
+- `required` funciona como nos outros campos.
 
 ### Calculo em campos
 
@@ -169,7 +188,7 @@ Tabelas dinamicas com ordenacao, paginacao e selecao.
 
 ```javascript
 Table.create({
-    idElem: 'tblUsers',
+    idDestiny: 'tblUsers',
     arrHead: [
         { label: 'Nome',   type: 'text',    orderBy: 'name' },
         { label: 'E-mail', type: 'text',    orderBy: 'email' },
@@ -207,6 +226,28 @@ data.forEach(item => {
         classes: Table.getClasses()
     });
 });
+```
+
+### Celulas com colspan
+
+O terceiro parametro de `Table.addCell(conteudo, classes, colspan)` junta colunas. Na linha montada a mao, `colspan` e um array paralelo a `cells`. As celulas depois de um colspan continuam usando a coluna certa do cabecalho (tipo, precision, colClasses).
+
+```javascript
+// Linha de grupo ocupando as 5 colunas
+Table.initLine();
+Table.addCell('Ofertas vigentes', 'bold', 5);
+body.push({ value: '', cells: Table.getCells(), classes: Table.getClasses(), colspan: Table.getColspans() });
+
+// O mesmo, direto
+body.push({ value: '', cells: ['Ofertas vigentes'], classes: ['bold'], colspan: [5] });
+```
+
+### Primeira coluna fixa
+
+Com a classe `stickyCol` a primeira coluna fica parada na rolagem horizontal. A tabela precisa estar num container com `overflow-x: auto`. Em tela pequena (layout de cartao) a coluna volta ao normal.
+
+```javascript
+Table.create({ idDestiny: 'tblPrecos', classes: 'striped stickyCol', arrHead: head });
 ```
 
 ### Atualizando conteudo
@@ -336,6 +377,25 @@ Dialog.open({
 ```javascript
 Dialog.setChangeMonitor($('#dlgUser'));
 // Se o usuario alterar campos e tentar fechar, sera avisado
+```
+
+### Confirmacao
+
+`Dialog.confirm()` abre um dialogo de confirmacao e devolve uma Promise: `true` quando a pessoa confirma; `false` quando cancela, fecha no X, clica fora ou aperta Esc. O botao de confirmar ja abre com o foco (Enter confirma).
+
+```javascript
+Dialog.confirm({
+    title:         'Excluir item',
+    html:          'Excluir a CAPA J1 do atendimento?',
+    labelOk:       'Excluir',           // padrao: Confirmar
+    classesOk:     'bgDanger white',    // padrao: bgPrimary white
+    labelCancel:   'Voltar',            // padrao: Cancelar
+    classesCancel: '',                  // o botao de cancelar sempre fecha o dialogo
+    classes:       'narrow'             // padrao: narrow
+})
+.then(ok => {
+    if(ok) MeuModulo.excluir(id);
+});
 ```
 
 ### Outros
@@ -578,6 +638,36 @@ FieldsTags.appendVal($('#categories'), '3', 'Esporte');
 
 ### Cores de texto
 `primary`, `info`, `danger`, `success`, `warning`, `fancy`, `grey`, `light`
+
+### Variaveis de cor
+
+As cores do framework ficam em variaveis CSS no `:root` (`css/global.css`). Para trocar a paleta, o projeto redefine as variaveis no seu CSS global, sem mexer nas classes:
+
+```css
+:root {
+    --r4Primary:    #4470c4;
+    --r4Success:    #4ca175;
+    --r4Danger:     #d15a5a;
+    --r4FieldFocus: #5b82c4;
+}
+```
+
+| Variavel | Usada em |
+|---|---|
+| `--r4Primary`, `--r4Info`, `--r4Danger`, `--r4Success`, `--r4Warning`, `--r4Fancy`, `--r4Grey`, `--r4Light`, `--r4White`, `--r4Black`, `--r4Smooth` | classes `bg*` e de texto com o mesmo nome |
+| `--r4SuccessText` | classe de texto `success` |
+| `--r4Background` | fundo do `body` |
+| `--r4Link` | links e `abbr` |
+| `--r4Line` | `hr` e divisoria da coluna fixa da Table |
+| `--r4Highlight` | linha da Table com o mouse e animacao `highlight` |
+| `--r4Overlay` | fundo escurecido atras do Dialog |
+| `--r4DialogBackground` | fundo do Dialog |
+| `--r4FieldText`, `--r4FieldBorder`, `--r4FieldLabel` | texto, linha de baixo e rotulo dos campos |
+| `--r4FieldFocus`, `--r4FieldFocusBackground` | campo em foco, rotulo preenchido, radio |
+| `--r4SwitchOn` | switch ligado |
+| `--r4TableBackground`, `--r4TableStriped`, `--r4TableSelected` | fundo da Table com `stickyCol`, linhas `striped`, linha selecionada |
+
+Sombras e alguns cinzas de detalhe continuam fixos no CSS.
 
 ### Layout
 `center`, `right`, `left`, `hidden`, `block`, `onRight`, `onLeft`

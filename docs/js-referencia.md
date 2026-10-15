@@ -171,26 +171,35 @@ let clone = R4.getTemplate($('#tplCard'));
 document.body.appendChild(clone);
 ```
 
-#### `R4.render(templateElem, payload, format)`
+#### `R4.render(templateElem, payload, outputFormat)`
 
-Renderiza template com dados. Substitui `{{variavel}}` pelos valores.
+Renderiza template com dados. Substitui `{{variavel}}` pelos valores do payload.
+
+Os valores entram como estao, sem escape: o payload ja deve vir do jeito que sera mostrado na tela (numeros formatados com `R4.moneyMask`/`R4.numberMask`, datas com `R4.dateMask`, HTML como `<b>` quando for o caso).
+
+O terceiro parametro diz o formato do retorno:
+- `'elem'` (padrao): elemento DOM. Se o template tiver mais de um elemento raiz, volta uma `div` com todos dentro.
+- `'html'`: string com o HTML.
 
 ```javascript
-// Template: <div>{{name}} - {{email}}</div>
-let html = R4.render($('#tplUser'), { name: 'Joao', email: 'j@mail.com' });
-```
-
-O parametro `format` permite formatar valores:
-```javascript
-R4.render($('#tpl'), data, {
-    price: val => R4.moneyMask(val),
-    date:  val => R4.dateMask(val)
-});
+// Template: <div>{{name}} - {{price}}</div>
+let elem = R4.render($('#tplUser'), { name: 'Joao', price: R4.moneyMask(10) });
+let html = R4.render($('#tplUser'), { name: 'Joao', price: R4.moneyMask(10) }, 'html');
 ```
 
 #### `R4.renderLoop(loopElem, payload)`
 
-Renderiza array em template com `[loop]...[/loop]`.
+Repete o elemento marcado com o atributo `loop` uma vez para cada item do array, trocando os `{{campos}}` de cada item. O `R4.render` chama sozinho quando o template tem um elemento com `loop` e o payload tem um array:
+
+```html
+<template id="tplLista">
+    <ul><li loop>{{nome}}</li></ul>
+</template>
+```
+
+```javascript
+R4.render($('#tplLista'), { itens: [{ nome: 'A' }, { nome: 'B' }] });
+```
 
 ---
 
