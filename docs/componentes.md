@@ -199,6 +199,7 @@ Table.create({
     arrBody: body,
     arrFoot: foot,
     withCheck: true,
+    withCheckAll: true,     // false: sem a caixa de marcar todas no titulo (selecao para acoes de uma linha so)
     onOrderBy: (params) => MeuModulo.list(params),
     onLineSel: (params) => MeuModulo.onSelect(params),
     onLineClick: (value) => MeuModulo.edit(value),

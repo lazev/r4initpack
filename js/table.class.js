@@ -67,6 +67,7 @@ var Table = {
 		Table.dom[idDestiny] = {
 			head:         arrArrHead,
 			withCheck:    opts.withCheck,
+			withCheckAll: (opts.withCheckAll !== false),
 			onOrderBy:    opts.onOrderBy,
 			onLineSel:    opts.onLineSel,
 			onLineClick:  opts.onLineClick,
@@ -240,7 +241,8 @@ var Table = {
 						Table.dom[idDestiny].colClasses[positionId] = cell.colClasses;
 					}
 
-					if((positionId == 0) && (Table.dom[idDestiny].withCheck)) {
+					//withCheckAll: false tira a caixa de marcar todas do título (seleção para ações de uma linha só)
+					if((positionId == 0) && (Table.dom[idDestiny].withCheck) && (Table.dom[idDestiny].withCheckAll)) {
 						let chkelem = document.createElement('input');
 						chkelem.setAttribute('type', 'checkbox');
 						chkelem.value = 'all';
