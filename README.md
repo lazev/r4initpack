@@ -167,6 +167,15 @@ R4::retOkAPI();
 
 ---
 
+## Skill para Claude Code
+
+O repositorio inclui uma skill do Claude Code em [.claude/skills/r4/SKILL.md](.claude/skills/r4/SKILL.md), com as convencoes para criar e validar modulos R4.
+
+- Abrindo o Claude Code dentro deste repositorio, a skill ja fica disponivel como `/r4`
+- Para usa-la em outros projetos R4, copie a pasta `.claude/skills/r4/` para `~/.claude/skills/r4/`
+
+---
+
 ## Licenca
 
 MIT
