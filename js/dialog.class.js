@@ -3,6 +3,7 @@ var Dialog = {
 	onOpenFuncs: {},
 	beforeCloseFuncs: {},
 	onCloseFuncs: {},
+	focusOrigin: {},
 
 	iconCloser: '<svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/></svg>',
 
@@ -21,6 +22,7 @@ var Dialog = {
 			    changeMonitor     = opts.changeMonitor     ? opts.changeMonitor     : false,
 			    buttons           = opts.buttons           ? opts.buttons           : [],
 			    clickOverlayClose = (opts.clickOverlayClose !== undefined) ? opts.clickOverlayClose : true,
+			    returnFocus       = (opts.returnFocus       !== undefined) ? opts.returnFocus       : true,
 			    classes           = [];
 
 			let onOpen    = opts.onOpen      || function(){},
@@ -75,6 +77,7 @@ var Dialog = {
 			over.id = 'R4Overlay-'+ idElem;
 
 			if(ephemeral) over.setAttribute('ephemeral', 'true');
+			if(!returnFocus) over.setAttribute('returnFocus', 'false');
 
 			let closer = document.createElement('div');
 			closer.innerHTML = Dialog.iconCloser;
@@ -193,6 +196,11 @@ var Dialog = {
 		let over = document.getElementById('R4Overlay-'+ idElem);
 		document.body.append(over);
 
+		//Guarda quem estava com o foco para devolver ao fechar (só se o diálogo estava fechado)
+		if(over.classList.contains('hidden') && over.getAttribute('returnFocus') != 'false') {
+			Dialog.focusOrigin[idElem] = document.activeElement;
+		}
+
 		over.classList.remove('hidden');
 
 		document.body.classList.add('noscroll');
@@ -303,6 +311,18 @@ var Dialog = {
 
 		if(Dialog.getIdOpenOverlays().length === 0) {
 			document.body.classList.remove('noscroll');
+		}
+
+		//Devolve o foco antes do onClose, que pode mandá-lo para outro lugar.
+		//Não interfere se o foco já saiu do diálogo por outro motivo.
+		let origin = Dialog.focusOrigin[idElem],
+		    active = document.activeElement;
+
+		delete Dialog.focusOrigin[idElem];
+
+		if(origin && origin !== document.body && origin.isConnected && !origin.disabled
+		&& (!active || active === document.body || over.contains(active))) {
+			origin.focus();
 		}
 
 		if(typeof Dialog.onCloseFuncs[idElem] === 'function') {

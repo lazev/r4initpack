@@ -128,7 +128,9 @@ var R4 = {
 		});
 
 		document.addEventListener('click', function(ev) {
-			if(ev.target.tagName.toLowerCase() != 'button' && ev.target.getAttribute('type') != 'button') {
+			//Clique em botão não fecha o aviso, senão o aviso que ele acabou de mostrar some no mesmo clique.
+			//closest(): o clique no ícone ou no texto de dentro do botão também conta como clique no botão.
+			if(!ev.target.closest('button, [type=button]')) {
 				Warning.hideAll();
 			}
 		});

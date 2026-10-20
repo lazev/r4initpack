@@ -13,12 +13,28 @@ var Pop = {
 		}
 
 		let fn = function(){
+			if(popel && popel.isConnected) return;
+
 			popel = Pop.create({
 				html: txt,
 				destiny: el,
 				classes: 'R4PopHint',
 				id: 'R4PopHint'+ R4.uniqid()
 			});
+
+			if(!popel) return;
+
+			//Se o elemento for escondido ou removido com o mouse em cima (troca de tela, aba, re-render),
+			//o mouseleave não dispara e a dica ficaria órfã na tela
+			let pop   = popel,
+			    watch = setInterval(() => {
+				if(!pop.isConnected) {
+					clearInterval(watch);
+				} else if(!el.isConnected || !el.getClientRects().length) {
+					clearInterval(watch);
+					Pop.destroyElem(pop, true);
+				}
+			}, 300);
 		};
 
 		if(open) {

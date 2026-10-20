@@ -46,7 +46,8 @@ var Fields = {
 			for(let k in arrFields) {
 
 				elem = null;
-				item = arrFields[k];
+				//Cópia: os create* alteram o item (id com prefixo, label, min) e o schema do chamador deve ficar intacto
+				item = Object.assign({}, arrFields[k]);
 
 				rcpt = document.getElementById(
 					(prefix) ? prefix +'_'+ item.id : item.id

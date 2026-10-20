@@ -317,6 +317,7 @@ Dialog.open({
     ephemeral: true,                // remover do DOM ao fechar
     changeMonitor: true,            // avisar se houver alteracoes nao salvas
     clickOverlayClose: true,        // fechar ao clicar no overlay
+    returnFocus: true,              // ao fechar, devolver o foco ao elemento que o tinha ao abrir
     buttons: [...],
     onOpen: () => {},
     onCreate: () => {},
