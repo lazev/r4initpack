@@ -59,6 +59,10 @@ var Fields = {
 				if(label) item.label = label;
 
 				switch(item.type) {
+					case 'multiselect':
+						elem = FieldsMultiSelect.create(item, prefix);
+						break;
+
 					case 'select':
 						elem = Fields.createSelect(item, prefix);
 						break;
@@ -423,6 +427,7 @@ var Fields = {
 
 
 	setSelectOpts: function(elem, options, value) {
+        if(elem.getAttribute('R4Type')==='multiselect')return FieldsMultiSelect.setOptions(elem,options,value);
 
 		elem.innerHTML = '';
 
@@ -672,7 +677,7 @@ var Fields = {
 		if(elem.classList.contains('RequiredField')) {
 
 			if(elem.tagName.toLowerCase() == 'select') {
-				if(!val.trim()) valid = false;
+				if(Array.isArray(val)?!val.length:!val.trim()) valid = false;
 			} else {
 				if(val == '' || val == '0000-00-00') valid = false;
 			}
@@ -864,6 +869,7 @@ var Fields = {
 		} else {
 			let type = elem.getAttribute('R4Type');
 			switch(type) {
+                case 'multiselect': return FieldsMultiSelect.getVal(elem);
 				case 'switch':    return (elem.checked) ? elem.value : 0;
 				case 'decimal':
 				case 'decimal-':
@@ -887,6 +893,7 @@ var Fields = {
 
 
 	getText: function(elem) {
+        if(elem.getAttribute('R4Type')==='multiselect')return FieldsMultiSelect.getText(elem);
 		if(elem.tagName.toLowerCase() == 'select')
 			return elem.options[elem.selectedIndex].text;
 
@@ -915,6 +922,7 @@ var Fields = {
 
 
 	setVal: function(elem, value, label) {
+        if(elem.getAttribute('R4Type')==='multiselect')return FieldsMultiSelect.setVal(elem,value);
 		let type = elem.getAttribute('R4Type');
 		switch(type) {
 			case 'switch':

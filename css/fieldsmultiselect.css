@@ -1,0 +1,20 @@
+/* Mesmo contrato visual dos campos R4; o select oculto guarda os valores. */
+.R4MultiSelect>select[hidden]{display:none!important}
+.R4Fields.R4MultiSelect>button.R4MultiSelectTrigger{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;box-sizing:border-box;text-align:left;margin-top:10px;padding:4px 3px 6px 5px;border:0;border-bottom:1px solid var(--r4FieldBorder);border-radius:0;background:inherit;color:var(--r4FieldText);font:inherit;font-size:18px;line-height:normal;cursor:pointer}
+.R4MultiSelectTrigger>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.R4MultiSelectTrigger:after{content:'';width:6px;height:6px;flex:none;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:0 3px 4px}
+.R4MultiSelectTrigger:focus-visible{outline:2px solid var(--r4FieldFocus);outline-offset:1px}
+.R4MultiSelectTrigger:disabled{opacity:.6;cursor:default}
+.formCompact .R4Fields.R4MultiSelect>button.R4MultiSelectTrigger{height:30px;margin-top:0;font-size:13px;border:1px solid #d8d2c7;border-radius:6px;background:#fff;color:#3a66c0;padding:0 6px}
+.R4MultiSelectPopup{position:fixed;z-index:11000;box-sizing:border-box;display:flex;flex-direction:column;min-height:100px;max-height:360px;border:1px solid var(--r4Line,#d8d2c7);background:var(--r4White,#fff);color:var(--r4FieldText,#374957);box-shadow:0 5px 20px rgba(0,0,0,.18);font:12px Lato,Helvetica,sans-serif;line-height:1.4;text-align:left}
+.R4MultiSelectPopup label{display:flex;align-items:center;gap:8px;padding:6px 9px;cursor:pointer;margin:0;position:static;color:inherit;font:inherit;overflow-wrap:anywhere}
+.R4MultiSelectPopup input[type=checkbox]{flex:none;width:14px;height:14px;margin:0;accent-color:var(--r4FieldFocus,#337ab7)}
+.R4MultiSelectPopup label:hover{background:var(--r4Smooth,#fafafa)}
+.R4MultiSelectPopup label:focus-within{outline:1px solid var(--r4FieldFocus);outline-offset:-1px}
+.R4MultiSelectAll{border-bottom:1px solid var(--r4Line,#d8d2c7);font-weight:600!important}
+.R4MultiSelectOptions{overflow:auto;min-height:0;flex:1}
+.R4MultiSelectActions{display:flex;justify-content:flex-end;gap:6px;padding:7px;border-top:1px solid var(--r4Line,#d8d2c7)}
+.R4MultiSelectActions button{padding:4px 9px;border:1px solid var(--r4Line,#d8d2c7);background:var(--r4White,#fff);color:inherit;font:inherit;cursor:pointer}
+.R4MultiSelectActions .R4MultiSelectApply{background:var(--r4Primary,#4470c4);color:white;border-color:var(--r4Primary,#4470c4)}
+
+.R4Fields.R4MultiSelect.errField>button.R4MultiSelectTrigger{border-color:var(--r4Danger,#e81e62)}
