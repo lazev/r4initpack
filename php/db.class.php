@@ -88,6 +88,27 @@ class DB {
 	}
 
 
+	/**
+	 * Retorna o tipo da query (select, insert, update, ...) em minúsculas.
+	 * Ignora espaços e comentários iniciais (-- , # e /* *\/) apenas para a
+	 * detecção: a query enviada ao banco não é alterada, preservando os
+	 * comentários de identificação no processlist/slow log.
+	 */
+	private function getQueryType($sqlQuery) {
+		preg_match('/^\s*+(?:(?:--|#)[^\n]*+\s*+|\/\*.*?\*\/\s*+)*+(\w+)/s', (string)$sqlQuery, $m);
+		return strtolower($m[1] ?? '');
+	}
+
+
+	/**
+	 * Indica se a query termina em "limit 1" (retorno de linha única),
+	 * ignorando espaços, ";" e comentários finais.
+	 */
+	private function isSingleRow($sqlQuery) {
+		return (bool)preg_match('/\blimit\s+1\s*+;?\s*+(?:(?:--|#)[^\n]*+\s*+|\/\*.*?\*\/\s*+)*+$/is', (string)$sqlQuery);
+	}
+
+
 	public function sql($sqlQuery, $dataFields='', $errorAlert=true) {
 
 		if(is_null($this->DBCon)) {
@@ -98,8 +119,7 @@ class DB {
 		}
 
 		$sqlQuery  = trim($sqlQuery, " \n\r\t\v\x00;");
-		preg_match('/^\s*(?:--[^\n]*(?:\n|$)|#[^\n]*(?:\n|$)|\/\*.*?\*\/\s*)*(\w+)/is', $sqlQuery, $m);
-		$queryType = strtolower($m[1] ?? '');
+		$queryType = $this->getQueryType($sqlQuery);
 
 		if(!empty($dataFields) && is_array($dataFields) && in_array($queryType, ['insert', 'update'])) {
 			$fields = [];
@@ -146,7 +166,7 @@ class DB {
 
 		if($queryType != 'select') return true;
 
-		if(preg_match('/\blimit\s+1\s*(?:--[^\n]*|#[^\n]*|\/\*.*?\*\/)?\s*$/is', $sqlQuery)) {
+		if($this->isSingleRow($sqlQuery)) {
 			return $result->fetch_array(MYSQLI_ASSOC);
 		}
 
@@ -161,7 +181,7 @@ class DB {
 		$result = $this->pureSQL($sqlQuery, $dataFields, $errorAlert);
 		if($result === false) return false;
 
-		if(strtolower(substr($sqlQuery, -7)) == 'limit 1') {
+		if($this->isSingleRow($sqlQuery)) {
 			return $result->fetch_array(MYSQLI_ASSOC);
 		}
 
